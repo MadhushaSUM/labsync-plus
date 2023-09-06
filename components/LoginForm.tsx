@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 
 const LoginForm = () => {
 
@@ -21,29 +22,22 @@ const LoginForm = () => {
         }
 
         try {
-            const res = await fetch("/api/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password,
-                }),
+            const res = await signIn("credentials", {
+                email,
+                password,
+                redirect: false,
             });
             
-            if (res.ok) {
-                const form = e.target;
-                form.reset();
-                router.push("/");                               
-            } else {
-                const { message } = await res.json();
-                setError(message);                
+            if (res?.error) {
+                setError("Invalid credentials!");
+                return;                               
             }
+
+            router.replace("/");
         } catch (error) {
             console.log("Error during login : ", error);   
         }
-    }
+    };
 
 
     return (
