@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { AuthProvider } from "./Providers/AuthProvider"
 import Navbar from '@/components/Navbar'
+import SidePannel from '@/components/SidePannel'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,7 +22,15 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <Navbar />
-          {children}
+          <div className='flex flex-row'>
+            <div>
+              <SidePannel />
+            </div>
+
+            <div className='flex-1'>
+              {children}
+            </div>
+          </div>
         </AuthProvider>
       </body>
     </html>
