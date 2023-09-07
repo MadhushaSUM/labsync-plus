@@ -1,6 +1,7 @@
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { query } from "../../../../lib/database";
+import { data } from "autoprefixer";
 
 
 export const AuthOptions = {
@@ -26,7 +27,7 @@ export const AuthOptions = {
                     if (user[0].password !== password) {
                         return NextResponse.json({ message: "Invalid credentials!" }, { status: 502 });
                     }
-            
+                    
                     return user[0];
                 } catch (error) {
                     console.log(error);
@@ -35,8 +36,29 @@ export const AuthOptions = {
             },
         }),
     ],
+    callbacks: {
+        async session({ session }) {
+            const email = session?.user?.email;
+
+            const data = await query({
+                query:"SELECT * FROM users WHERE email = ?",
+                values:[email]
+            }); 
+
+            const newSession = {
+                ...session,
+                user: {
+                    ...session.user,
+                    username: data[0].username,
+                },
+            };
+            
+            return newSession;
+        }
+    },
     session: {
         stratergy: "jwt",
+
     },
 
     secret: process.env.NEXTAUTH_SECRET,
