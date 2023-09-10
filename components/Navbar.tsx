@@ -14,8 +14,8 @@ const Navbar = () => {
                 <div className="flex gap-5 items-center">
                     <h3><span>Welcome </span>{session?.user?.username}</h3>
                     
-                    <button className="border-2 rounded-full border-blue-400 w-fit" onClick={() => signOut()}>
-                        <h1 className="px-2 font-semibold text-lg text-white">Sign Out</h1>
+                    <button className=" rounded-full bg-blue-500 w-fit" onClick={() => signOut()}>
+                        <h1 className="px-2 font-semibold text-white p-1">Sign Out</h1>
                     </button>
                 </div>
             }
