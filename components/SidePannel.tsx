@@ -13,6 +13,8 @@ const SidePannel = () => {
     const handleClicks = (e: React.MouseEvent<HTMLElement>) => {
         if (e.currentTarget.id === "newTestBtn") {
             router.push("/addselectpatient");            
+        } else if (e.currentTarget.id === "patientsBtn") {
+            router.push("/patients");
         }
     }
 
@@ -25,9 +27,9 @@ const SidePannel = () => {
                             New Test
                         </span>
                     </button>
-                    <button id="newPatientBtn" onClick={handleClicks} className="sidePanelButton">
+                    <button id="patientsBtn" onClick={handleClicks} className="sidePanelButton">
                         <span>
-                            New Patient
+                            Manage Patients
                         </span>
                     </button>
                     <button id="newDoctorBtn" onClick={handleClicks} className="sidePanelButton">
