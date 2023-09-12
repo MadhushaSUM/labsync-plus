@@ -20,5 +20,5 @@ input {
 }
 
 .search_result_item {
-  @apply p-1 hover:bg-zinc-200;
+  @apply p-1 cursor-pointer hover:bg-zinc-200;
 }

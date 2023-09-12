@@ -4,6 +4,9 @@ import { Inter } from 'next/font/google'
 import { AuthProvider } from "./Providers/AuthProvider"
 import Navbar from '@/components/Navbar'
 import SidePannel from '@/components/SidePannel'
+import { SelectedPatientContextProvider } from './context/SelectedPatientContext'
+import { NextUIProvider } from '@nextui-org/react'
+import LabSync from '@/components/LabSync'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,16 +24,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-          <Navbar />
-          <div className='flex flex-row'>
-            <div>
-              <SidePannel />
-            </div>
-
-            <div className='flex-1'>
-              {children}
-            </div>
-          </div>
+            <SelectedPatientContextProvider>
+              <LabSync children={children}/>
+            </SelectedPatientContextProvider>
+          
         </AuthProvider>
       </body>
     </html>
