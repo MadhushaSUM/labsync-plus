@@ -19,3 +19,20 @@ export const POST = async (req, res) => {
     }
 
 }
+
+export const PUT = async (req, res) => {
+    try {
+        const data = await req.json();
+    
+        await query({
+            query:"UPDATE patients SET name = ? WHERE id = ?",
+            values:[data.name, data.id]
+        });
+
+        return NextResponse.json({ message:"Patient details updated" }, { status: 201 });
+
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json({ message: "Error occured while updating patient details" }, { status: 501 });
+    }
+}

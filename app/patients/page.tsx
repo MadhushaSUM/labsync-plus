@@ -25,6 +25,11 @@ const PatientsPage = () => {
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
     const [rows, setRows] = useState([]);
+    const [selectedPatient, setSelectedPatient] = useState({});
+    const [updatedPatient, setUpdatedPatient] = useState({
+        id: -1,
+        name: "",
+    });
 
     const loadPatients = async () => {
         try {
@@ -44,9 +49,7 @@ const PatientsPage = () => {
     },[]);
 
     const renderCell = useCallback((user, columnKey) => {
-        const cellValue = user[columnKey];
-        console.log(columnKey);
-        
+        const cellValue = user[columnKey];        
     
         switch (columnKey) {
             case "name":
@@ -82,7 +85,11 @@ const PatientsPage = () => {
                         </Tooltip>
 
                         <Tooltip content="Edit user">
-                            <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={onOpen}>
+                            <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={() => {
+                                setSelectedPatient(user);
+                                setUpdatedPatient(user);
+                                onOpen();
+                            }}>
                                 <EditIcon />
                             </span>     
                         </Tooltip>
@@ -98,6 +105,16 @@ const PatientsPage = () => {
                 return cellValue;
         }
     }, []);
+
+    const updatePatient = async () => {
+        await fetch("/api/patients", {
+            method: "PUT",
+            body: JSON.stringify({
+                id: updatedPatient.id,
+                name: updatedPatient.name,
+            }),
+        });
+    };
 
     return (
         <div className="m-5">
@@ -128,21 +145,25 @@ const PatientsPage = () => {
                     <ModalContent>
                         {(onClose) => (
                             <>
-                            <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
-                            <ModalBody>
-                                <p> 
-                                Patient Name:
-                                </p>
-                                <input type="text" placeholder="Patient Name"/>
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button color="danger" variant="light" onPress={onClose}>
-                                Close
-                                </Button>
-                                <Button color="primary" onPress={onClose}>
-                                Action
-                                </Button>
-                            </ModalFooter>
+                                <ModalHeader className="flex flex-col gap-1">Edit Patient Details</ModalHeader>
+                                <ModalBody>
+                                    <p> 
+                                    Patient ID:
+                                    </p>
+                                    <input type="text" placeholder="Patient ID" disabled value={selectedPatient.id}/>
+                                    <p> 
+                                    Patient Name:
+                                    </p>
+                                    <input type="text" placeholder="Patient Name" value={updatedPatient.name} onChange={(e) => {setUpdatedPatient({id:selectedPatient.id, name: e.target.value}); }}/>
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Button color="danger" variant="light" onPress={onClose}>
+                                    Close
+                                    </Button>
+                                    <Button color="primary" onPress={updatePatient}>
+                                    Save
+                                    </Button>
+                                </ModalFooter>
                             </>
                         )}
                     </ModalContent>
