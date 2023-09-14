@@ -95,7 +95,9 @@ const PatientsPage = () => {
                         </Tooltip>
 
                         <Tooltip color="danger" content="Delete user">
-                            <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                            <span className="text-lg text-danger cursor-pointer active:opacity-50" onClick={() => {
+                                deletePatient(user);
+                            }}>
                                 <DeleteIcon />
                             </span>
                         </Tooltip>
@@ -114,6 +116,16 @@ const PatientsPage = () => {
                 name: updatedPatient.name,
             }),
         });
+        loadPatients();
+    };
+    const deletePatient = async (user) => {
+        await fetch("/api/patients", {
+            method: "DELETE",
+            body: JSON.stringify({
+                id: user.id,
+            }),
+        });
+        loadPatients();
     };
 
     return (
