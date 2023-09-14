@@ -6,6 +6,8 @@ import { useCallback, useEffect, useState } from "react";
 import {EditIcon} from "@/components/EditIcon"
 import {DeleteIcon} from "@/components/DeleteIcon";
 import {EyeIcon} from "@/components/EyeIcon";
+import Popup from "@/components/Popup"
+import Image from "next/image";
 
 const statusColorMap = {
     active: "success",
@@ -25,7 +27,10 @@ const PatientsPage = () => {
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
     const [rows, setRows] = useState([]);
-    const [selectedPatient, setSelectedPatient] = useState({});
+    const [selectedPatient, setSelectedPatient] = useState({
+        id:-1,
+        name:""
+    });
     const [updatedPatient, setUpdatedPatient] = useState({
         id: -1,
         name: "",
@@ -78,12 +83,7 @@ const PatientsPage = () => {
             case "actions":
                 return (
                     <div className="relative flex items-center gap-2">
-                        <Tooltip content="Details">
-                            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EyeIcon />
-                            </span>
-                        </Tooltip>
-
+                        
                         <Tooltip content="Edit user">
                             <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={() => {
                                 setSelectedPatient(user);
@@ -132,6 +132,14 @@ const PatientsPage = () => {
         <div className="m-5">
             <h1 className="text-3xl font-bold">Manage Patients</h1>
 
+            <div className="bg-gray-100 h-12 rounded-xl mx-10 mt-5 flex flex-row items-center justify-end p-5">
+                <button className="bg-blue-400 rounded-full p-1 px-2 text-white font-semibold hover:bg-blue-500">
+                    <div className="flex flex-row gap-2">
+                        <Image src="/plus-icon.svg" width={15} height={15} alt="plus-icon" className="text-white"/>
+                        Add
+                    </div>
+                </button>
+            </div>
             <div className="pt-5 px-10">
                 <Table aria-label="Example table with custom cells">
                     <TableHeader columns={columns}>
@@ -153,33 +161,14 @@ const PatientsPage = () => {
 
 
             <div>
-                <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur" size="5xl">
-                    <ModalContent>
-                        {(onClose) => (
-                            <>
-                                <ModalHeader className="flex flex-col gap-1">Edit Patient Details</ModalHeader>
-                                <ModalBody>
-                                    <p> 
-                                    Patient ID:
-                                    </p>
-                                    <input type="text" placeholder="Patient ID" disabled value={selectedPatient.id}/>
-                                    <p> 
-                                    Patient Name:
-                                    </p>
-                                    <input type="text" placeholder="Patient Name" value={updatedPatient.name} onChange={(e) => {setUpdatedPatient({id:selectedPatient.id, name: e.target.value}); }}/>
-                                </ModalBody>
-                                <ModalFooter>
-                                    <Button color="danger" variant="light" onPress={onClose}>
-                                    Close
-                                    </Button>
-                                    <Button color="primary" onPress={updatePatient}>
-                                    Save
-                                    </Button>
-                                </ModalFooter>
-                            </>
-                        )}
-                    </ModalContent>
-                </Modal>
+                <Popup 
+                    isOpen={isOpen} 
+                    onOpenChange={onOpenChange} 
+                    updatePatient={updatePatient} 
+                    updatedPatient={updatedPatient} 
+                    setUpdatedPatient={setUpdatedPatient} 
+                    selectedPatient={selectedPatient}
+                />
             </div>
         </div>
     )
