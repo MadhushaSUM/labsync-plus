@@ -1,7 +1,6 @@
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { query } from "../../../../lib/database";
-import { data } from "autoprefixer";
 
 
 export const AuthOptions = {
