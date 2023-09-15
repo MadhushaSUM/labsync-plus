@@ -6,6 +6,7 @@ import {Modal, ModalContent, useDisclosure} from "@nextui-org/react";
 import { useCallback, useEffect, useState } from "react";
 import {EditIcon} from "@/components/EditIcon"
 import {DeleteIcon} from "@/components/DeleteIcon";
+import EditDoctorModal from "@/components/EditDoctorModal";
 import AddDoctorModal from "@/components/AddDoctorModal";
 
 const columns = [
@@ -19,6 +20,8 @@ const Doctors = () => {
     const [rows, setRows] = useState([]);
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const [selectedDoctor, setSelectedDoctor] = useState({});
+    const [isForEdit, setIsForEdit] = useState(true);
+
 
     const loadDoctors = async () => {
         try {
@@ -52,6 +55,15 @@ const Doctors = () => {
             method: "DELETE",
             body: JSON.stringify({
                 id: id,
+            }),
+        });
+        loadDoctors();
+    };
+    const addDoctor = async (name) => {
+        await fetch("/api/doctors", {
+            method: "POST",
+            body: JSON.stringify({
+                name: name,
             }),
         });
         loadDoctors();
@@ -92,6 +104,7 @@ const Doctors = () => {
                         <Tooltip content="Edit user">
                             <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={() => {
                                 setSelectedDoctor(user);
+                                setIsForEdit(true);
                                 onOpen();                                
                             }}>
                                 <EditIcon />
@@ -117,7 +130,10 @@ const Doctors = () => {
             <h1 className="text-3xl font-bold">Manage Doctors</h1>
 
             <div className="bg-gray-100 h-12 rounded-xl mx-10 mt-5 flex flex-row items-center justify-end p-5">
-                <button className="bg-blue-400 rounded-full p-1 px-2 text-white font-semibold hover:bg-blue-500" onClick={()=>{}} >
+                <button className="bg-blue-400 rounded-full p-1 px-2 text-white font-semibold hover:bg-blue-500" onClick={()=>{
+                    setIsForEdit(false);
+                    onOpen();
+                }} >
                     <div className="flex flex-row gap-2">
                         <Image src="/plus-icon.svg" width={15} height={15} alt="plus-icon" className="text-white"/>
                         Add
@@ -149,7 +165,11 @@ const Doctors = () => {
                     <ModalContent>
                     {(onClose) => (
                         <>
-                            <AddDoctorModal onClose={onClose} doctor={selectedDoctor} updateDoctor={updateDoctor}/>                           
+                            { isForEdit ?
+                                <EditDoctorModal onClose={onClose} doctor={selectedDoctor} updateDoctor={updateDoctor}/>                              
+                            :
+                                <AddDoctorModal onClose={onClose} addDoctor={addDoctor}/> 
+                            }
                             
                         </>
                     )}

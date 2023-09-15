@@ -35,3 +35,20 @@ export const DELETE = async (req) => {
         return NextResponse.json({ message: "Error occured while deleting doctor" }, { status: 501 });
     }
 }
+
+export const POST = async (req) => {
+
+    const data = await req.json();
+
+    try {
+        await query({
+            query: "INSERT INTO doctors (name) VALUES (?)",
+            values:[data.name]
+        });
+
+        return NextResponse.json({ message: "Doctor added" }, { status: 201 });
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json({ message: "Error occured while adding doctor" }, { status: 501 });
+    }
+}
