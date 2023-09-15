@@ -17,7 +17,6 @@ export const POST = async (req, res) => {
         console.log(error);
         return NextResponse.json({ message: "Error occured while getting patient names" }, { status: 501 });
     }
-
 }
 
 export const PUT = async (req, res) => {
