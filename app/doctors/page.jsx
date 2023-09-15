@@ -47,6 +47,15 @@ const Doctors = () => {
         });
         loadDoctors();
     };
+    const deleteDoctor = async (id) => {
+        await fetch("/api/doctors", {
+            method: "DELETE",
+            body: JSON.stringify({
+                id: id,
+            }),
+        });
+        loadDoctors();
+    };
 
 
     const renderCell = useCallback((user, columnKey) => {
@@ -91,7 +100,7 @@ const Doctors = () => {
 
                         <Tooltip color="danger" content="Delete user">
                             <span className="text-lg text-danger cursor-pointer active:opacity-50" onClick={() => {
-                                
+                                deleteDoctor(user.id);                                
                             }}>
                                 <DeleteIcon />
                             </span>
