@@ -15,6 +15,8 @@ const SidePannel = () => {
             router.push("/addselectpatient");            
         } else if (e.currentTarget.id === "patientsBtn") {
             router.push("/patients");
+        } else if (e.currentTarget.id === "doctorsBtn") {
+            router.push("/doctors");
         }
     }
 
@@ -32,7 +34,7 @@ const SidePannel = () => {
                             Manage Patients
                         </span>
                     </button>
-                    <button id="newDoctorBtn" onClick={handleClicks} className="sidePanelButton">
+                    <button id="doctorsBtn" onClick={handleClicks} className="sidePanelButton">
                         <span>
                             New Doctor
                         </span>
