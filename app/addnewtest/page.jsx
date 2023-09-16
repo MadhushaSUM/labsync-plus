@@ -47,6 +47,11 @@ const AddNewTest = () => {
             const today = new Date();
             const testdate = today.getFullYear()+"-"+(today.getMonth() + 1)+"-"+today.getDate();
 
+            let testsArr = [];
+
+            if (fbs) {testsArr.push(1);}
+            if (bg) {testsArr.push(2);}
+
             await fetch("/api/tests/newtest", {
                 method:"POST",
                 body: JSON.stringify({
@@ -54,7 +59,7 @@ const AddNewTest = () => {
                     doc_id: selectedDoc.id,
                     date: testdate,
                     paid: 1,
-                    test_no: 1,
+                    test_nos: testsArr,
                 })
             })                
         } catch (error) {

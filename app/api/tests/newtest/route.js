@@ -14,7 +14,7 @@ export const POST = async (req) => {
             },
             {
                 query: "INSERT INTO enrollments (tests_id, test) VALUES (?, ?);",
-                values: [data.test_no],
+                values: [data.test_nos],
             },
         ];
         await newTestTransaction(queries);
