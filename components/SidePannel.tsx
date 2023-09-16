@@ -12,7 +12,7 @@ const SidePannel = () => {
 
     const handleClicks = (e: React.MouseEvent<HTMLElement>) => {
         if (e.currentTarget.id === "newTestBtn") {
-            router.push("/addselectpatient");            
+            router.push("/addnewtest");            
         } else if (e.currentTarget.id === "patientsBtn") {
             router.push("/patients");
         } else if (e.currentTarget.id === "doctorsBtn") {
