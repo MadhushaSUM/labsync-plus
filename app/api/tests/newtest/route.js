@@ -1,4 +1,4 @@
-import { query, transaction } from "../../../../lib/database";
+import { newTestTransaction } from "../../../../lib/database";
 
 const { NextResponse } = require("next/server");
 
@@ -17,7 +17,7 @@ export const POST = async (req) => {
                 values: [data.test_no],
             },
         ];
-        await transaction(queries);
+        await newTestTransaction(queries);
   
         return NextResponse.json({ message: "Doctor updated" }, { status: 201 });
     } catch (error) {
