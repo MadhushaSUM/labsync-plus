@@ -1,5 +1,6 @@
 'use client';
 
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Toggle } from "./ui/toggle";
 
 interface SidebarProps {
@@ -11,7 +12,7 @@ interface SidebarProps {
 export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: SidebarProps) {
     return (
         <div
-            className={`transition-all duration-300 ease-in-out`}
+            className="transition-all duration-300 ease-in-out"
             style={{ width: `${sidebarSize}rem` }}
         >
             <Toggle
@@ -19,6 +20,7 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Side
             >
                 {isExpanded ? "<<" : ">>"}
             </Toggle>
+
         </div>
     );
 }

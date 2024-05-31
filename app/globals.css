@@ -74,3 +74,13 @@
       @apply bg-background text-foreground;
     }
   }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-rgb: 229, 231, 235;
+    }
+  }
+  
+  body {
+    background: rgb(var(--background-rgb));
+  }
