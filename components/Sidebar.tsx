@@ -1,7 +1,13 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
+import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { Toggle } from "./ui/toggle";
+import { useRouter } from "next/navigation";
+
+import ConstructionIcon from '@mui/icons-material/Construction';
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
+import DeskIcon from '@mui/icons-material/Desk';
 
 interface SidebarProps {
     toggleSidebar: () => void;
@@ -9,18 +15,88 @@ interface SidebarProps {
     sidebarSize: number;
 }
 
-export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: SidebarProps) {
+export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Readonly<SidebarProps>) {
+    const router = useRouter();
+
+    const handleMenuItemClick = (e: React.MouseEvent<HTMLElement>) => {
+        switch (e.currentTarget.id) {
+            case "btnPatientManagement":
+                router.push("/patientManagement")
+                break;
+            case "btnNewInvestigationRegister":
+                router.push("/newInvestigationRegister")
+                break;
+            default:
+                break;
+        }
+    }
+
     return (
         <div
-            className="transition-all duration-300 ease-in-out"
+            className="transition-all duration-300 ease-in-out h-full"
             style={{ width: `${sidebarSize}rem` }}
         >
-            <Toggle
-                onClick={toggleSidebar}
-            >
-                {isExpanded ? "<<" : ">>"}
-            </Toggle>
-
+            <div className="flex flex-col h-full">
+                <ScrollArea className="flex-grow">
+                    <div className="p-2">
+                        <Accordion type="single" collapsible>
+                            <AccordionItem value="item-1">
+                                <AccordionTrigger>
+                                    <DeskIcon />Operations
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                    Add a test to list
+                                </AccordionContent>
+                                <AccordionContent>
+                                    Add test results
+                                </AccordionContent>
+                                <AccordionContent className="cursor-pointer" id="btnPatientManagement" onClick={handleMenuItemClick}>
+                                    Patient management
+                                </AccordionContent>
+                                <AccordionContent>
+                                    Print reports
+                                </AccordionContent>
+                            </AccordionItem>
+                        </Accordion>
+                        <Accordion type="single" collapsible>
+                            <AccordionItem value="item-2">
+                                <AccordionTrigger>
+                                    <QueryStatsIcon />Analysis
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                    Patient analysis
+                                </AccordionContent>
+                                <AccordionContent>
+                                    Test analysis
+                                </AccordionContent>
+                                <AccordionContent>
+                                    Financial analysis
+                                </AccordionContent>
+                            </AccordionItem>
+                        </Accordion>
+                        <Accordion type="single" collapsible>
+                            <AccordionItem value="item-3">
+                                <AccordionTrigger>
+                                    <ConstructionIcon />Settings
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                    Page settings
+                                </AccordionContent>
+                                <AccordionContent>
+                                    Flag settings
+                                </AccordionContent>
+                                <AccordionContent>
+                                    Age preferences
+                                </AccordionContent>
+                            </AccordionItem>
+                        </Accordion>
+                        <Toggle onClick={toggleSidebar}>
+                            {isExpanded ? "<<" : ">>"}
+                        </Toggle>
+                    </div>
+                    <ScrollBar />
+                </ScrollArea>
+            </div>
         </div>
     );
 }

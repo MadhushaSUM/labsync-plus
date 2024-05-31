@@ -84,3 +84,7 @@
   body {
     background: rgb(var(--background-rgb));
   }
+
+  .apply_shadow {
+    @apply shadow-lg;
+  }

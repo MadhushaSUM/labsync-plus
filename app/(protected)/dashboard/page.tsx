@@ -1,9 +1,9 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Dashboard() {
     return (
-        <div>
+        <div className="apply_shadow">
             <Card>
                 <CardHeader>
                     <CardTitle>
