@@ -3,8 +3,8 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 
 export default function Dashboard() {
     return (
-        <div className="apply_shadow">
-            <Card>
+        <div>
+            <Card className="apply_shadow">
                 <CardHeader>
                     <CardTitle>
                         LabSync - Plus

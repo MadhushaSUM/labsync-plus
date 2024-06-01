@@ -5,7 +5,7 @@ import { PatientRequestDtoType } from '@/types/Dto/patientDto';
 import { PatientType } from '@/types/entity/patient';
 import { Page } from '@/types/Dto/CommonNetworkTypes';
 
-const usePatients = ({ limit, skip }: PatientRequestDtoType) => {
+const useGetPatients = ({ limit, skip }: PatientRequestDtoType) => {
     const [data, setData] = useState<Page<PatientType>>({ content: [], totalPages: 0, totalElements: 0 });
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
@@ -36,4 +36,4 @@ const usePatients = ({ limit, skip }: PatientRequestDtoType) => {
     return { data, loading, error };
 };
 
-export default usePatients;
+export default useGetPatients;

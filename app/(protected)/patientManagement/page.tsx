@@ -9,13 +9,13 @@ import { Button } from "@/components/ui/button";
 import { CirclePlus, Trash2 } from 'lucide-react';
 import { useRouter } from "next/navigation";
 import { usePagination } from "@/hooks/usePagination";
-import usePatients from "@/hooks/api/usePatients";
+import useGetPatients from "@/hooks/api/useGetPatients";
 
 export default function PatientManagement() {
     const router = useRouter();
     const { limit, onPaginationChange, skip, pagination } = usePagination();
 
-    const { data, loading, error } = usePatients({ limit, skip });    
+    const { data, loading, error } = useGetPatients({ limit, skip });    
 
     const breadcrumbArr = [
         {
@@ -29,9 +29,7 @@ export default function PatientManagement() {
         router.push("/patientManagement/add")
     }
 
-    const generateTableActionButtons = () => {
-        console.log(data);
-        
+    const generateTableActionButtons = () => {        
         return (
             <div className="flex flex-row gap-2">
                 <Button
@@ -59,8 +57,8 @@ export default function PatientManagement() {
 
     return (
         <div>
-            <div className="apply_shadow">
-                <Card>
+            <div>
+                <Card className="apply_shadow">
                     <CardHeader>
                         <CardTitle>Patient management</CardTitle>
                         <CardDescription>
@@ -72,10 +70,10 @@ export default function PatientManagement() {
 
             <BreadCrumbService breadcrumbArr={breadcrumbArr} currentPageName={currentPageName} />
 
-            <div className="apply_shadow">
-                <Card>
+            <div>
+                <Card className="apply_shadow">
                     <CardContent>
-                        <div className="container mx-auto py-10">
+                        <div>
                             <DataTable
                                 actionButtons={generateTableActionButtons}
                                 columns={columns}

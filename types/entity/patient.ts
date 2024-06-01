@@ -1,5 +1,5 @@
 export interface PatientType {
-    id: number;
+    id?: number;
     name: string;
     birth_date: Date;
     is_male: boolean;

@@ -44,7 +44,10 @@ export const columns: ColumnDef<PatientType>[] = [
     },
     {
         accessorKey: "is_male",
-        header: "Gender (M?)",
+        header: "Gender",
+        cell: ({ row }) => (
+            row.original.is_male ? "Male" : "Female"
+        )
     },
     {
         accessorKey: "phone_number",

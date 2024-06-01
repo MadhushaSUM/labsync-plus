@@ -4,6 +4,7 @@ import { AccordionProvider } from '@/context/AccordionContext';
 import Sidebar from "@/components/Sidebar";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useState } from "react";
+import { Toaster } from '@/components/ui/sonner';
 
 export default function ProtectedLayout({
     children,
@@ -49,6 +50,9 @@ export default function ProtectedLayout({
                             <ScrollBar className="bg-white" />
                         </ScrollArea>
                     </div>
+                </div>
+                <div className="bg-white">
+                    <Toaster position="top-right" richColors theme='light' />
                 </div>
             </div>
         </AccordionProvider>

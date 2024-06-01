@@ -25,6 +25,9 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
             case "btnPatientManagement":
                 router.push("/patientManagement");
                 break;
+            case "btnDoctorManagement":
+                router.push("/doctor_management");
+                break;
             case "btnNewInvestigationRegister":
                 router.push("/newInvestigationRegister");
                 break;
@@ -33,7 +36,7 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
         }
     };
 
-    const handleAccordionChange = (value: string) => {        
+    const handleAccordionChange = (value: string) => {
         setExpandedAccordion(value === expandedAccordion ? null : value);
     };
 
@@ -49,6 +52,9 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
                                 <AccordionContent>Add test results</AccordionContent>
                                 <AccordionContent className="cursor-pointer" id="btnPatientManagement" onClick={handleMenuItemClick}>
                                     Patient management
+                                </AccordionContent>
+                                <AccordionContent className="cursor-pointer" id="btnDoctorManagement" onClick={handleMenuItemClick}>
+                                    Doctor management
                                 </AccordionContent>
                                 <AccordionContent>Print reports</AccordionContent>
                             </AccordionItem>
