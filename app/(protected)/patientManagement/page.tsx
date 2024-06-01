@@ -17,8 +17,6 @@ export default function PatientManagement() {
 
     const { data, loading, error } = usePatients({ limit, skip });    
 
-    const pageCount = Math.round(20 / limit);
-
     const breadcrumbArr = [
         {
             name: "Home",
@@ -32,6 +30,8 @@ export default function PatientManagement() {
     }
 
     const generateTableActionButtons = () => {
+        console.log(data);
+        
         return (
             <div className="flex flex-row gap-2">
                 <Button
@@ -79,9 +79,9 @@ export default function PatientManagement() {
                             <DataTable
                                 actionButtons={generateTableActionButtons}
                                 columns={columns}
-                                data={data}
+                                data={data.content}
                                 onPaginationChange={onPaginationChange}
-                                pageCount={pageCount}
+                                pageCount={data.totalPages}
                                 pagination={pagination}
                                 loading={loading}
                             />

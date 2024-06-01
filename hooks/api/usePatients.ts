@@ -3,9 +3,10 @@ import { useState, useEffect } from 'react';
 import { fetchPatients } from '@/services/api';
 import { PatientRequestDtoType } from '@/types/Dto/patientDto';
 import { PatientType } from '@/types/entity/patient';
+import { Page } from '@/types/Dto/CommonNetworkTypes';
 
 const usePatients = ({ limit, skip }: PatientRequestDtoType) => {
-    const [data, setData] = useState<PatientType[]>([]);
+    const [data, setData] = useState<Page<PatientType>>({ content: [], totalPages: 0, totalElements: 0 });
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
 
