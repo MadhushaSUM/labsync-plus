@@ -88,3 +88,7 @@
   .apply_shadow {
     @apply shadow-lg;
   }
+
+  .AccordionChevron {
+    transition: transform 300ms;
+  }
