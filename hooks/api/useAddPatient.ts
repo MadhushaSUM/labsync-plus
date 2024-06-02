@@ -4,22 +4,22 @@ import { addPatient } from '@/services/api';
 import { PatientType } from '@/types/entity/patient';
 
 const useAddPatient = () => {
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<Error | null>(null);
+    const [loadingAdd, setLoadingAdd] = useState<boolean>(true);
+    const [errorAdd, setErrorAdd] = useState<Error | null>(null);
 
     const createNewPatient = async (patientData: PatientType) => {
-        setLoading(true);
+        setLoadingAdd(true);
         try {
             const newPatient = await addPatient(patientData);
             return newPatient; // Return the created patient
         } catch (error: any) {
-            setError(error);
+            setErrorAdd(error);
         } finally {
-            setLoading(false);
+            setLoadingAdd(false);
         }
     };
 
-    return { createNewPatient, loading, error };
+    return { createNewPatient, loadingAdd, errorAdd };
 };
 
 

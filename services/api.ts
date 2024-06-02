@@ -3,7 +3,7 @@ import { PatientType } from "@/types/entity/patient";
 
 const API_BASE_URL = 'http://localhost:8080';
 
-export const fetchPatients = async ({ limit, skip }: PatientRequestDtoType, signal: AbortSignal) => {
+export const fetchPatients = async ({ limit, skip }: PatientRequestDtoType, signal: AbortSignal) => {    
     const response = await fetch(`${API_BASE_URL}/patient/getAll?limit=${limit}&skip=${skip}`, { signal });
     if (!response.ok) {
         throw new Error('Failed to fetch patients');
@@ -22,6 +22,24 @@ export const addPatient = async (patient: PatientType) => {
     });
     if (!response.ok) {
         throw new Error('Failed to add patient');
+    }
+
+    return response.json();
+};
+
+export const updatePatient = async (patientId: number, patientData: PatientType, signal?: AbortSignal): Promise<PatientType> => {
+    console.log(patientData);
+    
+    const response = await fetch(`${API_BASE_URL}/patient/update?id=${patientId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(patientData),
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to update patient');
     }
 
     return response.json();

@@ -23,7 +23,7 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
     const handleMenuItemClick = (e: React.MouseEvent<HTMLElement>) => {
         switch (e.currentTarget.id) {
             case "btnPatientManagement":
-                router.push("/patientManagement");
+                router.push("/patient_management");
                 break;
             case "btnDoctorManagement":
                 router.push("/doctor_management");

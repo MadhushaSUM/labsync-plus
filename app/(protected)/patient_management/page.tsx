@@ -2,20 +2,25 @@
 
 import BreadCrumbService from "@/components/breadcrumb/BreadcrumbService";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { columns } from "./columns";
 import { DataTable } from "@/components/data-table/data-table";
 import { Button } from "@/components/ui/button";
-
-import { CirclePlus, Trash2 } from 'lucide-react';
+import { CirclePlus, Trash2, } from 'lucide-react';
 import { useRouter } from "next/navigation";
 import { usePagination } from "@/hooks/usePagination";
 import useGetPatients from "@/hooks/api/useGetPatients";
+import { toast } from "sonner";
+import { PatientType } from "@/types/entity/patient";
+import { getColumns } from "./columns";
 
 export default function PatientManagement() {
     const router = useRouter();
     const { limit, onPaginationChange, skip, pagination } = usePagination();
 
-    const { data, loading, error } = useGetPatients({ limit, skip });    
+    const { data, loading, error } = useGetPatients({ limit, skip });
+
+    if (error) {
+        toast.error(error.message);
+    }
 
     const breadcrumbArr = [
         {
@@ -26,10 +31,18 @@ export default function PatientManagement() {
     const currentPageName = "Patient management";
 
     const handleAddPatientClick = () => {
-        router.push("/patientManagement/add")
+        router.push("/patient_management/add")
     }
 
-    const generateTableActionButtons = () => {        
+    const handleEditPatient = (patient: PatientType) => {
+        const patientData = encodeURIComponent(JSON.stringify(patient));
+        router.push(`/patient_management/add?data=${patientData}&editmode=true`);
+    };
+
+    const columns = getColumns({ onEditPatient: handleEditPatient });
+
+
+    const generateTableActionButtons = () => {
         return (
             <div className="flex flex-row gap-2">
                 <Button

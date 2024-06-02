@@ -8,7 +8,7 @@ import { Page } from '@/types/Dto/CommonNetworkTypes';
 const useGetPatients = ({ limit, skip }: PatientRequestDtoType) => {
     const [data, setData] = useState<Page<PatientType>>({ content: [], totalPages: 0, totalElements: 0 });
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<Error | null>(null);    
 
     useEffect(() => {
         const controller = new AbortController();

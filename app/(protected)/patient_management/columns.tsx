@@ -1,13 +1,17 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
 import { PatientType } from "@/types/entity/patient"
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal } from 'lucide-react';
 
-export const columns: ColumnDef<PatientType>[] = [
+interface Actions {
+    onEditPatient: (patient: PatientType) => void;
+}
+
+export const getColumns = (actions: Actions): ColumnDef<PatientType>[] => [
     {
         id: "select",
         header: ({ table }) => (
@@ -29,10 +33,6 @@ export const columns: ColumnDef<PatientType>[] = [
         ),
         enableSorting: false,
         enableHiding: false,
-    },
-    {
-        accessorKey: "id",
-        header: "ID",
     },
     {
         accessorKey: "name",
@@ -68,16 +68,16 @@ export const columns: ColumnDef<PatientType>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(patient.name)}
-                        >
+                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(patient.name)}>
                             Copy patient name
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>View patient</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => actions.onEditPatient(patient)}>
+                            Edit patient
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            )
+            );
         },
     },
 ]
