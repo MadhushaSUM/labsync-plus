@@ -12,7 +12,7 @@ const useAddPatient = () => {
         try {
             const newPatient = await addPatient(patientData);
             return newPatient; // Return the created patient
-        } catch (error: any) {
+        } catch (error: any) {            
             setErrorAdd(error);
         } finally {
             setLoadingAdd(false);

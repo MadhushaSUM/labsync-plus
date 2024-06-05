@@ -4,7 +4,7 @@ const genderEnum = z.enum(["Male", "Female", "Other"]);
 
 export const NewPatientFormSchema = z.object({
     name: z.string().min(2).max(100),
-    birth_date: z.date(),
+    dateOfBirth: z.date(),
     gender: genderEnum,
-    phone_number: z.string().min(10).max(15),
+    contactNumber: z.string().min(10).max(15),
 });

@@ -28,7 +28,6 @@ export const addPatient = async (patient: PatientType) => {
 };
 
 export const updatePatient = async (patientId: number, patientData: PatientType, signal?: AbortSignal): Promise<PatientType> => {
-    console.log(patientData);
     
     const response = await fetch(`${API_BASE_URL}/patient/update?id=${patientId}`, {
         method: 'PUT',
@@ -40,6 +39,22 @@ export const updatePatient = async (patientId: number, patientData: PatientType,
 
     if (!response.ok) {
         throw new Error('Failed to update patient');
+    }
+
+    return response.json();
+};
+
+export const deletePatient = async (patientIds: number[], signal?: AbortSignal): Promise<boolean> => {
+    
+    const response = await fetch(`${API_BASE_URL}/patient/delete?ids=${patientIds}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to delete patients');
     }
 
     return response.json();

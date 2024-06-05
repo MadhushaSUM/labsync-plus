@@ -46,29 +46,29 @@ export default function AddEditPatient() {
         defaultValues:
         {
             name: "",
-            birth_date: new Date(),
+            dateOfBirth: new Date(),
             gender: "Male",
-            phone_number: ""
+            contactNumber: ""
         }
     });
 
     useEffect(() => {
         if (data) {
-            const patientData = JSON.parse(data);
+            const patientData: PatientType = JSON.parse(data);
             setPatient(patientData);
             setIsEditMode(editmode === "true");
 
             form.reset({
                 name: patientData.name,
-                birth_date: new Date(patientData.birth_date),
-                gender: patientData.is_male ? "Male" : "Female",
-                phone_number: patientData.phone_number
+                dateOfBirth: patientData.dateOfBirth,
+                gender: patientData.gender,
+                contactNumber: patientData.contactNumber
             });
         }
     }, [data, editmode, form]);
 
-    const { createNewPatient, loadingAdd, errorAdd } = useAddPatient();
-    const { updateExistingPatient, loadingUpdate, errorUpdate } = useUpdatePatient();
+    const { createNewPatient, errorAdd } = useAddPatient();
+    const { updateExistingPatient, errorUpdate } = useUpdatePatient();
     const [savingPatient, setSavingPatient] = useState(false);
 
     if (errorAdd) {
@@ -82,10 +82,11 @@ export default function AddEditPatient() {
         setSavingPatient(true);
         const savingPatient: PatientType = {
             name: values.name,
-            birth_date: values.birth_date,
-            is_male: values.gender === "Male",
-            phone_number: values.phone_number
+            dateOfBirth: values.dateOfBirth,
+            gender: values.gender,
+            contactNumber: values.contactNumber
         };
+
         if (isEditMode) {
             savingPatient.id = patient?.id;
 
@@ -149,7 +150,7 @@ export default function AddEditPatient() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="birth_date"
+                                            name="dateOfBirth"
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>Patient birth date</FormLabel>
@@ -189,7 +190,7 @@ export default function AddEditPatient() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="phone_number"
+                                            name="contactNumber"
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>Patient phone number</FormLabel>

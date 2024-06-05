@@ -39,18 +39,15 @@ export const getColumns = (actions: Actions): ColumnDef<PatientType>[] => [
         header: "Name",
     },
     {
-        accessorKey: "birth_date",
+        accessorKey: "dateOfBirth",
         header: "Birth date",
     },
     {
-        accessorKey: "is_male",
+        accessorKey: "gender",
         header: "Gender",
-        cell: ({ row }) => (
-            row.original.is_male ? "Male" : "Female"
-        )
     },
     {
-        accessorKey: "phone_number",
+        accessorKey: "contactNumber",
         header: "Phone number",
     },
     {

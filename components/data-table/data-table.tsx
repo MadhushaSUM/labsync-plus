@@ -22,7 +22,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { DataTablePagination } from "./data-table-pagination"
 import { DataTableViewOptions } from "./data-table-column-visibility"
 
@@ -36,7 +36,8 @@ interface DataTableProps<TData, TValue> {
     pageCount: number,
     pagination: { pageSize: number; pageIndex: number; },
     loading: number | boolean | never[],
-    actionButtons: () => React.JSX.Element
+    actionButtons: () => React.JSX.Element,
+    onRowSelectionChange?: (selectedRows: TData[]) => void,
 }
 
 export function DataTable<TData, TValue>({
@@ -47,6 +48,7 @@ export function DataTable<TData, TValue>({
     pagination,
     loading,
     actionButtons,
+    onRowSelectionChange,
 }: Readonly<DataTableProps<TData, TValue>>) {
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -77,7 +79,14 @@ export function DataTable<TData, TValue>({
             columnVisibility,
             rowSelection
         },
-    })
+    });
+
+    useEffect(() => {
+        if (onRowSelectionChange) {
+            const seletedRows = table.getSelectedRowModel().rows.map(row => row.original);
+            onRowSelectionChange(seletedRows);
+        }
+    }, [table, rowSelection, onRowSelectionChange]);
 
     return (
         <div>
