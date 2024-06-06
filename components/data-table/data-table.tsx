@@ -11,7 +11,7 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
 import {
     Table,
@@ -20,14 +20,14 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { DataTablePagination } from "./data-table-pagination"
-import { DataTableViewOptions } from "./data-table-column-visibility"
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { DataTablePagination } from "./data-table-pagination";
+import { DataTableViewOptions } from "./data-table-column-visibility";
 
 import { SearchIcon } from "lucide-react";
-import { Input } from "../custom-ui/custom-input"
+import { Input } from "../custom-ui/custom-input";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[],

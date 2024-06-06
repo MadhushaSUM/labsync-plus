@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import { PatientType } from '@/types/entity/patient';
 import { Page } from '@/types/Dto/CommonNetworkTypes';
 import { DoctorRequestDtoType } from '@/types/Dto/DoctorDto';
 import { fetchDoctors } from '@/services/api';

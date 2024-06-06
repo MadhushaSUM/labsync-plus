@@ -3,12 +3,23 @@ import { PatientRequestDtoType } from "@/types/Dto/patientDto";
 import { DoctorType } from "@/types/entity/doctor";
 import { PatientType } from "@/types/entity/patient";
 
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const fetchPatients = async ({ limit, skip }: PatientRequestDtoType, signal: AbortSignal) => {    
+export const fetchPatients = async ({ limit, skip }: PatientRequestDtoType, signal: AbortSignal) => {   
+     
     const response = await fetch(`${API_BASE_URL}/patient/getAll?limit=${limit}&skip=${skip}`, { signal });
     if (!response.ok) {
         throw new Error('Failed to fetch patients');
+    }
+
+    return response.json();
+};
+
+export const searchPatientsByName = async (query: string, signal: AbortSignal) => {   
+     
+    const response = await fetch(`${API_BASE_URL}/patient/searchByName?query=${query}`, { signal });
+    if (!response.ok) {
+        throw new Error('Failed to search patients');
     }
 
     return response.json();
@@ -67,6 +78,16 @@ export const fetchDoctors = async ({ limit, skip }: DoctorRequestDtoType, signal
     const response = await fetch(`${API_BASE_URL}/doctor/getAll?limit=${limit}&skip=${skip}`, { signal });
     if (!response.ok) {
         throw new Error('Failed to fetch doctors');
+    }
+
+    return response.json();
+};
+
+export const searchDoctorsByName = async (query: string, signal: AbortSignal) => {   
+     
+    const response = await fetch(`${API_BASE_URL}/doctor/searchByName?query=${query}`, { signal });
+    if (!response.ok) {
+        throw new Error('Failed to search patients');
     }
 
     return response.json();

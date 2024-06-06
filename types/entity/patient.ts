@@ -1,4 +1,6 @@
-export interface PatientType {
+import { SearchBoxItem } from "../commonTypes";
+
+export interface PatientType extends SearchBoxItem{
     id?: number;
     name: string;
     dateOfBirth: Date;
