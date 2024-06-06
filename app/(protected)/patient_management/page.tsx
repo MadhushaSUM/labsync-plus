@@ -65,6 +65,7 @@ export default function PatientManagement() {
 
     const columns = getColumns({ onEditPatient: handleEditPatient });
 
+    console.log(data);  
 
     const generateTableActionButtons = () => {
         return (

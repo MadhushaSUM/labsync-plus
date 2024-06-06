@@ -13,7 +13,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { CheckIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -21,6 +21,7 @@ import { CaretSortIcon } from "@radix-ui/react-icons";
 import { SearchBoxItem } from "@/types/commonTypes";
 
 interface SearchBoxProps<TData extends SearchBoxItem> {
+    fieldOnChange: (data: TData | null) => void;
     generalFieldName: string;
     selectedValue: TData | null;
     setSelectedValue: Dispatch<SetStateAction<TData | null>>
@@ -30,15 +31,16 @@ interface SearchBoxProps<TData extends SearchBoxItem> {
     loadingSearchData: boolean;
 }
 
-export default function SearchBox<TData extends SearchBoxItem>({ 
+export default function SearchBox<TData extends SearchBoxItem>({
+    fieldOnChange,
     generalFieldName,
-    selectedValue, 
-    setSelectedValue, 
-    searchQuery, 
-    searchData, 
-    setSearchQuery, 
-    loadingSearchData 
-}: SearchBoxProps<TData>) {
+    selectedValue,
+    setSelectedValue,
+    searchQuery,
+    searchData,
+    setSearchQuery,
+    loadingSearchData
+}: Readonly<SearchBoxProps<TData>>) {
 
     const [openCombo, setOpenCombo] = useState<boolean>(false);
 
@@ -75,6 +77,7 @@ export default function SearchBox<TData extends SearchBoxItem>({
                                     value={item.name}
                                     onSelect={(currentValue) => {
                                         setSelectedValue(currentValue === selectedValue?.name ? null : item)
+                                        fieldOnChange(item)
                                         setOpenCombo(false)
                                     }}
                                 >

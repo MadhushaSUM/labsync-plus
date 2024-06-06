@@ -44,16 +44,41 @@ export const getColumns = (actions: Actions): ColumnDef<InvestigationRegisterTyp
         }
     },
     {
-        accessorKey: "dateOfBirth",
+        accessorKey: "registeredDate",
+        header: "Investigation date",
+    },
+    {
+        accessorKey: "investigations",
         header: "Investigations",
+        cell: ({ row }) => {
+            return (
+                <div className="flex flex-col">
+                    {row.original.investigations.map(inv => {
+                        return (
+                            <div key={inv.id}>{inv.name}</div>
+                        );
+                    })}
+                </div>
+            );
+        }
     },
     {
-        accessorKey: "gender",
+        accessorKey: "dataAdded",
         header: "Data added",
+        cell: ({ row }) => {
+            return (
+                row.original.isDataAdded ? "Yes" : "No"
+            );
+        }
     },
     {
-        accessorKey: "contactNumber",
+        accessorKey: "printed",
         header: "Printed",
+        cell: ({ row }) => {
+            return (
+                row.original.isDataAdded ? "Yes" : "No"
+            );
+        }
     },
     {
         id: "actions",

@@ -9,7 +9,6 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { NewDoctorFormSchema } from "@/schema/DoctorSchema";
 import { InvestigationRegisterType } from "@/types/entity/investigationRegister";
 import { NewInvestigationRegisterFormSchema } from "@/schema/InvestigationRegister";
 import { PatientType } from "@/types/entity/patient";
@@ -20,6 +19,12 @@ import { DoctorType } from "@/types/entity/doctor";
 import { Input } from "@/components/ui/input";
 import { format, parseISO } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
+
+import { investigations } from "./mockData";
+import useAddInvestigationRegister from "@/hooks/api/investigationRegister/useAddInvestigationRegister";
+import useUpdateInvestigationRegister from "@/hooks/api/investigationRegister/useUpdateInvestigationRegister";
+import { toast } from "sonner";
+import { NewInvestigationRegistryRequestDtoType } from "@/types/Dto/InvestigationRegistryDto";
 
 
 export default function AddInvestigationRegister() {
@@ -80,55 +85,44 @@ export default function AddInvestigationRegister() {
         }
     }, [data, editmode, form]);
 
-    //const { createNewInvestigationRegister, errorAdd } = useAddInvestigationRegister();
-    //const { updateExistingInvestigationRegister, errorUpdate } = useUpdateInvestigationRegister();
+    const { createNewInvestigationRegister, errorAdd } = useAddInvestigationRegister();
+    const { updateExistingInvestigationRegister, errorUpdate } = useUpdateInvestigationRegister();
     const [savingInvestigationRegister, setSavingInvestigationRegister] = useState(false);
 
-    // if (errorAdd) {
-    //     toast.error(errorAdd.message);
-    // }
-    // if (errorUpdate) {
-    //     toast.error(errorUpdate.message);
-    // }
+    if (errorAdd) {
+        toast.error(errorAdd.message);
+    }
+    if (errorUpdate) {
+        toast.error(errorUpdate.message);
+    }
 
-    function onSubmit(values: z.infer<typeof NewDoctorFormSchema>) {
-        setSavingInvestigationRegister(true);
-        const savingInvestigationRegisterData: InvestigationRegisterType = {
-            patient: {
-                name: "",
-                dateOfBirth: new Date(),
-                contactNumber: "",
-                gender: "Male"
-            },
-            doctor: {
-                name: "",
-                post: ""
-            },
-            investigations: [],
-            date: new Date(),
-            cost: 0,
-            isDataAdded: false,
-            isPrinted: false
-        };
+    function onSubmit(values: z.infer<typeof NewInvestigationRegisterFormSchema>) {
+        setSavingInvestigationRegister(true);       
 
-        // if (isEditMode) {
-        //     savingInvestigationRegisterData.id = investigationRegister?.id;
+        const savingInvestigationRegisterData: NewInvestigationRegistryRequestDtoType = {
+            patient_id: selectedPatient!.id!,
+            doctor_id: selectedDoctor!.id!,
+            investigation_ids: values.investigations.map(investigation => investigation.id),
+            investigation_cost: values.cost,
+            investigation_date: values.date
+        };        
 
-        //     const promise = updateExistingInvestigationRegister(investigationRegister?.id!, savingInvestigationRegisterData);
-        //     toast.promise(promise, {
-        //         loading: "Updating a investigation registration",
-        //         success: "Investigation registration has been updated",
-        //         error: "Error while updating the investigation registration"
-        //     });
-        // } else {
-        //     const promise = createNewInvestigationRegister(savingInvestigationRegisterData);
+        if (isEditMode) {
+            const promise = updateExistingInvestigationRegister(investigationRegister?.id!, savingInvestigationRegisterData);
+            toast.promise(promise, {
+                loading: "Updating a investigation registration",
+                success: "Investigation registration has been updated",
+                error: "Error while updating the investigation registration"
+            });
+        } else {
+            const promise = createNewInvestigationRegister(savingInvestigationRegisterData);
 
-        //     toast.promise(promise, {
-        //         loading: "Creating a investigation register",
-        //         success: "Investigation register has been created",
-        //         error: "Error while creating the investigation register"
-        //     });
-        // }
+            toast.promise(promise, {
+                loading: "Creating a investigation register",
+                success: "Investigation register has been created",
+                error: "Error while creating the investigation register"
+            });
+        }
         setSavingInvestigationRegister(false);
         router.push("/investigation_registration");
     }
@@ -138,39 +132,11 @@ export default function AddInvestigationRegister() {
     }
 
     const [selectedPatient, setSelectedPatient] = useState<PatientType | null>(null);
-    const [selectedDoctor, setSelectedDoctor] = useState<DoctorType | null>(null);
+    const [selectedDoctor, setSelectedDoctor] = useState<DoctorType | null>(null);    
 
     const { searchPatientData, searchPatientQuery, setSearchPatientQuery, loadingSearchPatients } = useSearchPatientsByName();
-    const { searchDoctorData, searchDoctorQuery, setSearchDoctorQuery, loadingSearchDoctors } = useSearchDoctorsByName();
-
-    const items = [
-        {
-            id: "fbs",
-            label: "Fasting blood sugar",
-        },
-        {
-            id: "fbc",
-            label: "Full blood count",
-        },
-        {
-            id: "ufr",
-            label: "Urine full report",
-        },
-        {
-            id: "ppbs",
-            label: "PPBS",
-        },
-        {
-            id: "tsh",
-            label: "TSH",
-        },
-        {
-            id: "otpt",
-            label: "SGOT/SGPT",
-        },
-    ] as const
-
-
+    const { searchDoctorData, searchDoctorQuery, setSearchDoctorQuery, loadingSearchDoctors } = useSearchDoctorsByName();        
+    
     return (
         <div>
             <div>
@@ -192,7 +158,7 @@ export default function AddInvestigationRegister() {
                         <div className="my-5">
                             <Form {...form}>
                                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                                    <div className="space-y-8 w-96">
+                                    <div className="space-y-8">
                                         <FormField
                                             control={form.control}
                                             name="patient"
@@ -201,6 +167,7 @@ export default function AddInvestigationRegister() {
                                                     <FormLabel>Patient</FormLabel>
                                                     <FormControl>
                                                         <SearchBox
+                                                            fieldOnChange={field.onChange}
                                                             generalFieldName="patient"
                                                             selectedValue={selectedPatient}
                                                             setSelectedValue={setSelectedPatient}
@@ -222,6 +189,7 @@ export default function AddInvestigationRegister() {
                                                     <FormLabel>Doctor</FormLabel>
                                                     <FormControl>
                                                         <SearchBox
+                                                            fieldOnChange={field.onChange}
                                                             generalFieldName="doctor"
                                                             selectedValue={selectedDoctor}
                                                             setSelectedValue={setSelectedDoctor}
@@ -243,6 +211,7 @@ export default function AddInvestigationRegister() {
                                                     <FormLabel>Registration date</FormLabel>
                                                     <FormControl>
                                                         <Input
+                                                            className="w-[200px]"
                                                             placeholder="YYYY-MM-DD"
                                                             type="date"
                                                             value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
@@ -264,39 +233,36 @@ export default function AddInvestigationRegister() {
                                                             Select the investigations you want to register with the selected patient
                                                         </FormDescription>
                                                     </div>
-                                                    {items.map((item) => (
-                                                        <FormField
-                                                            key={item.id}
-                                                            control={form.control}
-                                                            name="investigations"
-                                                            render={({ field }) => {
-                                                                return (
-                                                                    <FormItem
-                                                                        key={item.id}
-                                                                        className="flex flex-row items-start space-x-3 space-y-0"
-                                                                    >
-                                                                        <FormControl>
-                                                                            <Checkbox
-                                                                                checked={field.value?.includes(item.id)}
-                                                                                onCheckedChange={(checked) => {
-                                                                                    return checked
-                                                                                        ? field.onChange([...field.value, item.id])
-                                                                                        : field.onChange(
-                                                                                            field.value?.filter(
-                                                                                                (value) => value !== item.id
-                                                                                            )
-                                                                                        )
-                                                                                }}
-                                                                            />
-                                                                        </FormControl>
-                                                                        <FormLabel className="text-sm font-normal">
-                                                                            {item.label}
-                                                                        </FormLabel>
-                                                                    </FormItem>
-                                                                )
-                                                            }}
-                                                        />
-                                                    ))}
+                                                    <div className="grid grid-cols-4 gap-4">
+                                                        {investigations.map((investigation) => (
+                                                            <FormField
+                                                                key={investigation.id}
+                                                                control={form.control}
+                                                                name="investigations"
+                                                                render={({ field }) => {
+                                                                    return (
+                                                                        <FormItem
+                                                                            key={investigation.id}
+                                                                            className="flex flex-row items-start space-x-3 space-y-0"
+                                                                        >
+                                                                            <FormControl>
+                                                                                <Checkbox
+                                                                                    // checked={field.value?.includes(investigation)}
+                                                                                    onCheckedChange={(checked) => {
+                                                                                        checked ? field.value.push(investigation)
+                                                                                        : field.value.filter(inv => inv !== investigation)
+                                                                                    }}
+                                                                                />
+                                                                            </FormControl>
+                                                                            <FormLabel className="text-sm font-normal">
+                                                                                {investigation.name}
+                                                                            </FormLabel>
+                                                                        </FormItem>
+                                                                    )
+                                                                }}
+                                                            />
+                                                        ))}
+                                                    </div>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
@@ -307,14 +273,14 @@ export default function AddInvestigationRegister() {
                                             name="cost"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Registration cost</FormLabel>
+                                                    <FormLabel>Registration price</FormLabel>
                                                     <FormControl>
                                                         <Input
+                                                            className="w-[200px]"
                                                             placeholder="Rs."
-                                                            type="text"
+                                                            type="number"
                                                             value={field.value}
-                                                            disabled
-                                                            onChange={field.onChange}
+                                                            onChange={(e) => field.onChange(parseFloat(e.target.value))}
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
@@ -322,7 +288,7 @@ export default function AddInvestigationRegister() {
                                             )}
                                         />
                                     </div>
-                                    <div className="flex flex-row justify-end gap-2">
+                                    <div className="flex flex-row justify-end gap-2 mt-5">
                                         <Button size="sm" variant="outline" type="reset" onClick={onFormCancel}>
                                             Cancel
                                         </Button>

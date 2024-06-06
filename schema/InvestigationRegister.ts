@@ -3,6 +3,7 @@ import { NewPatientFormSchema } from "./PatientSchema";
 import { NewDoctorFormSchema } from "./DoctorSchema";
 
 const NewInvestigationSchema = z.object({
+    id: z.number(),
     name: z.string().min(2).max(100),
     code: z.string().min(2).max(50),
     specimen: z.string().min(2).max(50)
