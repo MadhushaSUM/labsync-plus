@@ -1,9 +1,10 @@
+import { AddInvestigationDataRequestDto } from "@/types/Dto/InvestigationData";
 import { InvestigationRegistryRequestDtoType, NewInvestigationRegistryRequestDtoType } from "@/types/Dto/InvestigationRegistryDto";
 import { InvestigationRegisterType } from "@/types/entity/investigationRegister";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_INVESTIGATION_REGISTER_BASE_URL;
 
-export const fetchInvestigationRegistrations = async ({ limit, skip }: InvestigationRegistryRequestDtoType, signal: AbortSignal) => {    
+export const fetchInvestigationRegistrations = async ({ limit, skip }: InvestigationRegistryRequestDtoType, signal: AbortSignal) => {
     const response = await fetch(`${API_BASE_URL}/investigationRegister/getAll?limit=${limit}&skip=${skip}`, { signal });
     if (!response.ok) {
         throw new Error('Failed to fetch investigation registry');
@@ -28,7 +29,7 @@ export const addInvestigationRegistrations = async (investigationRegister: NewIn
 };
 
 export const updateInvestigationRegistrations = async (investigationRegisterId: number, investigationRegisterData: NewInvestigationRegistryRequestDtoType, signal?: AbortSignal): Promise<InvestigationRegisterType> => {
-    
+
     const response = await fetch(`${API_BASE_URL}/investigationRegister/update?id=${investigationRegisterId}`, {
         method: 'PUT',
         headers: {
@@ -39,6 +40,21 @@ export const updateInvestigationRegistrations = async (investigationRegisterId: 
 
     if (!response.ok) {
         throw new Error('Failed to update investigation registration');
+    }
+
+    return response.json();
+};
+
+export const addInvestigationData = async (investigationData: AddInvestigationDataRequestDto) => {
+    const response = await fetch(`${API_BASE_URL}/investigationRegister/addInvestigationData`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(investigationData)
+    });
+    if (!response.ok) {
+        throw new Error('Failed to add investigation data');
     }
 
     return response.json();

@@ -2,7 +2,6 @@
 
 import BreadCrumbService from "@/components/breadcrumb/BreadcrumbService";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { DataTable } from "@/components/data-table/data-table";
 import { Button } from "@/components/ui/button";
 import { CirclePlus } from 'lucide-react';
 import { useRouter } from "next/navigation";
@@ -12,6 +11,7 @@ import { getColumns } from "./columns";
 import { useState } from "react";
 import { InvestigationRegisterType } from "@/types/entity/investigationRegister";
 import useGetInvestigationRegisters from "@/hooks/api/investigationRegister/useGetInvestigationRegisters";
+import { DataTable } from "./data-table.expandable";
 
 export default function InvestigationRegistration() {
     const router = useRouter();
@@ -76,9 +76,9 @@ export default function InvestigationRegistration() {
             <div>
                 <Card className="apply_shadow">
                     <CardHeader>
-                        <CardTitle>Investigation registration</CardTitle>
+                        <CardTitle>Investigation management</CardTitle>
                         <CardDescription>
-                            Manage your investigation registrations here
+                            Register new investigations save investiation data here
                         </CardDescription>
                     </CardHeader>
                 </Card>

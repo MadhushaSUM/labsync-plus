@@ -79,7 +79,7 @@ export default function AddInvestigationRegister() {
                 patient: investigationRegisterData.patient,
                 doctor: investigationRegisterData.doctor,
                 investigations: investigationRegisterData.investigations,
-                date: investigationRegisterData.date,
+                date: parseISO(investigationRegisterData.registeredDate),
                 cost: investigationRegisterData.cost
             });
         }
@@ -91,6 +91,7 @@ export default function AddInvestigationRegister() {
 
     if (errorAdd) {
         toast.error(errorAdd.message);
+        console.log(errorAdd.message);        
     }
     if (errorUpdate) {
         toast.error(errorUpdate.message);

@@ -1,17 +1,28 @@
 "use client"
 
-import { Checkbox } from "@/components/ui/checkbox"
-import { ColumnDef } from "@tanstack/react-table"
+import { Checkbox } from "@/components/ui/checkbox";
+import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from 'lucide-react';
+import { ChevronsUpDown, MoreHorizontal } from 'lucide-react';
 import { InvestigationRegisterType } from "@/types/entity/investigationRegister";
+import { Badge } from "@/components/ui/badge";
+import { CollapsibleTrigger } from "@/components/ui/collapsible";
+
 
 interface Actions {
     onEditInvestigationRegister: (investigationRegister: InvestigationRegisterType) => void;
 }
 
 export const getColumns = (actions: Actions): ColumnDef<InvestigationRegisterType>[] => [
+    {
+        id: "expand",
+        cell: ({ row }) => (
+            <CollapsibleTrigger>
+                <div><ChevronsUpDown size={15} /></div>
+            </CollapsibleTrigger>
+        )
+    },
     {
         id: "select",
         header: ({ table }) => (
@@ -33,6 +44,7 @@ export const getColumns = (actions: Actions): ColumnDef<InvestigationRegisterTyp
         ),
         enableSorting: false,
         enableHiding: false,
+        enablePinning: true
     },
     {
         accessorKey: "name",
@@ -47,27 +59,27 @@ export const getColumns = (actions: Actions): ColumnDef<InvestigationRegisterTyp
         accessorKey: "registeredDate",
         header: "Investigation date",
     },
-    {
-        accessorKey: "investigations",
-        header: "Investigations",
-        cell: ({ row }) => {
-            return (
-                <div className="flex flex-col">
-                    {row.original.investigations.map(inv => {
-                        return (
-                            <div key={inv.id}>{inv.name}</div>
-                        );
-                    })}
-                </div>
-            );
-        }
-    },
+    // {
+    //     accessorKey: "investigations",
+    //     header: "Investigations",
+    //     cell: ({ row }) => {
+    //         return (
+    //             <div className="flex flex-col">
+    //                 {row.original.investigations.map(inv => {
+    //                     return (
+    //                         <div key={inv.id}>{inv.name}</div>
+    //                     );
+    //                 })}
+    //             </div>
+    //         );
+    //     }
+    // },
     {
         accessorKey: "dataAdded",
         header: "Data added",
         cell: ({ row }) => {
             return (
-                row.original.isDataAdded ? "Yes" : "No"
+                row.original.dataAdded ? <Badge variant="default">Yes</Badge> : <Badge variant="secondary">No</Badge>
             );
         }
     },
@@ -76,9 +88,22 @@ export const getColumns = (actions: Actions): ColumnDef<InvestigationRegisterTyp
         header: "Printed",
         cell: ({ row }) => {
             return (
-                row.original.isDataAdded ? "Yes" : "No"
+                row.original.printed ? <Badge variant="default">Yes</Badge> : <Badge variant="secondary">No</Badge>
             );
         }
+    },
+    {
+        accessorKey: "cost",
+        header: () => <div className="text-right">Cost</div>,
+        cell: ({ row }) => {
+            const amount = parseFloat(row.getValue("cost"))
+            const formatted = new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "LKR",
+            }).format(amount)
+
+            return <div className="text-right font-medium">{formatted}</div>
+        },
     },
     {
         id: "actions",
@@ -104,3 +129,4 @@ export const getColumns = (actions: Actions): ColumnDef<InvestigationRegisterTyp
         },
     },
 ]
+

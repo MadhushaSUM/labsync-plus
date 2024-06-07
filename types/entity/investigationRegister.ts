@@ -8,7 +8,7 @@ export interface InvestigationRegisterType {
     doctor: DoctorType;
     investigations: InvestigationType[];
     cost: number;
-    date: Date;
-    isPrinted: boolean;
-    isDataAdded: boolean;
+    registeredDate: string;
+    printed: boolean;
+    dataAdded: boolean;
 }

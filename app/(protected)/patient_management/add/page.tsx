@@ -82,7 +82,7 @@ export default function AddEditPatient() {
         setSavingPatient(true);
         const savingPatient: PatientType = {
             name: values.name,
-            dateOfBirth: values.dateOfBirth,
+            dateOfBirth: values.dateOfBirth.toLocaleString(),
             gender: values.gender,
             contactNumber: values.contactNumber
         };

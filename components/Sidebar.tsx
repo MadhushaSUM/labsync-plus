@@ -49,9 +49,8 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
                             <AccordionItem value="item-1">
                                 <AccordionTrigger><DeskIcon className="AccordionChevron" />Operations</AccordionTrigger>
                                 <AccordionContent className="cursor-pointer" id="btnInvestigationRegistration" onClick={handleMenuItemClick}>
-                                    Add a test to list
+                                    Investigation management
                                 </AccordionContent>
-                                <AccordionContent>Add test results</AccordionContent>
                                 <AccordionContent className="cursor-pointer" id="btnPatientManagement" onClick={handleMenuItemClick}>
                                     Patient management
                                 </AccordionContent>
