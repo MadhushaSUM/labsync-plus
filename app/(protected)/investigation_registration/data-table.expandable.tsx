@@ -31,6 +31,8 @@ import { Button } from "@/components/ui/button";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import { InvestigationRegisterType } from "@/types/entity/investigationRegister";
 import { useRouter } from "next/navigation";
+import { useSelectedInvestigation } from "@/context/SelectedInvestigationContext";
+import { InvestigationType } from "@/types/entity/investigation";
 
 interface DataTableProps<InvestigationRegisterType> {
     columns: ColumnDef<InvestigationRegisterType>[],
@@ -58,6 +60,8 @@ export function DataTable<TData, TValue>({
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = useState({})
+
+    const { setInvestigationData } = useSelectedInvestigation();
 
     const table = useReactTable({
         data,
@@ -92,9 +96,12 @@ export function DataTable<TData, TValue>({
         }
     }, [table, rowSelection, onRowSelectionChange]);
 
-    const handleAddEditData = (investigationRegistration: InvestigationRegisterType, investigationId: number) => {
-        const investigationRegistrationData = encodeURIComponent(JSON.stringify(investigationRegistration));
-        router.push(`/investigation_registration/addData?data=${investigationRegistrationData}&investigationId=${investigationId}`);
+    const handleAddEditData = (investigationRegistration: InvestigationRegisterType, investigation: InvestigationType) => {
+        setInvestigationData({
+            investigationRegister: investigationRegistration,
+            investigation: investigation
+        })
+        router.push("/investigation_registration/addData");
     }
 
     return (
@@ -165,11 +172,11 @@ export function DataTable<TData, TValue>({
                                                                         <div></div>
                                                                         <div>{inv.name}</div>
                                                                         <div>
-                                                                            <Button 
-                                                                                size="sm" 
-                                                                                variant="outline" 
+                                                                            <Button
+                                                                                size="sm"
+                                                                                variant="outline"
                                                                                 className="w-24"
-                                                                                onClick={() => handleAddEditData(row.original, inv.id)}
+                                                                                onClick={() => handleAddEditData(row.original, inv)}
                                                                             >
                                                                                 Add data
                                                                             </Button>

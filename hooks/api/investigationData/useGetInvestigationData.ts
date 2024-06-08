@@ -3,7 +3,7 @@ import { fetchInvestigationData } from '@/services/investigationDataAPI';
 import { useState, useEffect } from 'react';
 
 const useGetInvestigationData = (investigationRegisterId: number, investigationId: number) => {
-    const [data, setData] = useState<Object | null>(null);
+    const [data, setData] = useState<Map<String, Object>[] | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
 
@@ -16,9 +16,6 @@ const useGetInvestigationData = (investigationRegisterId: number, investigationI
                 setLoading(false);
                 return;
             }
-            console.log(`investigationRegisterId: ${investigationRegisterId}`);
-            console.log(`investigationId: ${investigationId}`);
-
             setLoading(true);
             try {
                 const investigationData = await fetchInvestigationData(investigationRegisterId, investigationId, signal);

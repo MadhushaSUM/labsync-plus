@@ -1,6 +1,5 @@
 "use client";
 
-import { AccordionProvider } from '@/context/AccordionContext';
 import Sidebar from "@/components/Sidebar";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useState } from "react";
@@ -23,38 +22,36 @@ export default function ProtectedLayout({
     };
 
     return (
-        <AccordionProvider>
-            <div className="flex flex-col h-screen overflow-hidden">
-                <div className="bg-white p-3 apply_shadow">
-                    NavBar
-                </div>
-                <div className="flex flex-grow mt-2 overflow-hidden">
-                    <div className="flex-none transition-all duration-300 ease-in-out" style={{ width: `${sidebarSize}rem` }}>
-                        <div className="h-full pb-4">
-                            <div className="rounded-r-lg bg-white h-full apply_shadow">
-                                <Sidebar
-                                    toggleSidebar={toggleSidebar}
-                                    isExpanded={sidebarSize === SIDEBAR_EXPANDED_SIZE}
-                                    sidebarSize={sidebarSize}
-                                />
-                            </div>
+        <div className="flex flex-col h-screen overflow-hidden">
+            <div className="bg-white p-3 apply_shadow">
+                NavBar
+            </div>
+            <div className="flex flex-grow mt-2 overflow-hidden">
+                <div className="flex-none transition-all duration-300 ease-in-out" style={{ width: `${sidebarSize}rem` }}>
+                    <div className="h-full pb-4">
+                        <div className="rounded-r-lg bg-white h-full apply_shadow">
+                            <Sidebar
+                                toggleSidebar={toggleSidebar}
+                                isExpanded={sidebarSize === SIDEBAR_EXPANDED_SIZE}
+                                sidebarSize={sidebarSize}
+                            />
                         </div>
                     </div>
-                    <div className="flex-grow overflow-hidden ml-2">
-                        <ScrollArea className="h-full">
-                            <div className="h-full pb-4">
-                                <div className="mr-4">
-                                    {children}
-                                </div>
-                            </div>
-                            <ScrollBar className="bg-white" />
-                        </ScrollArea>
-                    </div>
                 </div>
-                <div className="bg-white">
-                    <Toaster position="top-right" richColors theme='light' />
+                <div className="flex-grow overflow-hidden ml-2">
+                    <ScrollArea className="h-full">
+                        <div className="h-full pb-4">
+                            <div className="mr-4">
+                                {children}
+                            </div>
+                        </div>
+                        <ScrollBar className="bg-white" />
+                    </ScrollArea>
                 </div>
             </div>
-        </AccordionProvider>
+            <div className="bg-white">
+                <Toaster position="top-right" richColors theme='light' />
+            </div>
+        </div>
     );
 }

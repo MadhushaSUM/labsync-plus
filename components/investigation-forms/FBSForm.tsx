@@ -7,19 +7,19 @@ import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AddInvestigationDataRequestDto } from "@/types/Dto/InvestigationData";
 import useAddInvestigationData from "@/hooks/api/investigationData/useAddInvestigationData";
 import { toast } from "sonner";
+import useGetInvestigationData from "@/hooks/api/investigationData/useGetInvestigationData";
 
 interface InvestigationFormProps {
-    defaultValues: { [key: string]: any } | null;
     investigationRegisterId: number;
     investigationId: number;
 }
 
-export default function FBSForm({ defaultValues, investigationRegisterId, investigationId }: InvestigationFormProps) {
+export default function FBSForm({ investigationRegisterId, investigationId }: InvestigationFormProps) {
     const router = useRouter();
     const [saving, setSaving] = useState(false);
 
@@ -31,10 +31,25 @@ export default function FBSForm({ defaultValues, investigationRegisterId, invest
         }
     });
 
-    if (defaultValues && defaultValues.length !== 0) {
-        form.reset({
-            fbsValue: defaultValues.fbsValue,
-        });
+    const { data, loading, error } = useGetInvestigationData(
+        investigationRegisterId,
+        investigationId
+    );
+
+    if (error) {
+        toast.error(error.message);
+    } 
+    
+    useEffect(() => {
+        if (data && data.length !== 0) {
+            form.reset({
+                fbsValue: data[0].fbsValue,
+            });
+        }
+    }, [data, form]);
+
+    if (data && data.length !== 0) {
+        
     }
 
     const { saveInvestigationData, errorAdd } = useAddInvestigationData();

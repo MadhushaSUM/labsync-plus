@@ -1,68 +1,44 @@
 "use client"
 
-import { useEffect, useState, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
-import { toast } from "sonner";
-
 import BreadCrumbService from "@/components/breadcrumb/BreadcrumbService";
 import FBSForm from "@/components/investigation-forms/FBSForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import useGetInvestigationData from "@/hooks/api/investigationData/useGetInvestigationData";
 import { calculateAge } from "@/lib/date-utils";
-import { InvestigationType } from "@/types/entity/investigation";
-import { InvestigationRegisterType } from "@/types/entity/investigationRegister";
+import { useSelectedInvestigation } from "@/context/SelectedInvestigationContext";
+import useGetInvestigationData from "@/hooks/api/investigationData/useGetInvestigationData";
 
 export default function AddDataToInvestigation() {
-    const searchParams = useSearchParams();
-    const passedInvestigationRegister = searchParams.get("data");
-    const passedInvestigationId = searchParams.get("investigationId");
 
-    const [investigationRegister, setInvestigationRegister] = useState<InvestigationRegisterType | null>(null);
-    const [investigation, setInvestigation] = useState<InvestigationType | null>(null);
+    const { investigationData } = useSelectedInvestigation();
 
-    useEffect(() => {
-        if (passedInvestigationRegister && passedInvestigationId) {
-            try {
-                const invReg: InvestigationRegisterType = JSON.parse(passedInvestigationRegister);
-                const invId = Number(passedInvestigationId);
-                const inv = invReg.investigations.find(i => i.id === invId) || null;
-
-                setInvestigationRegister(invReg);
-                setInvestigation(inv);
-            } catch (error) {
-                toast.error("Invalid data format");
-                setInvestigationRegister(null);
-                setInvestigation(null);
-            }
-        } else {
-            toast.error("Incomplete data");
-            setInvestigationRegister(null);
-            setInvestigation(null);
-        }
-    }, [passedInvestigationRegister, passedInvestigationId]);
-
-    const { data, loading, error } = useGetInvestigationData(
-        investigationRegister?.id!,
-        investigation?.id!
-    );
-
-    if (error) {
-        toast.error(error.message);
+    if (!investigationData || !investigationData.investigation || !investigationData.investigationRegister) {
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle>
+                        <div className="text-red-500">Incomplete data</div>
+                    </CardTitle>
+                    <CardDescription>
+                        Do not use URL to access this page. Always follow the investigation management table
+                    </CardDescription>
+                </CardHeader>
+            </Card>
+        )
     }
 
-    const renderForm = () => {
-        if (!investigation) return null;
-        switch (investigation.id) {
-            case 1:
-                return (
-                    <FBSForm
-                        defaultValues={{}}
-                        investigationRegisterId={investigationRegister?.id!}
-                        investigationId={investigation.id}
-                    />
-                );
-            default:
-                return null;
+    const renderForm = () => {        
+        if (investigationData.investigation) {
+            switch (investigationData.investigation.id) {
+                case 1:
+                    return (
+                        <FBSForm
+                            investigationRegisterId={investigationData.investigationRegister.id!}
+                            investigationId={investigationData.investigation.id}
+                        />
+                    );
+                default:
+                    return null;
+            }
         }
     };
 
@@ -79,23 +55,23 @@ export default function AddDataToInvestigation() {
                             <div className="flex flex-col gap-1 mt-2">
                                 <div className="flex flex-row">
                                     <div className="text-sm w-44">Patient name</div>
-                                    <div className="font-bold text-sm">{investigationRegister?.patient.name}</div>
+                                    <div className="font-bold text-sm">{investigationData.investigationRegister?.patient.name}</div>
                                 </div>
                                 <div className="flex flex-row">
                                     <div className="text-sm w-44">Patient age</div>
-                                    <div className="font-bold text-sm">{calculateAge(investigationRegister?.patient.dateOfBirth!)}</div>
+                                    <div className="font-bold text-sm">{calculateAge(investigationData.investigationRegister?.patient.dateOfBirth!)}</div>
                                 </div>
                                 <div className="flex flex-row">
                                     <div className="text-sm w-44">Investigation date</div>
-                                    <div className="font-bold text-sm">{investigationRegister?.registeredDate}</div>
+                                    <div className="font-bold text-sm">{investigationData.investigationRegister?.registeredDate}</div>
                                 </div>
                                 <div className="flex flex-row">
                                     <div className="text-sm w-44">Referanced doctor</div>
-                                    <div className="font-bold text-sm">{investigationRegister?.doctor.name}</div>
+                                    <div className="font-bold text-sm">{investigationData.investigationRegister?.doctor.name}</div>
                                 </div>
                                 <div className="flex flex-row">
                                     <div className="text-sm w-44">Investigation</div>
-                                    <div className="font-bold text-sm">{investigation?.name}</div>
+                                    <div className="font-bold text-sm">{investigationData.investigation?.name}</div>
                                 </div>
                             </div>
                         </CardContent>
@@ -111,7 +87,7 @@ export default function AddDataToInvestigation() {
             <div>
                 <Card className="apply_shadow">
                     <CardHeader>
-                        {!loading && renderForm()}
+                        {renderForm()}
                     </CardHeader>
                 </Card>
             </div>

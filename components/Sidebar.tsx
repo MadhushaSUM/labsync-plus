@@ -4,7 +4,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { Toggle } from "./ui/toggle";
 import { useRouter } from "next/navigation";
-import { useAccordion } from "@/context/AccordionContext";
 
 import ConstructionIcon from '@mui/icons-material/Construction';
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
@@ -18,7 +17,6 @@ interface SidebarProps {
 
 export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Readonly<SidebarProps>) {
     const router = useRouter();
-    const { expandedAccordion, setExpandedAccordion } = useAccordion();
 
     const handleMenuItemClick = (e: React.MouseEvent<HTMLElement>) => {
         switch (e.currentTarget.id) {
@@ -36,16 +34,12 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
         }
     };
 
-    const handleAccordionChange = (value: string) => {
-        setExpandedAccordion(value === expandedAccordion ? null : value);
-    };
-
     return (
         <div className="transition-all duration-300 ease-in-out h-full" style={{ width: `${sidebarSize}rem` }}>
             <div className="flex flex-col h-full">
                 <ScrollArea className="flex-grow">
                     <div className="p-2">
-                        <Accordion type="single" collapsible={true} value={expandedAccordion} onValueChange={handleAccordionChange}>
+                        <Accordion type="single" collapsible={true}>
                             <AccordionItem value="item-1">
                                 <AccordionTrigger><DeskIcon className="AccordionChevron" />Operations</AccordionTrigger>
                                 <AccordionContent className="cursor-pointer" id="btnInvestigationRegistration" onClick={handleMenuItemClick}>
@@ -60,7 +54,7 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
                                 <AccordionContent>Print reports</AccordionContent>
                             </AccordionItem>
                         </Accordion>
-                        <Accordion type="single" collapsible={true} value={expandedAccordion} onValueChange={handleAccordionChange}>
+                        <Accordion type="single" collapsible={true}>
                             <AccordionItem value="item-2">
                                 <AccordionTrigger><QueryStatsIcon className="AccordionChevron" />Analysis</AccordionTrigger>
                                 <AccordionContent>Patient analysis</AccordionContent>
@@ -68,7 +62,7 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
                                 <AccordionContent>Financial analysis</AccordionContent>
                             </AccordionItem>
                         </Accordion>
-                        <Accordion type="single" collapsible={true} value={expandedAccordion} onValueChange={handleAccordionChange}>
+                        <Accordion type="single" collapsible={true}>
                             <AccordionItem value="item-3">
                                 <AccordionTrigger><ConstructionIcon className="AccordionChevron" />Settings</AccordionTrigger>
                                 <AccordionContent>Page settings</AccordionContent>
