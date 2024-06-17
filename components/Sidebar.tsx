@@ -29,6 +29,9 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
             case "btnInvestigationRegistration":
                 router.push("/investigation_registration");
                 break;
+            case "btnPatientAnalysis":
+                router.push("/patient_analysis");
+                break;
             default:
                 break;
         }
@@ -51,13 +54,14 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
                                 <AccordionContent className="cursor-pointer" id="btnDoctorManagement" onClick={handleMenuItemClick}>
                                     Doctor management
                                 </AccordionContent>
-                                <AccordionContent>Print reports</AccordionContent>
                             </AccordionItem>
                         </Accordion>
                         <Accordion type="single" collapsible={true}>
                             <AccordionItem value="item-2">
                                 <AccordionTrigger><QueryStatsIcon className="AccordionChevron" />Analysis</AccordionTrigger>
-                                <AccordionContent>Patient analysis</AccordionContent>
+                                <AccordionContent className="cursor-pointer" id="btnPatientAnalysis" onClick={handleMenuItemClick}>
+                                    Patient analysis
+                                </AccordionContent>
                                 <AccordionContent>Test analysis</AccordionContent>
                                 <AccordionContent>Financial analysis</AccordionContent>
                             </AccordionItem>

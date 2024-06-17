@@ -1,4 +1,4 @@
-import { AddInvestigationDataRequestDto } from "@/types/Dto/InvestigationData";
+import { AddInvestigationDataRequestDto, UpdateInvestigationDataRequestDto } from "@/types/Dto/InvestigationData";
 import { InvestigationRegistryRequestDtoType, NewInvestigationRegistryRequestDtoType } from "@/types/Dto/InvestigationRegistryDto";
 import { InvestigationRegisterType } from "@/types/entity/investigationRegister";
 
@@ -59,3 +59,19 @@ export const addInvestigationData = async (investigationData: AddInvestigationDa
 
     return response.json();
 };
+
+export const updateInvestigationData = async (updatingData: UpdateInvestigationDataRequestDto) => {
+    const response = await fetch(`${API_BASE_URL}/investigationRegister/updateInvestigationData`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatingData),
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to update investigation data');
+    }
+
+    return response.json();
+}

@@ -5,11 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { DoctorType } from "@/types/entity/doctor";
@@ -17,7 +16,7 @@ import { NewDoctorFormSchema } from "@/schema/DoctorSchema";
 import useAddDoctor from "@/hooks/api/doctors/useAddDoctor";
 import useUpdateDoctor from "@/hooks/api/doctors/useUpdateDoctor";
 
-export default function AddEditDoctor() {
+function AddEditDoctorContent() {
     const router = useRouter();
 
     const searchParams = useSearchParams();
@@ -152,7 +151,7 @@ export default function AddEditDoctor() {
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
-                                        />                                        
+                                        />
                                     </div>
                                     <div className="flex flex-row justify-end gap-2">
                                         <Button size="sm" variant="outline" type="reset" onClick={onFormCancel}>
@@ -169,5 +168,13 @@ export default function AddEditDoctor() {
                 </Card>
             </div>
         </div>
+    );
+}
+
+export default function AddEditDoctor() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <AddEditDoctorContent />
+        </Suspense>
     );
 }
