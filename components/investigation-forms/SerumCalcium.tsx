@@ -57,11 +57,13 @@ export default function SerumCalciumForm({ patient, investigationRegisterId, inv
 
     useEffect(() => {
         if (data && data.length !== 0) {
-            setInvestigationDataId(data[0].investigationDataId);
+            setInvestigationDataId(data[0].investigationDataId);            
 
             form.reset({
                 totalCalcium: data[0].totalCalcium,
+                totalCalciumFlag: data[0].totalCalciumFlag,
                 ionizedCalcium: data[0].ionizedCalcium,
+                ionizedCalciumFlag: data[0].ionizedCalciumFlag,
             });
         }
     }, [data, form]);
