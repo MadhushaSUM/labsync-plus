@@ -1,42 +1,44 @@
-"use client"
+"use client";
 
-import { FBSFormSchema } from "@/schema/InvestigationDataSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { AddInvestigationDataRequestDto, UpdateInvestigationDataRequestDto } from "@/types/Dto/InvestigationData";
 import useAddInvestigationData from "@/hooks/api/investigationData/useAddInvestigationData";
-import { toast } from "sonner";
 import useGetInvestigationData from "@/hooks/api/investigationData/useGetInvestigationData";
 import useUpdateInvestigationData from "@/hooks/api/investigationData/useUpdateInvestigationData";
+import { getNormalRangeFlag } from "@/lib/normalRangeFlag";
+import { SerumCalciumFormSchema } from "@/schema/InvestigationDataSchema";
+import { AddInvestigationDataRequestDto, UpdateInvestigationDataRequestDto } from "@/types/Dto/InvestigationData";
 import { InvestigationFormProps } from "@/types/commonTypes";
-import { InfoCircledIcon } from "@radix-ui/react-icons";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { serumCalciumNormalRanges } from "./MockNormalRanges";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import {
     HoverCard,
     HoverCardContent,
     HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { fbsNormalRanges } from "./MockNormalRanges";
-import { getNormalRangeFlag } from "@/lib/normalRangeFlag";
+import { Input } from "../ui/input";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
+import { Button } from "../ui/button";
 
-type FlagFields = "fbsValueFlag";
+type FlagFields = "totalCalciumFlag" | "ionizedCalciumFlag";
 
-export default function FBSForm({ patient, investigationRegisterId, investigationId }: InvestigationFormProps) {
+export default function SerumCalciumForm({ patient, investigationRegisterId, investigationId }: InvestigationFormProps) {
     const router = useRouter();
     const [saving, setSaving] = useState(false);
     const [investigationDataId, setInvestigationDataId] = useState(undefined);
 
-    const form = useForm<z.infer<typeof FBSFormSchema>>({
-        resolver: zodResolver(FBSFormSchema),
+    const form = useForm<z.infer<typeof SerumCalciumFormSchema>>({
+        resolver: zodResolver(SerumCalciumFormSchema),
         defaultValues:
         {
-            fbsValue: 0,
-            fbsValueFlag: ""
+            totalCalcium: 0,
+            totalCalciumFlag: "",
+            ionizedCalcium: 0,
+            ionizedCalciumFlag: ""
         }
     });
 
@@ -58,12 +60,13 @@ export default function FBSForm({ patient, investigationRegisterId, investigatio
             setInvestigationDataId(data[0].investigationDataId);
 
             form.reset({
-                fbsValue: data[0].fbsValue,
+                totalCalcium: data[0].totalCalcium,
+                ionizedCalcium: data[0].ionizedCalcium,
             });
         }
     }, [data, form]);
 
-    const normalRanges = fbsNormalRanges;
+    const normalRanges = serumCalciumNormalRanges;
     const handleSetFlag = (field: string, value: number, flagField: FlagFields) => {
         const range = normalRanges.data.find(range => range.fieldName === field)?.normalRanges;
 
@@ -78,8 +81,9 @@ export default function FBSForm({ patient, investigationRegisterId, investigatio
         toast.error(errorAdd.message);
     }
 
-    function onSubmit(values: z.infer<typeof FBSFormSchema>) {
+    function onSubmit(values: z.infer<typeof SerumCalciumFormSchema>) {
         setSaving(true);
+
         if (investigationDataId) {
             // updating data
             const updateData: UpdateInvestigationDataRequestDto = {
@@ -88,7 +92,6 @@ export default function FBSForm({ patient, investigationRegisterId, investigatio
                 investigationId: investigationId,
                 investigationData: values
             }
-
             const promise = updateExistingInvestigationData(updateData);
 
             toast.promise(promise, {
@@ -96,7 +99,6 @@ export default function FBSForm({ patient, investigationRegisterId, investigatio
                 success: "Investigation data has been saved",
                 error: "Error while updating investigation data"
             });
-
         } else {
             // saving data as a new record
             const savingData: AddInvestigationDataRequestDto = {
@@ -115,7 +117,7 @@ export default function FBSForm({ patient, investigationRegisterId, investigatio
         }
 
         setSaving(false);
-        router.push("/investigation_registration");       
+        router.push("/investigation_registration");
     }
 
     function onFormCancel() {
@@ -130,10 +132,10 @@ export default function FBSForm({ patient, investigationRegisterId, investigatio
                         <div className="flex gap-5 w-fit">
                             <FormField
                                 control={form.control}
-                                name="fbsValue"
+                                name="totalCalcium"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>FBS value</FormLabel>
+                                        <FormLabel>Total calcium value</FormLabel>
                                         <FormControl>
                                             <Input
                                                 {...field}
@@ -143,7 +145,7 @@ export default function FBSForm({ patient, investigationRegisterId, investigatio
                                                 onChange={(e) => {
                                                     const value = parseFloat(e.target.value);
                                                     field.onChange(value);
-                                                    handleSetFlag(field.name, value, "fbsValueFlag");
+                                                    handleSetFlag(field.name, value, "totalCalciumFlag");
                                                 }}
                                             />
                                         </FormControl>
@@ -154,7 +156,7 @@ export default function FBSForm({ patient, investigationRegisterId, investigatio
 
                             <FormField
                                 control={form.control}
-                                name="fbsValueFlag"
+                                name="totalCalciumFlag"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="italic">Flag</FormLabel>
@@ -170,7 +172,61 @@ export default function FBSForm({ patient, investigationRegisterId, investigatio
                                                         <InfoCircledIcon color="blue" />
                                                     </HoverCardTrigger>
                                                     <HoverCardContent>
-                                                        FBS Value normal ranges will be displayed here
+                                                        Total calcium value normal ranges will be displayed here
+                                                    </HoverCardContent>
+                                                </HoverCard>
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <div className="flex gap-5 w-fit">
+                            <FormField
+                                control={form.control}
+                                name="ionizedCalcium"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Ionized calcium value</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                className="w-[200px]"
+                                                type="number"
+                                                value={field.value}
+                                                onChange={(e) => {
+                                                    const value = parseFloat(e.target.value);
+                                                    field.onChange(value);
+                                                    handleSetFlag(field.name, value, "ionizedCalciumFlag");
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="ionizedCalciumFlag"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="italic">Flag</FormLabel>
+                                        <FormControl>
+                                            <div className="flex gap-5 items-center">
+                                                <Input
+                                                    {...field}
+                                                    className="w-[200px]"
+                                                />
+
+                                                <HoverCard>
+                                                    <HoverCardTrigger>
+                                                        <InfoCircledIcon color="blue" />
+                                                    </HoverCardTrigger>
+                                                    <HoverCardContent>
+                                                        Ionized calcium value normal ranges will be displayed here
                                                     </HoverCardContent>
                                                 </HoverCard>
                                             </div>

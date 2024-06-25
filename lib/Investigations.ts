@@ -9,8 +9,14 @@ export const investigations: InvestigationType[] = [
     },
     {
         id: 2,
-        code: "crp",
-        name: "C. Reactive protein",
+        code: "serum_calcium",
+        name: "Serum Calcium",
         specimen: "Blood"
     },
+    // {
+    //     id: 3,
+    //     code: "ufr",
+    //     name: "Urine full report",
+    //     specimen: "Urine"
+    // },
 ]

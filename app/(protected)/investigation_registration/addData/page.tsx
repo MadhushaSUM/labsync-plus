@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { calculateAge } from "@/lib/date-utils";
 import { useSelectedInvestigation } from "@/context/SelectedInvestigationContext";
 import useGetInvestigationData from "@/hooks/api/investigationData/useGetInvestigationData";
+import SerumCalciumForm from "@/components/investigation-forms/SerumCalcium";
 
 export default function AddDataToInvestigation() {
 
@@ -26,12 +27,21 @@ export default function AddDataToInvestigation() {
         )
     }
 
-    const renderForm = () => {        
+    const renderForm = () => {
         if (investigationData.investigation) {
             switch (investigationData.investigation.id) {
                 case 1:
                     return (
                         <FBSForm
+                            patient={investigationData.investigationRegister.patient}
+                            investigationRegisterId={investigationData.investigationRegister.id!}
+                            investigationId={investigationData.investigation.id}
+                        />
+                    );
+                case 2:
+                    return (
+                        <SerumCalciumForm
+                            patient={investigationData.investigationRegister.patient}
                             investigationRegisterId={investigationData.investigationRegister.id!}
                             investigationId={investigationData.investigation.id}
                         />

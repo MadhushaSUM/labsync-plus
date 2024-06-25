@@ -20,11 +20,11 @@ import { Input } from "@/components/ui/input";
 import { format, parseISO } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { investigations } from "./mockData";
 import useAddInvestigationRegister from "@/hooks/api/investigationRegister/useAddInvestigationRegister";
 import useUpdateInvestigationRegister from "@/hooks/api/investigationRegister/useUpdateInvestigationRegister";
 import { toast } from "sonner";
 import { NewInvestigationRegistryRequestDtoType } from "@/types/Dto/InvestigationRegistryDto";
+import { investigations } from "@/lib/Investigations";
 
 
 export default function AddInvestigationRegister() {

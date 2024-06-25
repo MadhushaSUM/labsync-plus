@@ -3,7 +3,7 @@ import { fetchInvestigationData } from '@/services/investigationDataAPI';
 import { useState, useEffect } from 'react';
 
 const useGetInvestigationData = (investigationRegisterId: number, investigationId: number) => {
-    const [data, setData] = useState<Map<String, Object>[] | null>(null);
+    const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
 
