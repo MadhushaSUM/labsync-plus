@@ -7,6 +7,7 @@ import { calculateAge } from "@/lib/date-utils";
 import { useSelectedInvestigation } from "@/context/SelectedInvestigationContext";
 import useGetInvestigationData from "@/hooks/api/investigationData/useGetInvestigationData";
 import SerumCalciumForm from "@/components/investigation-forms/SerumCalcium";
+import LipidProfileForm from "@/components/investigation-forms/LipidProfile";
 
 export default function AddDataToInvestigation() {
 
@@ -46,6 +47,13 @@ export default function AddDataToInvestigation() {
                             investigationId={investigationData.investigation.id}
                         />
                     );
+                case 3: return (
+                    <LipidProfileForm
+                        patient={investigationData.investigationRegister.patient}
+                        investigationRegisterId={investigationData.investigationRegister.id!}
+                        investigationId={investigationData.investigation.id}
+                    />
+                );
                 default:
                     return null;
             }

@@ -128,6 +128,9 @@ export default function SerumCalciumForm({ patient, investigationRegisterId, inv
 
     return (
         <div>
+            <div className="text-lg font-bold justify-center flex">
+                Serum Calcium
+            </div>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="space-y-8 w-96">

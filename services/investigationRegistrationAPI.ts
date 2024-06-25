@@ -25,7 +25,7 @@ export const addInvestigationRegistrations = async (investigationRegister: NewIn
         throw new Error('Failed to add investigation registration');
     }
 
-    return response.json();
+    return response;
 };
 
 export const updateInvestigationRegistrations = async (investigationRegisterId: number, investigationRegisterData: NewInvestigationRegistryRequestDtoType, signal?: AbortSignal): Promise<InvestigationRegisterType> => {
@@ -42,7 +42,7 @@ export const updateInvestigationRegistrations = async (investigationRegisterId: 
         throw new Error('Failed to update investigation registration');
     }
 
-    return response.json();
+    return response;
 };
 
 export const addInvestigationData = async (investigationData: AddInvestigationDataRequestDto) => {
@@ -56,8 +56,8 @@ export const addInvestigationData = async (investigationData: AddInvestigationDa
     if (!response.ok) {
         throw new Error('Failed to add investigation data');
     }
-
-    return response.json();
+    
+    return response;
 };
 
 export const updateInvestigationData = async (updatingData: UpdateInvestigationDataRequestDto) => {
@@ -73,5 +73,5 @@ export const updateInvestigationData = async (updatingData: UpdateInvestigationD
         throw new Error('Failed to update investigation data');
     }
 
-    return response.json();
+    return response;
 }

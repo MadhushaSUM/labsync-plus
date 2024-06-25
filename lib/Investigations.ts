@@ -10,13 +10,13 @@ export const investigations: InvestigationType[] = [
     {
         id: 2,
         code: "serum_calcium",
-        name: "Serum Calcium",
+        name: "Serum calcium",
         specimen: "Blood"
     },
-    // {
-    //     id: 3,
-    //     code: "ufr",
-    //     name: "Urine full report",
-    //     specimen: "Urine"
-    // },
+    {
+        id: 3,
+        code: "lipid_profile",
+        name: "Lipid profile",
+        specimen: "Blood"
+    },
 ]

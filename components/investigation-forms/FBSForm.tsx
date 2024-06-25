@@ -124,6 +124,9 @@ export default function FBSForm({ patient, investigationRegisterId, investigatio
 
     return (
         <div>
+            <div className="text-lg font-bold justify-center flex">
+                Fasting blood sugar
+            </div>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="space-y-8 w-96">
