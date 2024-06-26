@@ -61,7 +61,7 @@ export default function ComboBox({ form, field, choices }: ComboBoxProps) {
                                 setSelectedOption(e.target.value)
                             }}
                         />
-                        <div className={cn("absolute right-3 top-3", selectedOption ? "opacity-80" : "opacity-0")}>
+                        <div className={cn("absolute right-3 top-3 cursor-pointer", selectedOption ? "opacity-80" : "opacity-0")}>
                             <PlusCircleIcon size={15} onClick={addToList} />
                         </div>
                     </div>
