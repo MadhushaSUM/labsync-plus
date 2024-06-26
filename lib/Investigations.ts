@@ -19,4 +19,10 @@ export const investigations: InvestigationType[] = [
         name: "Lipid profile",
         specimen: "Blood"
     },
+    {
+        id: 4,
+        code: "ufr",
+        name: "Urine full report",
+        specimen: "Urine"
+    },
 ]

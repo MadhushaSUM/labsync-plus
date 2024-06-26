@@ -1,3 +1,4 @@
+import { epithelialCellsOptions } from "@/components/investigation-forms/UFRChoices";
 import { z } from "zod";
 
 export const FBSFormSchema = z.object({
@@ -24,4 +25,20 @@ export const LipidProfileFormSchema = z.object({
     triglyceridesFlag: z.string(),
     ldlCholesterolFlag: z.string(),
     vldlCholesterolFlag: z.string(),
+});
+
+export const UrineFullReportFormSchema = z.object({
+    colour: z.string(),
+    appearance: z.string(),
+    reaction: z.string(),
+    albumin: z.string(),
+    reducingSubs: z.string(),
+    bile: z.string(),
+    urobilinogen: z.string(),
+    pusCells: z.string(),
+    redCells: z.string(),
+    epithelialCells: z.string(),
+    casts: z.string(),
+    crystals: z.string(),
+    organisms: z.string(),
 });
