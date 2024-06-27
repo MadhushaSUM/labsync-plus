@@ -47,3 +47,8 @@ export const serumCalciumNormalRanges: NormalRangesDto = {
         },
     ]
 }
+
+export const fbcNormalRanges: NormalRangesDto = {
+    investigationId: 5,
+    data: []
+}

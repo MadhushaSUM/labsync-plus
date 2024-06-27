@@ -9,6 +9,7 @@ import useGetInvestigationData from "@/hooks/api/investigationData/useGetInvesti
 import SerumCalciumForm from "@/components/investigation-forms/SerumCalcium";
 import LipidProfileForm from "@/components/investigation-forms/LipidProfile";
 import UFRForm from "@/components/investigation-forms/UFRForm";
+import FBCForm from "@/components/investigation-forms/FBCForm";
 
 export default function AddDataToInvestigation() {
 
@@ -59,6 +60,14 @@ export default function AddDataToInvestigation() {
                 case 4:
                     return (
                         <UFRForm
+                            patient={investigationData.investigationRegister.patient}
+                            investigationRegisterId={investigationData.investigationRegister.id!}
+                            investigationId={investigationData.investigation.id}
+                        />
+                    );
+                case 5:
+                    return (
+                        <FBCForm
                             patient={investigationData.investigationRegister.patient}
                             investigationRegisterId={investigationData.investigationRegister.id!}
                             investigationId={investigationData.investigation.id}

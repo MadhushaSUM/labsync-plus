@@ -45,13 +45,13 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
                         <Accordion type="single" collapsible={true}>
                             <AccordionItem value="item-1">
                                 <AccordionTrigger><DeskIcon className="AccordionChevron" />Operations</AccordionTrigger>
-                                <AccordionContent className="cursor-pointer" id="btnInvestigationRegistration" onClick={handleMenuItemClick}>
+                                <AccordionContent className="cursor-pointer ml-5" id="btnInvestigationRegistration" onClick={handleMenuItemClick}>
                                     Investigation management
                                 </AccordionContent>
-                                <AccordionContent className="cursor-pointer" id="btnPatientManagement" onClick={handleMenuItemClick}>
+                                <AccordionContent className="cursor-pointer ml-5" id="btnPatientManagement" onClick={handleMenuItemClick}>
                                     Patient management
                                 </AccordionContent>
-                                <AccordionContent className="cursor-pointer" id="btnDoctorManagement" onClick={handleMenuItemClick}>
+                                <AccordionContent className="cursor-pointer ml-5" id="btnDoctorManagement" onClick={handleMenuItemClick}>
                                     Doctor management
                                 </AccordionContent>
                             </AccordionItem>
@@ -59,19 +59,19 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
                         <Accordion type="single" collapsible={true}>
                             <AccordionItem value="item-2">
                                 <AccordionTrigger><QueryStatsIcon className="AccordionChevron" />Analysis</AccordionTrigger>
-                                <AccordionContent className="cursor-pointer" id="btnPatientAnalysis" onClick={handleMenuItemClick}>
+                                <AccordionContent className="cursor-pointer ml-5" id="btnPatientAnalysis" onClick={handleMenuItemClick}>
                                     Patient analysis
                                 </AccordionContent>
-                                <AccordionContent>Test analysis</AccordionContent>
-                                <AccordionContent>Financial analysis</AccordionContent>
+                                <AccordionContent className="cursor-pointer ml-5">Test analysis</AccordionContent>
+                                <AccordionContent className="cursor-pointer ml-5">Financial analysis</AccordionContent>
                             </AccordionItem>
                         </Accordion>
                         <Accordion type="single" collapsible={true}>
                             <AccordionItem value="item-3">
                                 <AccordionTrigger><ConstructionIcon className="AccordionChevron" />Settings</AccordionTrigger>
-                                <AccordionContent>Page settings</AccordionContent>
-                                <AccordionContent>Flag settings</AccordionContent>
-                                <AccordionContent>Age preferences</AccordionContent>
+                                <AccordionContent className="cursor-pointer ml-5">Page settings</AccordionContent>
+                                <AccordionContent className="cursor-pointer ml-5">Flag settings</AccordionContent>
+                                <AccordionContent className="cursor-pointer ml-5">Age preferences</AccordionContent>
                             </AccordionItem>
                         </Accordion>
                         <Toggle onClick={toggleSidebar}>

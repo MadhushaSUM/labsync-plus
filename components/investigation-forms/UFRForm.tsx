@@ -15,8 +15,8 @@ import { Button } from "../ui/button";
 import { UrineFullReportFormSchema } from "@/schema/InvestigationDataSchema";
 import { albuminOptions, appearanceOptions, bileOptions, castsOptions, crystalsOptions, epithelialCellsOptions, organismsOptions, pusCellsOptions, reactionOptions, redCellsOptions, reducingSubstancesOptions, urineColours, urobilinogenOptions } from "./UFRChoices";
 import ComboBox from "../custom-ui/combo-box";
-import { Separator } from "../ui/Separator";
 import { AddInvestigationDataRequestDto, UpdateInvestigationDataRequestDto } from "@/types/Dto/InvestigationData";
+import { Separator } from "../ui/separator";
 
 export default function SerumCalciumForm({ patient, investigationRegisterId, investigationId }: InvestigationFormProps) {
     const router = useRouter();

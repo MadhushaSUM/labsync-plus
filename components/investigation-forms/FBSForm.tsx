@@ -59,6 +59,7 @@ export default function FBSForm({ patient, investigationRegisterId, investigatio
 
             form.reset({
                 fbsValue: data[0].fbsValue,
+                fbsValueFlag: data[0].fbsValueFlag,
             });
         }
     }, [data, form]);
