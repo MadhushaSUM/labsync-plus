@@ -64,12 +64,8 @@ export default function PatientAnalysis() {
         }
 
         setSearchPatientAnalysisQuery(searchQuery);
-        console.log("SS");
         
-    };
-
-    console.log(data);
-    
+    };    
 
     const loadChart = () => {
         if (!data || loadingData) {

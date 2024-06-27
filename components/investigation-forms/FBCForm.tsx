@@ -165,7 +165,7 @@ export default function FBCForm({ patient, investigationRegisterId, investigatio
                 investigationId: investigationId,
                 investigationData: values
             };
-
+            
             const promise = saveInvestigationData(savingData);
 
             toast.promise(promise, {

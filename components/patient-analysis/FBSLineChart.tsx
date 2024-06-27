@@ -1,4 +1,3 @@
-import { investigationData } from "@/types/entity/InvestigationData";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -12,10 +11,12 @@ import {
 import { Line } from 'react-chartjs-2';
 import { Card, CardContent } from "../ui/card";
 import { ScrollArea } from "../ui/scroll-area";
-import { Separator } from "@radix-ui/react-select";
+import { PatientInvestigationAnalysisDto } from "@/types/Dto/PatientInvestigationAnalysisDto";
+import PatientHistoryEntry from './PatientHistoryEntry';
+import { Separator } from '../ui/separator';
 
 interface FBSLineChartProps {
-    data: investigationData[];
+    data: PatientInvestigationAnalysisDto;
 }
 
 ChartJS.register(
@@ -37,19 +38,25 @@ export default function FBSLineChart({ data }: FBSLineChartProps) {
             },
             title: {
                 display: true,
-                text: 'Chart.js Line Chart',
+                text: 'Fasting blood sugar history',
             },
         },
     };
 
-    const labels = ['January', 'February', 'March', 'April'];
+    let labels: string[] = [];
+    let fbsDataPoints: number[] = [];
+
+    for (const entry of data.data) {
+        labels.push(entry.date);
+        fbsDataPoints.push(entry.data.fbsValue);
+    }  
 
     const cahrtData = {
         labels,
         datasets: [
             {
-                label: 'Dataset 1',
-                data: [1, 2, 5, 3],
+                label: 'FBS',
+                data: fbsDataPoints,
                 borderColor: 'rgb(255, 99, 132)',
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
             }
@@ -72,11 +79,9 @@ export default function FBSLineChart({ data }: FBSLineChartProps) {
                             <ScrollArea className="h-[420px] rounded-md border">
                                 <div className="p-4">
                                     <h4 className="mb-4 text-sm font-medium leading-none">History</h4>
-                                    {tags.map((tag) => (
+                                    {data.data.map((entry) => (
                                         <>
-                                            <div key={tag} className="text-sm">
-                                                {tag}
-                                            </div>
+                                            <PatientHistoryEntry date={entry.date} key={entry.date}/>
                                             <Separator className="my-2" />
                                         </>
                                     ))}

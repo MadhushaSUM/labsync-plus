@@ -70,8 +70,9 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
                             <AccordionItem value="item-3">
                                 <AccordionTrigger><ConstructionIcon className="AccordionChevron" />Settings</AccordionTrigger>
                                 <AccordionContent className="cursor-pointer ml-5">Page settings</AccordionContent>
-                                <AccordionContent className="cursor-pointer ml-5">Flag settings</AccordionContent>
+                                <AccordionContent className="cursor-pointer ml-5">Normal range rules</AccordionContent>
                                 <AccordionContent className="cursor-pointer ml-5">Age preferences</AccordionContent>
+                                <AccordionContent className="cursor-pointer ml-5">Integrations</AccordionContent>
                             </AccordionItem>
                         </Accordion>
                         <Toggle onClick={toggleSidebar}>
