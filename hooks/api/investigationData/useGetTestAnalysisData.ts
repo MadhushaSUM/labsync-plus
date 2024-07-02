@@ -1,11 +1,11 @@
-import { fetchTestAnalysisOverview } from '@/services/investigationDataAPI';
+import { fetchTestAnalysisOverview } from '@/services/investigationRegistrationAPI';
 import { TestAnalysisDataRequestDto } from '@/types/Dto/InvestigationData';
-import { investigationData } from '@/types/entity/InvestigationData';
+import { InvestigationRegisterType } from '@/types/entity/investigationRegister';
 import { debounce } from 'lodash';
 import { useState, useEffect, useCallback } from 'react';
 
 const useGetTestAnalysisData = () => {
-    const [data, setData] = useState<investigationData[]>();
+    const [data, setData] = useState<InvestigationRegisterType[]>();
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
     const [searchTestAnalysisQuery, setSearchTestAnalysisQuery] = useState<TestAnalysisDataRequestDto | null>(null);
@@ -13,6 +13,7 @@ const useGetTestAnalysisData = () => {
     const searchTestAnalysis = useCallback(
         debounce(async (query: TestAnalysisDataRequestDto, signal: AbortSignal) => {
             setLoading(true);
+            setData([]);
             try {
                 const patientsData = await fetchTestAnalysisOverview(query, signal);                
                 setData(patientsData);

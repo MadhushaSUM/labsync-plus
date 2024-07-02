@@ -32,6 +32,9 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
             case "btnPatientAnalysis":
                 router.push("/patient_analysis");
                 break;
+            case "btnInvestigationAnalysis":
+                router.push("/investigation_analysis");
+                break;
             default:
                 break;
         }
@@ -62,7 +65,9 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
                                 <AccordionContent className="cursor-pointer ml-5" id="btnPatientAnalysis" onClick={handleMenuItemClick}>
                                     Patient analysis
                                 </AccordionContent>
-                                <AccordionContent className="cursor-pointer ml-5">Test analysis</AccordionContent>
+                                <AccordionContent className="cursor-pointer ml-5" id="btnInvestigationAnalysis" onClick={handleMenuItemClick}>
+                                    Investigation analysis
+                                </AccordionContent>
                                 <AccordionContent className="cursor-pointer ml-5">Financial analysis</AccordionContent>
                             </AccordionItem>
                         </Accordion>

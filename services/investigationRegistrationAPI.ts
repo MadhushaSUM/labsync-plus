@@ -1,4 +1,4 @@
-import { AddInvestigationDataRequestDto, UpdateInvestigationDataRequestDto } from "@/types/Dto/InvestigationData";
+import { AddInvestigationDataRequestDto, TestAnalysisDataRequestDto, UpdateInvestigationDataRequestDto } from "@/types/Dto/InvestigationData";
 import { InvestigationRegistryRequestDtoType, NewInvestigationRegistryRequestDtoType } from "@/types/Dto/InvestigationRegistryDto";
 import { InvestigationRegisterType } from "@/types/entity/investigationRegister";
 
@@ -28,7 +28,7 @@ export const addInvestigationRegistrations = async (investigationRegister: NewIn
     return response;
 };
 
-export const updateInvestigationRegistrations = async (investigationRegisterId: number, investigationRegisterData: NewInvestigationRegistryRequestDtoType, signal?: AbortSignal): Promise<InvestigationRegisterType> => {
+export const updateInvestigationRegistrations = async (investigationRegisterId: number, investigationRegisterData: NewInvestigationRegistryRequestDtoType, signal?: AbortSignal) => {
 
     const response = await fetch(`${API_BASE_URL}/investigationRegister/update?id=${investigationRegisterId}`, {
         method: 'PUT',
@@ -42,7 +42,7 @@ export const updateInvestigationRegistrations = async (investigationRegisterId: 
         throw new Error('Failed to update investigation registration');
     }
 
-    return response;
+    return response; 
 };
 
 export const addInvestigationData = async (investigationData: AddInvestigationDataRequestDto) => {
@@ -74,4 +74,16 @@ export const updateInvestigationData = async (updatingData: UpdateInvestigationD
     }
 
     return response;
+}
+
+export const fetchTestAnalysisOverview = async (
+    query: TestAnalysisDataRequestDto,
+    signal: AbortSignal
+) => {
+    const response = await fetch(`${API_BASE_URL}/investigationRegister/test-analysis-overview?startDate=${query.startDate}&endDate=${query.endDate}`, { signal });
+    if (!response.ok) {
+        throw new Error('Failed to fetch test analysis data');
+    }
+
+    return response.json();
 }
