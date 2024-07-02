@@ -1,4 +1,4 @@
-import { PatientAnalysisDataRequestDto } from "@/types/Dto/InvestigationData";
+import { PatientAnalysisDataRequestDto, TestAnalysisDataRequestDto } from "@/types/Dto/InvestigationData";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_INVESTIGATION_DATA_BASE_URL;
 
@@ -22,3 +22,15 @@ export const fetchPatientInvestigationData = async (
 
     return response.json();
 };
+
+export const fetchTestAnalysisOverview = async (
+    query: TestAnalysisDataRequestDto,
+    signal: AbortSignal
+) => {
+    const response = await fetch(`${API_BASE_URL}/investigationData/test-analysis-overview?startDate=${query.startDate}&endDate=${query.endDate}`, { signal });
+    if (!response.ok) {
+        throw new Error('Failed to fetch test analysis data');
+    }
+
+    return response.json();
+}

@@ -18,3 +18,8 @@ export interface PatientAnalysisDataRequestDto {
     startDate: string;
     endDate: string;
 }
+
+export interface TestAnalysisDataRequestDto {
+    startDate: string;
+    endDate: string;
+}

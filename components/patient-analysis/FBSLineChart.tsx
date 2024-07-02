@@ -49,7 +49,7 @@ export default function FBSLineChart({ data }: FBSLineChartProps) {
     for (const entry of data.data) {
         labels.push(entry.date);
         fbsDataPoints.push(entry.data.fbsValue);
-    }  
+    }
 
     const cahrtData = {
         labels,
@@ -62,10 +62,6 @@ export default function FBSLineChart({ data }: FBSLineChartProps) {
             }
         ],
     };
-
-    const tags = Array.from({ length: 50 }).map(
-        (_, i, a) => `v1.2.0-beta.${a.length - i}`
-    )
 
     return (
         <div className="mt-5">
@@ -81,7 +77,7 @@ export default function FBSLineChart({ data }: FBSLineChartProps) {
                                     <h4 className="mb-4 text-sm font-medium leading-none">History</h4>
                                     {data.data.map((entry) => (
                                         <>
-                                            <PatientHistoryEntry date={entry.date} key={entry.date}/>
+                                            <PatientHistoryEntry date={entry.date} key={entry.date} />
                                             <Separator className="my-2" />
                                         </>
                                     ))}
