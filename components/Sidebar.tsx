@@ -35,6 +35,9 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
             case "btnInvestigationAnalysis":
                 router.push("/investigation_analysis");
                 break;
+            case "btnNormalRangeRules":
+                router.push("/normal_range_rules");
+                break;
             default:
                 break;
         }
@@ -74,7 +77,9 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
                             <AccordionItem value="item-3">
                                 <AccordionTrigger><ConstructionIcon className="AccordionChevron" />Settings</AccordionTrigger>
                                 <AccordionContent className="cursor-pointer ml-5">Page settings</AccordionContent>
-                                <AccordionContent className="cursor-pointer ml-5">Normal range rules</AccordionContent>
+                                <AccordionContent className="cursor-pointer ml-5" id="btnNormalRangeRules" onClick={handleMenuItemClick}>
+                                    Normal range rules
+                                </AccordionContent>
                                 <AccordionContent className="cursor-pointer ml-5">Age preferences</AccordionContent>
                                 <AccordionContent className="cursor-pointer ml-5">Integrations</AccordionContent>
                             </AccordionItem>
