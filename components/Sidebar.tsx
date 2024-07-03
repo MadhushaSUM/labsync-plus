@@ -68,7 +68,6 @@ export default function Sidebar({ toggleSidebar, isExpanded, sidebarSize }: Read
                                 <AccordionContent className="cursor-pointer ml-5" id="btnInvestigationAnalysis" onClick={handleMenuItemClick}>
                                     Investigation analysis
                                 </AccordionContent>
-                                <AccordionContent className="cursor-pointer ml-5">Financial analysis</AccordionContent>
                             </AccordionItem>
                         </Accordion>
                         <Accordion type="single" collapsible={true}>

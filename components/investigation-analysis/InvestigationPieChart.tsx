@@ -51,13 +51,26 @@ export default function InvestigationPieChart({ data }: InvestigationPieChartPro
     };
 
     const investigationCount = [];
+    let investigationTotalCost = 0;
+    let totalInvestigationCount = 0;
+    let firstRound = true;
     for (const inv of investigations) {
         let count = 0;
-        for (const enty of data) {
-            if (enty.investigations.map(inv => inv.id).includes(inv.id)) count++;
+        for (const entry of data) {
+            if (entry.investigations.map(inv => inv.id).includes(inv.id)) count++;
+            if (firstRound) {
+                investigationTotalCost += entry.cost;
+                totalInvestigationCount += entry.investigations.length;
+            }
         }
         investigationCount.push(count);
+
+        firstRound = false;
     }
+    const formattedTotalConst = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "LKR",
+    }).format(investigationTotalCost)
 
     const getRandomColor = () => {
         const letters = '0123456789ABCDEF';
@@ -84,40 +97,53 @@ export default function InvestigationPieChart({ data }: InvestigationPieChartPro
         <div >
             <Card className="apply_shadow mt-5">
                 <CardContent>
-
-                    <div className="flex flex-row h-[500px]">
-                        <div className="w-2/3 justify-center flex">
-                            <Doughnut
-                                data={pie_data}
-                                options={options}
-                            />
-                        </div>
-                        <div className="w-1/3 p-5">
-                            <ScrollArea className="h-full rounded-md border">
-                                <div className="p-4">
-                                    <h4 className="mb-4 text-sm font-medium leading-none">Investigation records</h4>
-                                    {
-                                        clickedInvestigation && data
-                                            .filter(register => register.investigations.map(inv => inv.name).includes(clickedInvestigation.name))
-                                            .map(register => (
-                                                (
-                                                    <>
-                                                        <InvestigationHistoryEntry
-                                                            patientName={register.patient.name}
-                                                            date={register.registeredDate}
-                                                            key={register.id!} 
-                                                        />
-                                                        <Separator />
-                                                    </>
-                                                )
-                                            ))
-                                    }
-                                </div>
-                            </ScrollArea>
+                    <div className="flex gap-5 mt-5">
+                        <p className="w-96">Total investigation count for the time period:</p>
+                        <p className="font-bold w-32 text-right">{totalInvestigationCount}</p>
+                    </div>
+                    <div className="flex gap-5 mt-2">
+                        <p className="w-96">Total earnings for the time period:</p>
+                        <p className="font-bold w-32 text-right">{formattedTotalConst}</p>
+                    </div>
+                </CardContent>
+            </Card>
+            <Card className="apply_shadow mt-5">
+                <CardContent>
+                    <div>
+                        <div className="flex flex-row h-[500px] mt-5">
+                            <div className="w-2/3 justify-center flex">
+                                <Doughnut
+                                    data={pie_data}
+                                    options={options}
+                                />
+                            </div>
+                            <div className="w-1/3 p-5">
+                                <ScrollArea className="h-full rounded-md border">
+                                    <div className="p-4">
+                                        <h4 className="mb-4 text-sm font-medium leading-none">Investigation records</h4>
+                                        {
+                                            clickedInvestigation && data
+                                                .filter(register => register.investigations.map(inv => inv.name).includes(clickedInvestigation.name))
+                                                .map(register => (
+                                                    (
+                                                        <>
+                                                            <InvestigationHistoryEntry
+                                                                patientName={register.patient.name}
+                                                                date={register.registeredDate}
+                                                                key={register.id!}
+                                                            />
+                                                            <Separator />
+                                                        </>
+                                                    )
+                                                ))
+                                        }
+                                    </div>
+                                </ScrollArea>
+                            </div>
                         </div>
                     </div>
                 </CardContent>
             </Card>
-        </div>
+        </div >
     );
 }
