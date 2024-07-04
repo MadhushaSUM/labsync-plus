@@ -31,4 +31,117 @@ export const investigations: InvestigationType[] = [
         name: "Full blood count",
         specimen: "Blood"
     },
-]
+];
+
+export const investigationFields: {
+    investigationId: number;
+    fields: {
+        code: string;
+        name: string;
+    }[];
+}[] = [
+        {
+            investigationId: 1,
+            fields: [
+                {
+                    code: "fbsValue",
+                    name: "FBS value"
+                }
+            ]
+        },
+        {
+            investigationId: 2,
+            fields: [
+                {
+                    code: "totalCalcium",
+                    name: "Total calcium"
+                },
+                {
+                    code: "ionizedCalcium",
+                    name: "Ionized calcium"
+                }
+            ]
+        },
+        {
+            investigationId: 3,
+            fields: [
+                {
+                    code: "totalCholesterol",
+                    name: "Total cholesterol"
+                },
+                {
+                    code: "hdlCholesterol",
+                    name: "HDL cholesterol"
+                },
+                {
+                    code: "triglycerides",
+                    name: "Triglycerides"
+                },
+                {
+                    code: "ldlCholesterol",
+                    name: "LDL holesterol"
+                },
+                {
+                    code: "vldlCholesterol",
+                    name: "VLDL cholesterol"
+                },
+                {
+                    code: "totalCholToHdl",
+                    name: "Total cholesterol to HDL cholesterol ratio"
+                }
+            ]
+        },
+        {
+            investigationId: 5,
+            fields: [
+                {
+                    code: "wbcCount",
+                    name: "WBC count"
+                },
+                {
+                    code: "neutrophils",
+                    name: "Neutrophils"
+                },
+                {
+                    code: "lymphocytes",
+                    name: "Lymphocytes"
+                },
+                {
+                    code: "eosinophils",
+                    name: "Eosinophils"
+                },
+                {
+                    code: "monocytes",
+                    name: "Monocytes"
+                },
+                {
+                    code: "basophils",
+                    name: "Basophils"
+                },
+                {
+                    code: "haemoglobin",
+                    name: "Haemoglobin"
+                },
+                {
+                    code: "rbcCount",
+                    name: "RBC count"
+                },
+                {
+                    code: "pcv",
+                    name: "PCV"
+                },
+                {
+                    code: "mcv",
+                    name: "MCV"
+                },
+                {
+                    code: "mch",
+                    name: "MCH"
+                },
+                {
+                    code: "mchc",
+                    name: "MCHC"
+                }
+            ]
+        }
+    ];

@@ -1,6 +1,6 @@
 import { string, z } from "zod";
 
-const genderEnum = z.enum(["Male", "Female", "Other"]);
+export const genderEnum = z.enum(["Male", "Female", "Other"]);
 
 export const NewPatientFormSchema = z.object({
     name: z.string().min(2).max(100),

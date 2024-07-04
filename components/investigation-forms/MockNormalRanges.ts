@@ -7,7 +7,7 @@ export const fbsNormalRanges: NormalRangesDto = {
             fieldName: "fbsValue",
             normalRanges: [
                 {
-                    gender: ["Male", "Female"],
+                    genders: ["Male", "Female"],
                     ageLowerBound: 0,
                     ageUpperBound: 120,
                     valueLowerBound: 75.0,
@@ -25,7 +25,7 @@ export const serumCalciumNormalRanges: NormalRangesDto = {
             fieldName: "totalCalcium",
             normalRanges: [
                 {
-                    gender: ["Male", "Female"],
+                    genders: ["Male", "Female"],
                     ageLowerBound: 0,
                     ageUpperBound: 120,
                     valueLowerBound: 2.2,
@@ -37,7 +37,7 @@ export const serumCalciumNormalRanges: NormalRangesDto = {
             fieldName: "ionizedCalcium",
             normalRanges: [
                 {
-                    gender: ["Male", "Female"],
+                    genders: ["Male", "Female"],
                     ageLowerBound: 0,
                     ageUpperBound: 120,
                     valueLowerBound: 1.1,

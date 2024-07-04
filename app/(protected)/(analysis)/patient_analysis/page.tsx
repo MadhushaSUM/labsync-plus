@@ -205,7 +205,7 @@ export default function PatientAnalysis() {
                                                 <PopoverContent className="w-[200px] p-0">
                                                     <Command>
                                                         <CommandInput
-                                                            placeholder={"Search patient..."}
+                                                            placeholder={"Search investigation..."}
                                                             className="h-9"
                                                             value={invSearchQuery}
                                                             onValueChange={(e) => setInvSearchQuery(e)}
@@ -226,7 +226,7 @@ export default function PatientAnalysis() {
                                                                         <CheckIcon
                                                                             className={cn(
                                                                                 "ml-auto h-4 w-4",
-                                                                                selectedPatient?.name === item.name ? "opacity-100" : "opacity-0"
+                                                                                selectedInvestigation?.name === item.name ? "opacity-100" : "opacity-0"
                                                                             )}
                                                                         />
                                                                     </CommandItem>

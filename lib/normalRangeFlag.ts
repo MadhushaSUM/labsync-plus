@@ -20,7 +20,7 @@ export function getNormalRangeFlag(
         (
             profile.ageLowerBound < patientAge &&
             profile.ageUpperBound >= patientAge &&
-            profile.gender.includes(patientGender)
+            profile.genders.includes(patientGender)
         )
     );
 

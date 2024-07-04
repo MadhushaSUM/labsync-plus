@@ -20,10 +20,10 @@ export interface NormalRangesDto {
 }
 
 export interface NormalRangeType {
-    gender: string[],
+    id?: string;
+    genders: ("Male" | "Female" | "Other")[],
     ageLowerBound: number,
     ageUpperBound: number,
     valueLowerBound: number,
     valueUpperBound: number
 }
-
