@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { InvestigationType } from "@/types/entity/investigation";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { CheckIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import NormalRangeDataItem from "@/components/normal-range-rules/NormalRangeDataItem";
@@ -56,24 +56,21 @@ export default function NormalRangeRules() {
             valueUpperBound: 0
         }
         setNormalRanges([...normalRanges, rule]);
-        calculateAgeCoverages();
     }
 
     const removeNormalRangeRule = (id: string) => {
         setNormalRanges((prevNormalRanges) =>
             prevNormalRanges.filter((rule) => rule.id !== id)
         );
-        calculateAgeCoverages();
     }
 
     const updateNormalRangeRule = (id: string, updatedRule: NormalRangeType) => {
         setNormalRanges((prevNormalRanges) =>
             prevNormalRanges.map((rule) => rule.id === id ? updatedRule : rule)
         );
-        calculateAgeCoverages();
     }
 
-    const calculateAgeCoverages = () => {
+    useEffect(() => {
         let male = 0;
         let female = 0;
         let other = 0;
@@ -91,7 +88,7 @@ export default function NormalRangeRules() {
         setMaleAgeCoverage(male);
         setFemaleAgeCoverage(female);
         setOtherAgeCoverage(other);
-    }
+    }, [normalRanges]);
 
     const saveNormalRangeRules = () => {
         console.log(normalRanges);
