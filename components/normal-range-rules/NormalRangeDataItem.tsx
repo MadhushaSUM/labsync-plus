@@ -27,8 +27,8 @@ export default function NormalRangeDataItem({ data, removeData, updateData }: No
         genders: z.array(genderEnum).min(1, {
             message: "Select at least one gender"
         }),
-        ageLowerBound: z.number(),
-        ageUpperBound: z.number(),
+        ageLowerBound: z.number().min(0),
+        ageUpperBound: z.number().max(120),
         valueLowerBound: z.number(),
         valueUpperBound: z.number(),
     }).refine((data) => data.ageUpperBound > data.ageLowerBound, {

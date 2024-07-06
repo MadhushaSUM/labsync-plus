@@ -21,8 +21,8 @@ import {
     HoverCardContent,
     HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { fbsNormalRanges } from "./MockNormalRanges";
 import { getNormalRangeFlag } from "@/lib/normalRangeFlag";
+import { useGetNormalRanges } from "@/hooks/api/investigations/useGetNormalRangesByInvestigationId";
 
 type FlagFields = "fbsValueFlag";
 
@@ -64,13 +64,19 @@ export default function FBSForm({ patient, investigationRegisterId, investigatio
         }
     }, [data, form]);
 
-    const normalRanges = fbsNormalRanges;
-    const handleSetFlag = (field: string, value: number, flagField: FlagFields) => {
-        const range = normalRanges.data.find(range => range.fieldName === field)?.normalRanges;
+    const { normalRangesData, errorNormalRanges } = useGetNormalRanges(investigationId);
+    if (errorNormalRanges) {
+        toast.error(errorNormalRanges.message);
+    }
 
-        if (range) {
-            const flag = getNormalRangeFlag(patient, range, flagField, value);
-            form.setValue(flagField, flag)
+    const handleSetFlag = (field: string, value: number, flagField: FlagFields) => {
+        if (normalRangesData) {
+            const range = normalRangesData.find(range => range.fieldName === field)?.normalRanges;
+
+            if (range) {
+                const flag = getNormalRangeFlag(patient, range, flagField, value);
+                form.setValue(flagField, flag)
+            }
         }
     };
 
@@ -116,7 +122,7 @@ export default function FBSForm({ patient, investigationRegisterId, investigatio
         }
 
         setSaving(false);
-        router.push("/investigation_registration");       
+        router.push("/investigation_registration");
     }
 
     function onFormCancel() {

@@ -17,7 +17,10 @@ import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import NormalRangeDataItem from "@/components/normal-range-rules/NormalRangeDataItem";
-import { NormalRangeType } from "@/types/commonTypes";
+import { NormalRangesDto, NormalRangeType } from "@/types/commonTypes";
+import { useGetNormalRangesByInvestigationId } from "@/hooks/api/investigations/useGetNormalRangesByInvestigationId";
+import { toast } from "sonner";
+import useAddNormalRangeRule from "@/hooks/api/investigations/useAddNormalRangeRule";
 
 export default function NormalRangeRules() {
     const [openInvestigationCombo, setOpenInvestigationCombo] = useState<boolean>(false);
@@ -41,12 +44,19 @@ export default function NormalRangeRules() {
     ];
     const currentPageName = "Normal range rules";
 
+    const { setInvestigationId, normalRangesData, loadingSearchNormalRanges, errorSearchNormalRanges } = useGetNormalRangesByInvestigationId();
+    if (errorSearchNormalRanges) {
+        toast.error(errorSearchNormalRanges.message);
+    }
+
+
     const filterInvestigationFields = (id: number) => {
+        setInvestigationId(id);
         const fieldsOfCurrentInvestigation = investigationFields.find(inv => inv.investigationId === id)?.fields ?? [];
         setInvFields(fieldsOfCurrentInvestigation);
     }
 
-    const addNormalRangeRule = () => {
+    const addNewNormalRangeRule = () => {
         const rule: NormalRangeType = {
             id: uuidv4(),
             genders: ["Male", "Female", "Other"],
@@ -70,6 +80,19 @@ export default function NormalRangeRules() {
         );
     }
 
+    const handleInvestigationSelection = (investigationName: string, investigation: InvestigationType) => {
+        setSelectedInvestigation(investigationName === selectedInvestigation?.name ? null : investigation);
+        setSelectedField(null);
+        filterInvestigationFields(investigation.id);
+        setOpenInvestigationCombo(false);
+    }
+
+    const handleFieldSelection = (fieldName: string, field: { code: string; name: string; }) => {
+        setSelectedField(fieldName === selectedField?.name ? null : field);
+        setOpenFieldCombo(false);
+        setNormalRanges(normalRangesData?.find(data => data.fieldName === field.code)?.normalRanges ?? []);
+    }
+
     useEffect(() => {
         let male = 0;
         let female = 0;
@@ -90,8 +113,26 @@ export default function NormalRangeRules() {
         setOtherAgeCoverage(other);
     }, [normalRanges]);
 
+    const { addNormalRangeRule, errorAdd } = useAddNormalRangeRule();
+    if (errorAdd) {
+        toast.error(errorAdd.message);
+    }
     const saveNormalRangeRules = () => {
-        console.log(normalRanges);
+        if (selectedInvestigation && selectedField) {
+            const savingData: NormalRangesDto = {
+                id: normalRangesData?.find(data => data.fieldName === selectedField.code)?.id,
+                investigationId: selectedInvestigation.id!,
+                fieldName: selectedField.code,
+                normalRanges: normalRanges
+            }
+
+            const promise = addNormalRangeRule(savingData);
+            toast.promise(promise, {
+                loading: "Saving a normal range rule",
+                success: "Normal range rule has been saved",
+                error: "Error while saving normal range rule"
+            });
+        }
     }
 
     return (
@@ -143,10 +184,7 @@ export default function NormalRangeRules() {
                                                     key={item.id}
                                                     value={item.name}
                                                     onSelect={(currentValue) => {
-                                                        setSelectedInvestigation(currentValue === selectedInvestigation?.name ? null : item);
-                                                        setSelectedField(null);
-                                                        filterInvestigationFields(item.id);
-                                                        setOpenInvestigationCombo(false);
+                                                        handleInvestigationSelection(currentValue, item);
                                                     }}
                                                 >
                                                     {item.name}
@@ -195,8 +233,7 @@ export default function NormalRangeRules() {
                                                     key={field.code}
                                                     value={field.name}
                                                     onSelect={(currentValue) => {
-                                                        setSelectedField(currentValue === selectedField?.name ? null : field);
-                                                        setOpenFieldCombo(false);
+                                                        handleFieldSelection(currentValue, field);
                                                     }}
                                                 >
                                                     {field.name}
@@ -257,7 +294,7 @@ export default function NormalRangeRules() {
                                 </div>
                                 <div className="flex justify-center mt-5">
                                     <Button
-                                        onClick={addNormalRangeRule}
+                                        onClick={addNewNormalRangeRule}
                                         variant="outline"
                                         className="w-[40rem]"
                                     >

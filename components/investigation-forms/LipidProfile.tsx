@@ -12,7 +12,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { serumCalciumNormalRanges } from "./MockNormalRanges";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import {
     HoverCard,
@@ -23,6 +22,7 @@ import { Input } from "../ui/input";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
 import { LipidProfileFormSchema } from "@/schema/InvestigationDataSchema";
+import { useGetNormalRanges } from "@/hooks/api/investigations/useGetNormalRangesByInvestigationId";
 
 type FlagFields = "totalCholesterolFlag" | "hdlCholesterolFlag" | "ldlCholesterolFlag" | "vldlCholesterolFlag" | "triglyceridesFlag";
 
@@ -82,13 +82,19 @@ export default function LipidProfileForm({ patient, investigationRegisterId, inv
         }
     }, [data, form]);
 
-    const normalRanges = serumCalciumNormalRanges;
-    const handleSetFlag = (field: string, value: number, flagField: FlagFields) => {
-        const range = normalRanges.data.find(range => range.fieldName === field)?.normalRanges;
+    const { normalRangesData, errorNormalRanges } = useGetNormalRanges(investigationId);
+    if (errorNormalRanges) {
+        toast.error(errorNormalRanges.message);
+    }
 
-        if (range) {
-            const flag = getNormalRangeFlag(patient, range, flagField, value);
-            form.setValue(flagField, flag)
+    const handleSetFlag = (field: string, value: number, flagField: FlagFields) => {
+        if (normalRangesData) {
+            const range = normalRangesData.find(range => range.fieldName === field)?.normalRanges;
+
+            if (range) {
+                const flag = getNormalRangeFlag(patient, range, flagField, value);
+                form.setValue(flagField, flag)
+            }
         }
     };
 

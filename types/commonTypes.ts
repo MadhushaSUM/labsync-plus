@@ -12,11 +12,10 @@ export interface InvestigationFormProps {
 }
 
 export interface NormalRangesDto {
+    id?: number;
     investigationId: number;
-    data: {
-        fieldName: string;
-        normalRanges: NormalRangeType[]
-    }[]
+    fieldName: string;
+    normalRanges: NormalRangeType[];
 }
 
 export interface NormalRangeType {

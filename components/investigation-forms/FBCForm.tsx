@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { fbcNormalRanges } from "./MockNormalRanges";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import {
     HoverCard,
@@ -23,6 +22,7 @@ import {
 import { Input } from "../ui/input";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
+import { useGetNormalRanges } from "@/hooks/api/investigations/useGetNormalRangesByInvestigationId";
 
 type FlagFields =
     "wbcCountFlag" |
@@ -125,13 +125,19 @@ export default function FBCForm({ patient, investigationRegisterId, investigatio
         }
     }, [data, form]);
 
-    const normalRanges = fbcNormalRanges;
-    const handleSetFlag = (field: string, value: number, flagField: FlagFields) => {
-        const range = normalRanges.data.find(range => range.fieldName === field)?.normalRanges;
+    const { normalRangesData, errorNormalRanges } = useGetNormalRanges(investigationId);
+    if (errorNormalRanges) {
+        toast.error(errorNormalRanges.message);
+    }
 
-        if (range) {
-            const flag = getNormalRangeFlag(patient, range, flagField, value);
-            form.setValue(flagField, flag)
+    const handleSetFlag = (field: string, value: number, flagField: FlagFields) => {
+        if (normalRangesData) {
+            const range = normalRangesData.find(range => range.fieldName === field)?.normalRanges;
+
+            if (range) {
+                const flag = getNormalRangeFlag(patient, range, flagField, value);
+                form.setValue(flagField, flag)
+            }
         }
     };
 
@@ -165,7 +171,7 @@ export default function FBCForm({ patient, investigationRegisterId, investigatio
                 investigationId: investigationId,
                 investigationData: values
             };
-            
+
             const promise = saveInvestigationData(savingData);
 
             toast.promise(promise, {
