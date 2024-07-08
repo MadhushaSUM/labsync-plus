@@ -44,7 +44,7 @@ export default function NormalRangeRules() {
     ];
     const currentPageName = "Normal range rules";
 
-    const { setInvestigationId, normalRangesData, loadingSearchNormalRanges, errorSearchNormalRanges } = useGetNormalRangesByInvestigationId();
+    const { setInvestigationId, normalRangesData, errorSearchNormalRanges } = useGetNormalRangesByInvestigationId();
     if (errorSearchNormalRanges) {
         toast.error(errorSearchNormalRanges.message);
     }
@@ -262,15 +262,30 @@ export default function NormalRangeRules() {
                             <div className="flex flex-row justify-around gap-5">
                                 <div className="w-full">
                                     <Label htmlFor="ageCoverage">Male</Label>
-                                    <Progress id="ageCoverage" className="h-4" value={maleAgeCoverage} indicatorColor="bg-blue-400" />
+                                    <Progress
+                                        id="ageCoverage"
+                                        className="h-4"
+                                        value={maleAgeCoverage}
+                                        indicatorColor="bg-blue-400"                                                                                
+                                    />
                                 </div>
                                 <div className="w-full">
                                     <Label htmlFor="ageCoverage">Female</Label>
-                                    <Progress id="ageCoverage" className="h-4" value={femaleAgeCoverage} indicatorColor="bg-red-400" />
+                                    <Progress
+                                        id="ageCoverage"
+                                        className="h-4"
+                                        value={femaleAgeCoverage}
+                                        indicatorColor="bg-red-400"
+                                    />
                                 </div>
                                 <div className="w-full">
                                     <Label htmlFor="ageCoverage">Other</Label>
-                                    <Progress id="ageCoverage" className="h-4" value={otherAgeCoverage} indicatorColor="bg-green-400" />
+                                    <Progress
+                                        id="ageCoverage"
+                                        className="h-4"
+                                        value={otherAgeCoverage}
+                                        indicatorColor="bg-green-400"
+                                    />
                                 </div>
                             </div>
                         </div>
