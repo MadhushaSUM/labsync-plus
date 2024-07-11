@@ -1,10 +1,17 @@
-"use client";
+import { Button } from "@/components/ui/button";
+
 
 export default function Home() {
-
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1 className='text-4xl font-bold'>LabSync Plus</h1>
-    </main>
-  )
+    return (
+        <div className="flex flex-col justify-center items-center mt-5 gap-2">
+            LABSYNC-PLUS
+            <div>
+                <Button 
+                    variant={"outline"}
+                >
+                    Click Me!
+                </Button>
+            </div>
+        </div>      
+    );
 }
