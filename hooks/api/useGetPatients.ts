@@ -5,7 +5,7 @@ import { PatientRequestDtoType } from '@/types/Dto/patientDto';
 import { PatientType } from '@/types/entity/patient';
 import { Page } from '@/types/Dto/CommonNetworkTypes';
 
-const useGetPatients = ({ limit, skip }: PatientRequestDtoType) => {
+const useGetPatients = ({ limit, offset }: PatientRequestDtoType) => {
     const [data, setData] = useState<Page<PatientType>>({ content: [], totalPages: 0, totalElements: 0 });
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);    
@@ -17,7 +17,7 @@ const useGetPatients = ({ limit, skip }: PatientRequestDtoType) => {
         const loadPatients = async () => {
             setLoading(true);
             try {
-                const patients = await fetchPatients({ limit, skip }, signal);
+                const patients = await fetchPatients({ limit, offset }, signal);
                 setData(patients);
             } catch (error: any) {
                 if (error.name !== 'AbortError') {
@@ -31,7 +31,7 @@ const useGetPatients = ({ limit, skip }: PatientRequestDtoType) => {
         loadPatients();
 
         return () => controller.abort();
-    }, [limit, skip]);
+    }, [limit, offset]);
 
     return { data, loading, error };
 };

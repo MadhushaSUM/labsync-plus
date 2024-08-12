@@ -27,16 +27,16 @@ import useDeletePatient from "@/hooks/api/useDeletePatient";
 
 export default function PatientManagement() {
     const router = useRouter();
-    const { limit, onPaginationChange, skip, pagination } = usePagination();
+    const { limit, onPaginationChange, offset, pagination } = usePagination();
     const [selectedPatients, setSelectedPatients] = useState<PatientType[]>([]);
 
-    const { data, loading, error } = useGetPatients({ limit, skip });
+    const { data, loading, error } = useGetPatients({ limit, offset });
     const { deleteSelectedPatients} = useDeletePatient();
 
     if (error) {
         toast.error(error.message);
-    }
-
+    }   
+       
     const breadcrumbArr = [
         {
             name: "Home",
@@ -64,8 +64,6 @@ export default function PatientManagement() {
     };
 
     const columns = getColumns({ onEditPatient: handleEditPatient });
-
-    console.log(data);  
 
     const generateTableActionButtons = () => {
         return (

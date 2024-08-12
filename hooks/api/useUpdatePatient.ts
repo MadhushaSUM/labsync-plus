@@ -6,7 +6,7 @@ const useUpdatePatient = () => {
     const [loadingUpdate, setLoadingUpdate] = useState<boolean>(false);
     const [errorUpdate, setErrorUpdate] = useState<Error | null>(null);
 
-    const updateExistingPatient = async (patientId: number, patientData: PatientType, signal?: AbortSignal) => {
+    const updateExistingPatient = async (patientId: string, patientData: PatientType, signal?: AbortSignal) => {
         setLoadingUpdate(true);
         try {
             const updatedPatient = await updatePatient(patientId, patientData, signal);

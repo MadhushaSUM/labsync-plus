@@ -2,10 +2,10 @@ import { AddInvestigationDataRequestDto, TestAnalysisDataRequestDto, UpdateInves
 import { InvestigationRegistryRequestDtoType, NewInvestigationRegistryRequestDtoType } from "@/types/Dto/InvestigationRegistryDto";
 import { InvestigationRegisterType } from "@/types/entity/investigationRegister";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_INVESTIGATION_REGISTER_BASE_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const fetchInvestigationRegistrations = async ({ limit, skip }: InvestigationRegistryRequestDtoType, signal: AbortSignal) => {
-    const response = await fetch(`${API_BASE_URL}/investigationRegister/getAll?limit=${limit}&skip=${skip}`, { signal });
+export const fetchInvestigationRegistrations = async ({ limit, offset }: InvestigationRegistryRequestDtoType, signal: AbortSignal) => {
+    const response = await fetch(`${API_BASE_URL}/investigation-registration/all?filterUnconfirmed=false&limit=${limit}&offset=${offset}`, { signal });
     if (!response.ok) {
         throw new Error('Failed to fetch investigation registry');
     }

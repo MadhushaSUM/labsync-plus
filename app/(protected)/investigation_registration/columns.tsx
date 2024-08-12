@@ -8,6 +8,7 @@ import { ChevronsUpDown, MoreHorizontal } from 'lucide-react';
 import { InvestigationRegisterType } from "@/types/entity/investigationRegister";
 import { Badge } from "@/components/ui/badge";
 import { CollapsibleTrigger } from "@/components/ui/collapsible";
+import { parseISO } from "date-fns";
 
 
 interface Actions {
@@ -56,8 +57,13 @@ export const getColumns = (actions: Actions): ColumnDef<InvestigationRegisterTyp
         }
     },
     {
-        accessorKey: "registeredDate",
+        accessorKey: "date",
         header: "Investigation date",
+        cell: ({ row }) => {
+            return (
+                <div>{parseISO(row.original.date).toDateString()}</div>
+            )
+        }
     },
     // {
     //     accessorKey: "investigations",
@@ -79,7 +85,7 @@ export const getColumns = (actions: Actions): ColumnDef<InvestigationRegisterTyp
         header: "Data added",
         cell: ({ row }) => {
             return (
-                row.original.dataAdded ? <Badge variant="default">Yes</Badge> : <Badge variant="secondary">No</Badge>
+                row.original.data_added_investigations.length === 0 ? <Badge variant="default">Yes</Badge> : <Badge variant="secondary">No</Badge>
             );
         }
     },

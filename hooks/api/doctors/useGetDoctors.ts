@@ -5,7 +5,7 @@ import { DoctorRequestDtoType } from '@/types/Dto/DoctorDto';
 import { fetchDoctors } from '@/services/api';
 import { DoctorType } from '@/types/entity/doctor';
 
-const useGetDoctors = ({ limit, skip }: DoctorRequestDtoType) => {
+const useGetDoctors = ({ limit, offset }: DoctorRequestDtoType) => {
     const [data, setData] = useState<Page<DoctorType>>({ content: [], totalPages: 0, totalElements: 0 });
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);    
@@ -17,7 +17,7 @@ const useGetDoctors = ({ limit, skip }: DoctorRequestDtoType) => {
         const loadPatients = async () => {
             setLoading(true);
             try {
-                const patients = await fetchDoctors({ limit, skip }, signal);
+                const patients = await fetchDoctors({ limit, offset }, signal);
                 setData(patients);
             } catch (error: any) {
                 if (error.name !== 'AbortError') {
@@ -31,7 +31,7 @@ const useGetDoctors = ({ limit, skip }: DoctorRequestDtoType) => {
         loadPatients();
 
         return () => controller.abort();
-    }, [limit, skip]);
+    }, [limit, offset]);
 
     return { data, loading, error };
 };

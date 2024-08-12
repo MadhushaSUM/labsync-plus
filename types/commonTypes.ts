@@ -1,7 +1,7 @@
 import { PatientType } from "./entity/patient";
 
 export interface SearchBoxItem {
-    id?: number;
+    id?: string;
     name: string;
 }
 

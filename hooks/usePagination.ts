@@ -13,6 +13,6 @@ export function usePagination(initialSize = 5) {
         pagination,
         // API
         limit: pageSize,
-        skip: pageSize * pageIndex,
+        offset: pageSize * pageIndex,
     };
 }

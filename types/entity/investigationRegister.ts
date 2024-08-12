@@ -1,14 +1,13 @@
 import { DoctorType } from "./doctor";
-import { InvestigationType } from "./investigation";
 import { PatientType } from "./patient";
 
 export interface InvestigationRegisterType {
     id?: number;
     patient: PatientType;
     doctor: DoctorType;
-    investigations: InvestigationType[];
+    investigations: number[];
     cost: number;
-    registeredDate: string;
+    date: string;
     printed: boolean;
-    dataAdded: boolean;
+    data_added_investigations: number[];
 }

@@ -5,7 +5,7 @@ import { InvestigationRegistryRequestDtoType } from '@/types/Dto/InvestigationRe
 import { InvestigationRegisterType } from '@/types/entity/investigationRegister';
 import { fetchInvestigationRegistrations } from '@/services/investigationRegistrationAPI';
 
-const useGetInvestigationRegisters = ({ limit, skip }: InvestigationRegistryRequestDtoType) => {
+const useGetInvestigationRegisters = ({ limit, offset }: InvestigationRegistryRequestDtoType) => {
     const [data, setData] = useState<Page<InvestigationRegisterType>>({ content: [], totalPages: 0, totalElements: 0 });
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);    
@@ -17,7 +17,7 @@ const useGetInvestigationRegisters = ({ limit, skip }: InvestigationRegistryRequ
         const loadInvestigationRegisters = async () => {
             setLoading(true);
             try {
-                const investigationRegisters = await fetchInvestigationRegistrations({ limit, skip }, signal);
+                const investigationRegisters = await fetchInvestigationRegistrations({ limit, offset }, signal);
                 setData(investigationRegisters);
             } catch (error: any) {
                 if (error.name !== 'AbortError') {
@@ -31,7 +31,7 @@ const useGetInvestigationRegisters = ({ limit, skip }: InvestigationRegistryRequ
         loadInvestigationRegisters();
 
         return () => controller.abort();
-    }, [limit, skip]);
+    }, [limit, offset]);
 
     return { data, loading, error };
 };

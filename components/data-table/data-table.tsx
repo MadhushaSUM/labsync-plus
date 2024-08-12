@@ -64,7 +64,6 @@ export function DataTable<TData, TValue>({
         // THIS IS FOR SERVER-SIDE PAGINATION
         manualPagination: true,
         onPaginationChange,
-
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
         onColumnFiltersChange: setColumnFilters,

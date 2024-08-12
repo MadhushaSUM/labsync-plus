@@ -1,9 +1,9 @@
 import { SearchBoxItem } from "../commonTypes";
 
 export interface PatientType extends SearchBoxItem{
-    id?: number;
+    id?: string;
     name: string;
-    dateOfBirth: string;
+    date_of_birth: string;
     gender: "Male" | "Female" | "Other";
-    contactNumber: string;
+    contact_number: string;
 }

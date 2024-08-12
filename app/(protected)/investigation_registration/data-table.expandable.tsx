@@ -33,6 +33,7 @@ import { InvestigationRegisterType } from "@/types/entity/investigationRegister"
 import { useRouter } from "next/navigation";
 import { useSelectedInvestigation } from "@/context/SelectedInvestigationContext";
 import { InvestigationType } from "@/types/entity/investigation";
+import { investigations } from "@/lib/Investigations";
 
 interface DataTableProps<InvestigationRegisterType> {
     columns: ColumnDef<InvestigationRegisterType>[],
@@ -164,27 +165,30 @@ export function DataTable<TData, TValue>({
                                             </TableRow>
                                             <CollapsibleContent asChild>
                                                 <>
-                                                    {row.original.investigations.map(inv => {
-                                                        return (
-                                                            <TableRow key={inv.id}>
-                                                                <TableCell colSpan={7}>
-                                                                    <div className="grid grid-cols-3 gap-5 items-center">
-                                                                        <div></div>
-                                                                        <div>{inv.name}</div>
-                                                                        <div>
-                                                                            <Button
-                                                                                size="sm"
-                                                                                variant="outline"
-                                                                                className="w-24"
-                                                                                onClick={() => handleAddEditData(row.original, inv)}
-                                                                            >
-                                                                                Add data
-                                                                            </Button>
+                                                    {row.original.investigations.map(investigationId => {
+                                                        const investigation = investigations.find(inv => inv.id === investigationId);
+                                                        if (investigation) {
+                                                            return (
+                                                                <TableRow key={investigationId}>
+                                                                    <TableCell colSpan={7}>
+                                                                        <div className="grid grid-cols-3 gap-5 items-center">
+                                                                            <div></div>
+                                                                            <div>{investigation.name}</div>
+                                                                            <div>
+                                                                                <Button
+                                                                                    size="sm"
+                                                                                    variant="outline"
+                                                                                    className="w-24"
+                                                                                    onClick={() => handleAddEditData(row.original, investigation)}
+                                                                                >
+                                                                                    Add data
+                                                                                </Button>
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        );
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            );
+                                                        }
                                                     })}
                                                 </>
                                             </CollapsibleContent>

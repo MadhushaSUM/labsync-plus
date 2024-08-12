@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { NewPatientFormSchema } from "@/schema/PatientSchema";
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { format, parseISO } from "date-fns"
+import { format, formatISO, parseISO } from "date-fns"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,6 +17,7 @@ import { PatientType } from "@/types/entity/patient";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 import useUpdatePatient from "@/hooks/api/useUpdatePatient";
 
 export default function AddEditPatient() {
@@ -46,9 +47,9 @@ export default function AddEditPatient() {
         defaultValues:
         {
             name: "",
-            dateOfBirth: new Date(),
+            date_of_birth: new Date(),
             gender: "Male",
-            contactNumber: ""
+            contact_number: ""
         }
     });
 
@@ -60,9 +61,9 @@ export default function AddEditPatient() {
 
             form.reset({
                 name: patientData.name,
-                dateOfBirth: patientData.dateOfBirth,
+                date_of_birth: patientData.date_of_birth,
                 gender: patientData.gender,
-                contactNumber: patientData.contactNumber
+                contact_number: patientData.contact_number
             });
         }
     }, [data, editmode, form]);
@@ -82,15 +83,14 @@ export default function AddEditPatient() {
         setSavingPatient(true);
         const savingPatient: PatientType = {
             name: values.name,
-            dateOfBirth: values.dateOfBirth.toLocaleString(),
+            date_of_birth: formatISO(values.date_of_birth, { representation: 'date' }),
             gender: values.gender,
-            contactNumber: values.contactNumber
+            contact_number: values.contact_number
         };
 
-        if (isEditMode) {
-            savingPatient.id = patient?.id;
-
+        if (isEditMode) {           
             const promise = updateExistingPatient(patient?.id!, savingPatient);
+            
             toast.promise(promise, {
                 loading: "Updating a patient",
                 success: "Patient has been updated",
@@ -150,7 +150,7 @@ export default function AddEditPatient() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="dateOfBirth"
+                                            name="date_of_birth"
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>Patient birth date</FormLabel>
@@ -190,7 +190,7 @@ export default function AddEditPatient() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="contactNumber"
+                                            name="contact_number"
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>Patient phone number</FormLabel>

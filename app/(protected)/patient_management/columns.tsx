@@ -39,7 +39,7 @@ export const getColumns = (actions: Actions): ColumnDef<PatientType>[] => [
         header: "Name",
     },
     {
-        accessorKey: "dateOfBirth",
+        accessorKey: "date_of_birth",
         header: "Birth date",
     },
     {
@@ -47,7 +47,7 @@ export const getColumns = (actions: Actions): ColumnDef<PatientType>[] => [
         header: "Gender",
     },
     {
-        accessorKey: "contactNumber",
+        accessorKey: "contact_number",
         header: "Phone number",
     },
     {

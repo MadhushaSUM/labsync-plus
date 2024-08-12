@@ -15,8 +15,8 @@ import { DataTable } from "@/components/data-table/data-table";
 
 export default function DoctorManagement() {
     const router = useRouter();
-    const { limit, onPaginationChange, skip, pagination } = usePagination();
-    const { data, loading, error } = useGetDoctors({ limit, skip });
+    const { limit, onPaginationChange, offset, pagination } = usePagination();
+    const { data, loading, error } = useGetDoctors({ limit, offset });
 
     const [selectedDoctors, setSelectedDoctors] = useState<DoctorType[]>([]);
 

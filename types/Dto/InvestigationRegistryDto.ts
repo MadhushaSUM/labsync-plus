@@ -1,6 +1,6 @@
 export interface InvestigationRegistryRequestDtoType {
     limit: number;
-    skip: number;
+    offset: number;
 }
 
 export interface NewInvestigationRegistryRequestDtoType {

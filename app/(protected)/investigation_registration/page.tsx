@@ -15,11 +15,11 @@ import { DataTable } from "./data-table.expandable";
 
 export default function InvestigationRegistration() {
     const router = useRouter();
-    const { limit, onPaginationChange, skip, pagination } = usePagination();
+    const { limit, onPaginationChange, offset, pagination } = usePagination();
     const [selectedPatients, setSelectedPatients] = useState<InvestigationRegisterType[]>([]);
 
-    const { data, loading, error } = useGetInvestigationRegisters({ limit, skip });
-    //const { deleteSelectedPatients} = useDeletePatient();
+    const { data, loading, error } = useGetInvestigationRegisters({ limit, offset });
+    //const { deleteSelectedPatients} = useDeletePatient();    
 
     if (error) {
         toast.error(error.message);
