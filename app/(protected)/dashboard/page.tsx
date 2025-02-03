@@ -1,19 +1,19 @@
+"use client";
 
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "antd";
+
+const { Meta } = Card;
 
 export default function Dashboard() {
     return (
         <div>
-            <Card className="apply_shadow">
-                <CardHeader>
-                    <CardTitle>
-                        LabSync - Plus
-                    </CardTitle>
-                    <CardDescription>
-                        Your trusted medical laboratory management software
-                    </CardDescription>
-
-                </CardHeader>
+            <Card
+                className="apply_shadow"
+            >
+                <Meta
+                    title="LabSync - Plus"
+                    description="Your trusted medical laboratory management software"
+                />
             </Card>
 
         </div>

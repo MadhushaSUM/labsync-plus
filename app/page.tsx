@@ -1,5 +1,4 @@
-import { Button } from "@/components/ui/button";
-
+import { Button } from "antd";
 
 export default function Home() {
     return (
@@ -7,7 +6,7 @@ export default function Home() {
             LABSYNC-PLUS
             <div>
                 <Button 
-                    variant={"outline"}
+                    variant="outlined"
                 >
                     Click Me!
                 </Button>

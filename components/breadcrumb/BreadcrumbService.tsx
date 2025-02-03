@@ -1,32 +1,41 @@
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "../ui/breadcrumb";
+"use client";
 
-interface BreadCrumbServiceItem {
-    name: string;
-    link: string;
-}
+import React from "react";
+import { Breadcrumb } from "antd";
+import { HomeOutlined } from "@ant-design/icons";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-interface BreadCrumbServiceProps {
-    breadcrumbArr: BreadCrumbServiceItem[];
-    currentPageName: string;
-}
+const breadcrumbNameMap: { [key: string]: string } = {
+    "/": "Home",
+    "/dashboard": "Dashboard",
+    "/patients": "Patients",
+    "/products": "Products",
+    "/products/[id]": "Product Details",
+};
 
-export default function BreadCrumbService({ breadcrumbArr, currentPageName }: Readonly<BreadCrumbServiceProps>) {
+export default function Breadcrumbs() {
+    const pathname = usePathname();
+    const pathSegments = pathname.split("/").filter(Boolean);
+
+    const breadcrumbItems = pathSegments.map((segment, index) => {
+        const url = `/${pathSegments.slice(0, index + 1).join("/")}`;
+        return {
+            title: (
+                <Link href={url}>
+                    {breadcrumbNameMap[url] || segment.replace(/-/g, " ").toUpperCase()}
+                </Link>
+            ),
+        };
+    });
+
     return (
-        <div className="ml-6 my-3">
-            <Breadcrumb>
-                <BreadcrumbList>
-                    {breadcrumbArr.map((item, index) => (
-                        <BreadcrumbItem key={item.link}>
-                            <BreadcrumbLink href={item.link}>{item.name}</BreadcrumbLink>
-                            {index < breadcrumbArr.length - 1 && <BreadcrumbSeparator />}
-                        </BreadcrumbItem>
-                    ))}
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        <BreadcrumbPage>{currentPageName}</BreadcrumbPage>
-                    </BreadcrumbItem>
-                </BreadcrumbList>
-            </Breadcrumb>
-        </div>
+        <Breadcrumb
+            items={[
+                { title: <Link href="/"><HomeOutlined /> Home</Link> },
+                ...breadcrumbItems,
+            ]}
+            style={{ margin: '16px 0' }}
+        />
     );
 }
