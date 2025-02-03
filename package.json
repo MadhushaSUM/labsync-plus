@@ -34,6 +34,7 @@
     "@types/chartjs": "^0.0.31",
     "@types/lodash": "^4.17.4",
     "@types/react-chartjs-2": "^2.5.7",
+    "antd": "^5.23.3",
     "chartjs": "^0.3.24",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
