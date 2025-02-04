@@ -8,17 +8,19 @@ import { HomeOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, } fro
 import ToggleThemeButton from "@/components/ToggleThemeButton";
 import { useRouter } from "next/navigation";
 import Breadcrumbs from "@/components/breadcrumb/BreadcrumbService";
+import QueryProviders from "@/context/QueryProvider";
+import { Toaster } from "sonner";
 
 const { Header, Content, Sider } = Layout;
 
 const siderItems: MenuProps['items'] = [
     {
-        key: "dashboard",
+        key: "/dashboard",
         icon: React.createElement(HomeOutlined),
         label: "Home",
     },
     {
-        key: "patients",
+        key: "/patients",
         icon: React.createElement(UserOutlined),
         label: "Patients",
     },
@@ -29,11 +31,11 @@ const siderItems: MenuProps['items'] = [
 
         children: [
             {
-                key: "something",
+                key: "/something",
                 label: "Something"
             },
             {
-                key: "anything",
+                key: "/anything",
                 label: "Anything"
             },
         ]
@@ -83,6 +85,7 @@ export default function ProtectedLayout({
     return (
         <div>
             <ConfigProvider theme={{ algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm }}>
+                <Toaster richColors position="top-right" theme={isDarkMode ? "dark" : "light"} />
                 <Layout>
                     <Header
                         style={{
@@ -93,14 +96,17 @@ export default function ProtectedLayout({
                             display: 'flex',
                             alignItems: 'center',
                             background: isDarkMode ? undefined : colorBgContainer,
-                        }}>
+                        }}
+                    >
                         <div className="flex flex-row content-center items-center justify-between w-full h-full">
-                            <h1>LabSync - Plus</h1>
+                            <h1 className="text-lg font-black text-cyan-400 ring-1 rounded-lg px-2 py-1 ring-cyan-300">
+                                LabSync - Plus
+                            </h1>
                             <ToggleThemeButton toggleTheme={toggleTheme} darkTheme={isDarkMode} />
                         </div>
                     </Header>
                     <Layout>
-                        <Sider width={200} style={siderStyle} collapsible collapsed={collapsed} trigger={null}>
+                        <Sider width={200} style={siderStyle} collapsible collapsed={collapsed} trigger={null} >
                             <Menu
                                 mode="inline"
                                 defaultSelectedKeys={['1']}
@@ -127,12 +133,15 @@ export default function ProtectedLayout({
                             <Content
                                 style={{
                                     padding: 24,
+                                    paddingTop: 0,
                                     margin: 0,
                                     minHeight: 280,
                                     borderRadius: borderRadiusLG,
                                 }}
                             >
-                                {children}
+                                <QueryProviders>
+                                    {children}
+                                </QueryProviders>
                             </Content>
                         </Layout>
                     </Layout>

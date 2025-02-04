@@ -1,26 +1,21 @@
-
-import { useState } from 'react';
-import { addPatient } from '@/services/api';
-import { PatientType } from '@/types/entity/patient';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addPatient } from "@/services/api";
+import { PatientType } from "@/types/entity/patient";
 
 const useAddPatient = () => {
-    const [loadingAdd, setLoadingAdd] = useState<boolean>(true);
-    const [errorAdd, setErrorAdd] = useState<Error | null>(null);
+    const queryClient = useQueryClient();
 
-    const createNewPatient = async (patientData: PatientType) => {
-        setLoadingAdd(true);
-        try {
-            const newPatient = await addPatient(patientData);
-            return newPatient; // Return the created patient
-        } catch (error: any) {            
-            setErrorAdd(error);
-        } finally {
-            setLoadingAdd(false);
-        }
-    };
+    const mutation = useMutation({
+        mutationFn: (patientData: PatientType) => addPatient(patientData),
+        onSuccess: (newPatient) => {
+            queryClient.invalidateQueries({ queryKey: ["patients"], exact: false });
+        },
+        onError: (error) => {
+            console.error("Error adding patient:", error);
+        },
+    });
 
-    return { createNewPatient, loadingAdd, errorAdd };
+    return mutation;
 };
-
 
 export default useAddPatient;

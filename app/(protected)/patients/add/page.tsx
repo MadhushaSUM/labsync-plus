@@ -1,219 +1,196 @@
 "use client";
 
-import BreadCrumbService from "@/components/breadcrumb/BreadcrumbService";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { NewPatientFormSchema } from "@/schema/PatientSchema";
-
-import { zodResolver } from "@hookform/resolvers/zod"
-import { format, parseISO } from "date-fns"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import useAddPatient from "@/hooks/api/useAddPatient";
 import { PatientType } from "@/types/entity/patient";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import useUpdatePatient from "@/hooks/api/useUpdatePatient";
+import {
+    Button,
+    Card,
+    Space,
+    DatePicker,
+    Form,
+    Input,
+    Select,
+} from "antd";
 
-export default function AddEditPatient() {
+import dayjs from "dayjs";
+import { calculateDateOfBirth } from "@/lib/date-utils";
+
+
+const { Meta } = Card;
+
+type AddPatientFormType = Omit<PatientType, "whatsapp_number"> & {
+    whatsapp_number: {
+        prefix: string;
+        number: string;
+    }
+}
+
+export default function AddPatient() {
     const router = useRouter();
+    const [form] = Form.useForm();
 
-    const searchParams = useSearchParams();
-    const editmode = searchParams.get("editmode");
-    const data = searchParams.get("data");
+    const { mutateAsync: createNewPatient, isPending } = useAddPatient();
 
-    const [patient, setPatient] = useState<PatientType | null>(null);
-    const [isEditMode, setIsEditMode] = useState<boolean>(false);
+    const handleSimpleDateOfBirth = (value: string) => {
+        const matchArr = value.match(new RegExp(/^(\d+y\s?)?(\d+m\s?)?(\d+d\s?)?$/));
+        let years = 0;
+        let months = 0;
+        let days = 0;
 
-    const breadcrumbArr = [
-        {
-            name: "Home",
-            link: "/dashboard"
-        },
-        {
-            name: "Patient management",
-            link: "/patient_management"
+        if (matchArr) {
+            if (matchArr[1]) {
+                years = Number(matchArr[1].split('y')[0]);
+            }
+            if (matchArr[2]) {
+                months = Number(matchArr[2].split('m')[0]);
+            }
+            if (matchArr[3]) {
+                days = Number(matchArr[3].split('d')[0]);
+            }
+
+            const dateOfBirth = calculateDateOfBirth(years, months, days);
+            form.setFieldValue("date_of_birth", dayjs(dateOfBirth));
         }
-    ];
-    const currentPageName = "Add new patient";
-
-    const form = useForm<z.infer<typeof NewPatientFormSchema>>({
-        resolver: zodResolver(NewPatientFormSchema),
-        defaultValues:
-        {
-            name: "",
-            dateOfBirth: new Date(),
-            gender: "Male",
-            contactNumber: ""
-        }
-    });
-
-    useEffect(() => {
-        if (data) {
-            const patientData: PatientType = JSON.parse(data);
-            setPatient(patientData);
-            setIsEditMode(editmode === "true");
-
-            form.reset({
-                name: patientData.name,
-                dateOfBirth: patientData.dateOfBirth,
-                gender: patientData.gender,
-                contactNumber: patientData.contactNumber
-            });
-        }
-    }, [data, editmode, form]);
-
-    const { createNewPatient, errorAdd } = useAddPatient();
-    const { updateExistingPatient, errorUpdate } = useUpdatePatient();
-    const [savingPatient, setSavingPatient] = useState(false);
-
-    if (errorAdd) {
-        toast.error(errorAdd.message);
-    }
-    if (errorUpdate) {
-        toast.error(errorUpdate.message);
     }
 
-    function onSubmit(values: z.infer<typeof NewPatientFormSchema>) {
-        setSavingPatient(true);
+    async function onSubmit(values: AddPatientFormType) {
         const savingPatient: PatientType = {
             name: values.name,
-            dateOfBirth: values.dateOfBirth.toLocaleString(),
+            date_of_birth: values.date_of_birth,
             gender: values.gender,
-            contactNumber: values.contactNumber
+            version: 1,
         };
-
-        if (isEditMode) {
-            savingPatient.id = patient?.id;
-
-            const promise = updateExistingPatient(patient?.id!, savingPatient);
-            toast.promise(promise, {
-                loading: "Updating a patient",
-                success: "Patient has been updated",
-                error: "Error while updating the patient"
-            });
-        } else {
-            const promise = createNewPatient(savingPatient);
-
-            toast.promise(promise, {
-                loading: "Creating a patient",
-                success: "Patient has been created",
-                error: "Error while creating the patient"
-            });
+        if (values.whatsapp_number.number) {
+            savingPatient.whatsapp_number = `${values.whatsapp_number.prefix}${values.whatsapp_number.number}`;
         }
-        setSavingPatient(false);
-        router.push("/patient_management");
-    }
 
-    function onFormCancel() {
-        router.push("/patient_management");
+        const promise = createNewPatient(savingPatient);
+
+        toast.promise(promise, {
+            loading: "Creating a patient",
+            success: "Patient has been created",
+            error: "Error while creating the patient"
+        });
+        try {
+            await promise;
+            router.push("/patients");
+        } catch (error) {
+            console.error(error);
+        }
+
     }
 
     return (
         <div>
             <div>
-                <Card className="apply_shadow">
-                    <CardHeader>
-                        <CardTitle>{isEditMode ? "Edit patient" : "Add patient"}</CardTitle>
-                        <CardDescription>
-                            {isEditMode ? "Edit patient details here" : "Add new patients here"}
-                        </CardDescription>
-                    </CardHeader>
-                </Card>
-            </div>
+                <Card
+                    className="apply_shadow"
+                >
+                    <Meta
+                        title="Add Patient"
+                        description="Add new patient to database"
+                    />
 
-            <BreadCrumbService breadcrumbArr={breadcrumbArr} currentPageName={currentPageName} />
+                    <div className="mt-5">
+                        <Form
+                            form={form}
+                            labelCol={{ span: 6 }}
+                            wrapperCol={{ span: 14 }}
+                            layout="horizontal"
+                            style={{ maxWidth: 600 }}
+                            onFinish={onSubmit}
+                            disabled={isPending}
+                            initialValues={{ whatsapp_number: { prefix: "+94" } }}
+                        >
+                            <Form.Item<AddPatientFormType>
+                                label="Name"
+                                name="name"
+                                required
+                                rules={[{ required: true, message: 'Please input patient name!' }]}
+                            >
+                                <Input />
+                            </Form.Item>
 
-            <div>
-                <Card className="apply_shadow">
-                    <CardContent>
-                        <div className="my-5">
-                            <Form {...form}>
-                                <form onSubmit={form.handleSubmit(onSubmit)}>
-                                    <div className="space-y-8 w-96">
-                                        <FormField
-                                            control={form.control}
-                                            name="name"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Patient name</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Ex: Mr. Jack Sparrow" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
+                            <Form.Item<AddPatientFormType>
+                                label="Gender"
+                                name="gender"
+                                required
+                                rules={[{ required: true, message: 'Please select patient gender!' }]}
+                            >
+                                <Select>
+                                    <Select.Option value="Male">Male</Select.Option>
+                                    <Select.Option value="Female">Female</Select.Option>
+                                    <Select.Option value="Other">Other</Select.Option>
+                                </Select>
+                            </Form.Item>
+
+                            <Form.Item<AddPatientFormType>
+                                label="Date of birth"
+                                style={{ marginBottom: 0 }}
+                            >
+                                <Space>
+                                    <Form.Item
+                                        name="simpleDateOfBirth"
+                                        rules={[
+                                            {
+                                                required: false,
+                                                pattern: /^(\d+y\s?)?(\d+m\s?)?(\d+d\s?)?$/,
+                                                message: "Wrong format!",
+                                            },
+                                        ]}
+                                    >
+                                        <Input
+                                            style={{ width: 190 }}
+                                            placeholder="00y 00m 00d"
+                                            onChange={(e) => handleSimpleDateOfBirth(e.target.value)}
                                         />
-                                        <FormField
-                                            control={form.control}
-                                            name="dateOfBirth"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Patient birth date</FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            placeholder="YYYY-MM-DD"
-                                                            type="date"
-                                                            value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
-                                                            onChange={(e) => field.onChange(e.target.value && parseISO(e.target.value))}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="gender"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Gender</FormLabel>
-                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                        <FormControl>
-                                                            <SelectTrigger>
-                                                                <SelectValue placeholder="Select gender" />
-                                                            </SelectTrigger>
-                                                        </FormControl>
-                                                        <SelectContent>
-                                                            <SelectItem value="Male">Male</SelectItem>
-                                                            <SelectItem value="Female">Female</SelectItem>
-                                                            <SelectItem value="Other">Other</SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="contactNumber"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Patient phone number</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Ex: +947012345667" type="tel" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                    <div className="flex flex-row justify-end gap-2">
-                                        <Button size="sm" variant="outline" type="reset" onClick={onFormCancel}>
-                                            Cancel
-                                        </Button>
-                                        <Button type="submit" size="sm">
-                                            {savingPatient ? "Saving" : "Save patient"}
-                                        </Button>
-                                    </div>
-                                </form>
-                            </Form>
-                        </div>
-                    </CardContent>
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        name="date_of_birth"
+                                        required
+                                        rules={[{ required: true, message: 'Please select patient date of birth!' }]}
+                                    >
+                                        <DatePicker />
+                                    </Form.Item>
+                                </Space>
+                            </Form.Item>
+
+                            <Form.Item<AddPatientFormType>
+                                label="WhatsApp number"
+                            >
+                                <Space.Compact>
+                                    <Form.Item<AddPatientFormType>
+                                        name={["whatsapp_number", "prefix"]}
+                                        noStyle
+                                    >
+                                        <Input style={{ width: '20%' }} />
+                                    </Form.Item>
+                                    <Form.Item<AddPatientFormType>
+                                        name={["whatsapp_number", "number"]}
+                                        noStyle
+                                        hasFeedback
+                                        validateDebounce={500}
+                                        rules={[{ len: 9, message: 'Please enter a valid contact number!' }]}
+                                    >
+                                        <Input style={{ width: '80%' }} />
+                                    </Form.Item>
+                                </Space.Compact>
+                            </Form.Item>
+
+                            <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
+                                <div className="flex flex-row gap-5">
+                                    <Button type="primary" htmlType="submit">
+                                        Add Patient
+                                    </Button>
+                                    <Button type="default" onClick={() => router.push("/patients")}>Go Back</Button>
+                                </div>
+                            </Form.Item>
+                        </Form>
+                    </div>
                 </Card>
             </div>
         </div>

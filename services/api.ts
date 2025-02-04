@@ -5,9 +5,13 @@ import { PatientType } from "@/types/entity/patient";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const fetchPatients = async ({ limit, skip }: PatientRequestDtoType, signal: AbortSignal) => {   
-     
-    const response = await fetch(`${API_BASE_URL}/patient/getAll?limit=${limit}&skip=${skip}`, { signal });
+export const fetchPatients = async ({ limit, skip, search }: PatientRequestDtoType, signal: AbortSignal) => {
+    let params = `limit=${limit}&offset=${skip}`;
+    if (search) {
+        params += `&search=${search}`;
+    }
+    const response = await fetch(`${API_BASE_URL}/patient/all?${params}`, { signal });
+
     if (!response.ok) {
         throw new Error('Failed to fetch patients');
     }
@@ -15,8 +19,8 @@ export const fetchPatients = async ({ limit, skip }: PatientRequestDtoType, sign
     return response.json();
 };
 
-export const searchPatientsByName = async (query: string, signal: AbortSignal) => {   
-     
+export const searchPatientsByName = async (query: string, signal: AbortSignal) => {
+
     const response = await fetch(`${API_BASE_URL}/patient/searchByName?query=${query}`, { signal });
     if (!response.ok) {
         throw new Error('Failed to search patients');
@@ -26,39 +30,45 @@ export const searchPatientsByName = async (query: string, signal: AbortSignal) =
 };
 
 export const addPatient = async (patient: PatientType) => {
-    const response = await fetch(`${API_BASE_URL}/patient/add`, {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(patient)
-    });
-    if (!response.ok) {
-        throw new Error('Failed to add patient');
-    }
+    try {
+        const response = await fetch(`${API_BASE_URL}/patient`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(patient)
+        });
 
-    return response.json();
+        return response.json();
+    } catch (error) {
+        throw error;
+    }
 };
 
 export const updatePatient = async (patientId: number, patientData: PatientType, signal?: AbortSignal): Promise<PatientType> => {
-    
-    const response = await fetch(`${API_BASE_URL}/patient/update?id=${patientId}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(patientData),
-    });
+    try {
+        const response = await fetch(`${API_BASE_URL}/patient/${patientId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(patientData),
+        });
 
-    if (!response.ok) {
-        throw new Error('Failed to update patient');
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to update patient");
+        }
+
+        return response.json();
+    } catch (error) {
+        throw error;
     }
-
-    return response.json();
 };
 
+
 export const deletePatient = async (patientIds: number[], signal?: AbortSignal): Promise<boolean> => {
-    
+
     const response = await fetch(`${API_BASE_URL}/patient/delete?ids=${patientIds}`, {
         method: 'DELETE',
         headers: {
@@ -74,7 +84,7 @@ export const deletePatient = async (patientIds: number[], signal?: AbortSignal):
 };
 
 
-export const fetchDoctors = async ({ limit, skip }: DoctorRequestDtoType, signal: AbortSignal) => {    
+export const fetchDoctors = async ({ limit, skip }: DoctorRequestDtoType, signal: AbortSignal) => {
     const response = await fetch(`${API_BASE_URL}/doctor/getAll?limit=${limit}&skip=${skip}`, { signal });
     if (!response.ok) {
         throw new Error('Failed to fetch doctors');
@@ -83,8 +93,8 @@ export const fetchDoctors = async ({ limit, skip }: DoctorRequestDtoType, signal
     return response.json();
 };
 
-export const searchDoctorsByName = async (query: string, signal: AbortSignal) => {   
-     
+export const searchDoctorsByName = async (query: string, signal: AbortSignal) => {
+
     const response = await fetch(`${API_BASE_URL}/doctor/searchByName?query=${query}`, { signal });
     if (!response.ok) {
         throw new Error('Failed to search patients');
@@ -109,7 +119,7 @@ export const addDoctor = async (doctor: DoctorType) => {
 };
 
 export const updateDoctor = async (doctorId: number, doctorData: DoctorType, signal?: AbortSignal): Promise<DoctorType> => {
-    
+
     const response = await fetch(`${API_BASE_URL}/doctor/update?id=${doctorId}`, {
         method: 'PUT',
         headers: {

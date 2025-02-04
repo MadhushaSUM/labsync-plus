@@ -10,6 +10,8 @@ const breadcrumbNameMap: { [key: string]: string } = {
     "/": "Home",
     "/dashboard": "Dashboard",
     "/patients": "Patients",
+    "/patients/add": "Add",
+    "/patients/edit": "Edit",
     "/products": "Products",
     "/products/[id]": "Product Details",
 };
@@ -20,6 +22,7 @@ export default function Breadcrumbs() {
 
     const breadcrumbItems = pathSegments.map((segment, index) => {
         const url = `/${pathSegments.slice(0, index + 1).join("/")}`;
+        
         return {
             title: (
                 <Link href={url}>

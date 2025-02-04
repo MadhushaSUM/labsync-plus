@@ -1,9 +1,10 @@
 import { SearchBoxItem } from "../commonTypes";
 
-export interface PatientType extends SearchBoxItem{
+export interface PatientType extends SearchBoxItem {
     id?: number;
     name: string;
-    dateOfBirth: string;
+    date_of_birth: Date;
     gender: "Male" | "Female" | "Other";
-    contactNumber: string;
+    whatsapp_number?: string;
+    version: number;
 }

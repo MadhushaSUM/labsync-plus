@@ -1,24 +1,24 @@
-import { useState } from 'react';
-import { updatePatient } from '@/services/api';
-import { PatientType } from '@/types/entity/patient'; 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updatePatient } from "@/services/api";
+import { PatientType } from "@/types/entity/patient";
 
 const useUpdatePatient = () => {
-    const [loadingUpdate, setLoadingUpdate] = useState<boolean>(false);
-    const [errorUpdate, setErrorUpdate] = useState<Error | null>(null);
+    const queryClient = useQueryClient();
 
-    const updateExistingPatient = async (patientId: number, patientData: PatientType, signal?: AbortSignal) => {
-        setLoadingUpdate(true);
-        try {
-            const updatedPatient = await updatePatient(patientId, patientData, signal);
-            return updatedPatient;
-        } catch (error: any) {
-            setErrorUpdate(error);
-        } finally {
-            setLoadingUpdate(false);
+    const mutation = useMutation({
+        mutationFn: ({ patientId, patientData, signal }: { patientId: number; patientData: PatientType; signal?: AbortSignal }) => 
+            updatePatient(patientId, patientData, signal),
+
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["patients"], exact: false });
+        },
+
+        onError: (error) => {
+            console.error("Error updating patient:", error);
         }
-    };
+    });
 
-    return { updateExistingPatient, loadingUpdate, errorUpdate };
+    return mutation;
 };
 
 export default useUpdatePatient;
