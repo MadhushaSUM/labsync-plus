@@ -25,6 +25,11 @@ const siderItems: MenuProps['items'] = [
         label: "Patients",
     },
     {
+        key: "/doctors",
+        icon: React.createElement(UserOutlined),
+        label: "Doctors",
+    },
+    {
         key: "items",
         icon: React.createElement(HomeOutlined),
         label: "Items",

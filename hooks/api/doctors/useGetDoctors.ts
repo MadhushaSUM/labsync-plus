@@ -1,39 +1,19 @@
+import { useQuery } from "@tanstack/react-query";
+import { fetchDoctors } from "@/services/api";
+import { Page } from "@/types/Dto/CommonNetworkTypes";
+import { DoctorType } from "@/types/entity/doctor";
+import { DoctorRequestDtoType } from "@/types/Dto/DoctorDto";
 
-import { useState, useEffect } from 'react';
-import { Page } from '@/types/Dto/CommonNetworkTypes';
-import { DoctorRequestDtoType } from '@/types/Dto/DoctorDto';
-import { fetchDoctors } from '@/services/api';
-import { DoctorType } from '@/types/entity/doctor';
+const useGetDoctors = ({ limit, skip, search }: DoctorRequestDtoType) => {
+    const controller = new AbortController();
+    const { signal } = controller;
 
-const useGetDoctors = ({ limit, skip }: DoctorRequestDtoType) => {
-    const [data, setData] = useState<Page<DoctorType>>({ content: [], totalPages: 0, totalElements: 0 });
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<Error | null>(null);    
-
-    useEffect(() => {
-        const controller = new AbortController();
-        const { signal } = controller;
-
-        const loadPatients = async () => {
-            setLoading(true);
-            try {
-                const patients = await fetchDoctors({ limit, skip }, signal);
-                setData(patients);
-            } catch (error: any) {
-                if (error.name !== 'AbortError') {
-                    setError(error);
-                }
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadPatients();
-
-        return () => controller.abort();
-    }, [limit, skip]);
-
-    return { data, loading, error };
+    return useQuery<Page<DoctorType>>({
+        queryKey: ["doctors", limit, skip, search], // Unique cache key
+        queryFn: () => fetchDoctors({ limit, skip, search }, signal),
+        staleTime: 1000 * 60 * 5, // Cache data for 5 minutes
+        refetchOnWindowFocus: false, // Avoid refetching when switching tabs
+    });
 };
 
 export default useGetDoctors;

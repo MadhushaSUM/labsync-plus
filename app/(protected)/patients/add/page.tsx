@@ -4,7 +4,6 @@ import useAddPatient from "@/hooks/api/useAddPatient";
 import { PatientType } from "@/types/entity/patient";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import useUpdatePatient from "@/hooks/api/useUpdatePatient";
 import {
     Button,
     Card,

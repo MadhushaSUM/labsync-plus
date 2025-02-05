@@ -13,7 +13,8 @@ export const fetchPatients = async ({ limit, skip, search }: PatientRequestDtoTy
     const response = await fetch(`${API_BASE_URL}/patient/all?${params}`, { signal });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch patients');
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch patient");
     }
 
     return response.json();
@@ -38,6 +39,11 @@ export const addPatient = async (patient: PatientType) => {
             },
             body: JSON.stringify(patient)
         });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to add patient");
+        }
 
         return response.json();
     } catch (error) {
@@ -77,17 +83,24 @@ export const deletePatient = async (patientIds: number[], signal?: AbortSignal):
     });
 
     if (!response.ok) {
-        throw new Error('Failed to delete patients');
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete patient");
     }
 
     return response.json();
 };
 
 
-export const fetchDoctors = async ({ limit, skip }: DoctorRequestDtoType, signal: AbortSignal) => {
-    const response = await fetch(`${API_BASE_URL}/doctor/getAll?limit=${limit}&skip=${skip}`, { signal });
+export const fetchDoctors = async ({ limit, skip, search }: DoctorRequestDtoType, signal: AbortSignal) => {
+    let params = `limit=${limit}&offset=${skip}`;
+    if (search) {
+        params += `&search=${search}`;
+    }
+    const response = await fetch(`${API_BASE_URL}/doctor/all?${params}`, { signal });
+
     if (!response.ok) {
-        throw new Error('Failed to fetch doctors');
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch doctors");
     }
 
     return response.json();
@@ -104,15 +117,17 @@ export const searchDoctorsByName = async (query: string, signal: AbortSignal) =>
 };
 
 export const addDoctor = async (doctor: DoctorType) => {
-    const response = await fetch(`${API_BASE_URL}/doctor/add`, {
+    const response = await fetch(`${API_BASE_URL}/doctor`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(doctor)
     });
+    
     if (!response.ok) {
-        throw new Error('Failed to add doctor');
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to add patient");
     }
 
     return response.json();
@@ -120,7 +135,7 @@ export const addDoctor = async (doctor: DoctorType) => {
 
 export const updateDoctor = async (doctorId: number, doctorData: DoctorType, signal?: AbortSignal): Promise<DoctorType> => {
 
-    const response = await fetch(`${API_BASE_URL}/doctor/update?id=${doctorId}`, {
+    const response = await fetch(`${API_BASE_URL}/doctor/${doctorId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -129,7 +144,8 @@ export const updateDoctor = async (doctorId: number, doctorData: DoctorType, sig
     });
 
     if (!response.ok) {
-        throw new Error('Failed to update doctor');
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update doctor");
     }
 
     return response.json();
