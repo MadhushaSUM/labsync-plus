@@ -1,6 +1,10 @@
 export interface InvestigationRegistryRequestDtoType {
     limit: number;
     skip: number;
+    patientId?: number;
+    startDate?: string;
+    endDate?: string;
+    refNumber?: number;
 }
 
 export interface NewInvestigationRegistryRequestDtoType {

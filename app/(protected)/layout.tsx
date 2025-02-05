@@ -4,7 +4,7 @@ import "antd/dist/reset.css";
 import { Button, ConfigProvider, Layout, Menu, theme, MenuProps } from "antd";
 import { useState, useEffect } from "react";
 import React from 'react';
-import { AuditOutlined, HomeOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, } from '@ant-design/icons';
+import { AuditOutlined, FolderOpenOutlined, HomeOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, } from '@ant-design/icons';
 import ToggleThemeButton from "@/components/ToggleThemeButton";
 import { useRouter } from "next/navigation";
 import Breadcrumbs from "@/components/breadcrumb/BreadcrumbService";
@@ -18,6 +18,11 @@ const siderItems: MenuProps['items'] = [
         key: "/dashboard",
         icon: React.createElement(HomeOutlined),
         label: "Home",
+    },
+    {
+        key: "/registrations",
+        icon: React.createElement(FolderOpenOutlined),
+        label: "Registrations",
     },
     {
         key: "/patients",

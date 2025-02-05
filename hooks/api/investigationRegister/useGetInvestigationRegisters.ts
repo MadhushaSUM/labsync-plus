@@ -1,39 +1,20 @@
-
-import { useState, useEffect } from 'react';
 import { Page } from '@/types/Dto/CommonNetworkTypes';
-import { InvestigationRegistryRequestDtoType } from '@/types/Dto/InvestigationRegistryDto';
-import { InvestigationRegisterType } from '@/types/entity/investigationRegister';
+import { Registration } from '@/types/entity/investigationRegister';
 import { fetchInvestigationRegistrations } from '@/services/investigationRegistrationAPI';
+import { useQuery } from "@tanstack/react-query";
+import { InvestigationRegistryRequestDtoType } from '@/types/Dto/InvestigationRegistryDto';
 
-const useGetInvestigationRegisters = ({ limit, skip }: InvestigationRegistryRequestDtoType) => {
-    const [data, setData] = useState<Page<InvestigationRegisterType>>({ content: [], totalPages: 0, totalElements: 0 });
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<Error | null>(null);    
+const useGetInvestigationRegisters = ({ limit, skip, patientId, startDate, endDate, refNumber }: InvestigationRegistryRequestDtoType) => {
+    const controller = new AbortController();
+    const { signal } = controller;
 
-    useEffect(() => {
-        const controller = new AbortController();
-        const { signal } = controller;
-
-        const loadInvestigationRegisters = async () => {
-            setLoading(true);
-            try {
-                const investigationRegisters = await fetchInvestigationRegistrations({ limit, skip }, signal);
-                setData(investigationRegisters);
-            } catch (error: any) {
-                if (error.name !== 'AbortError') {
-                    setError(error);
-                }
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadInvestigationRegisters();
-
-        return () => controller.abort();
-    }, [limit, skip]);
-
-    return { data, loading, error };
+    return useQuery<Page<Registration>>({
+        queryKey: ["registrations", limit, skip, patientId, startDate, endDate, refNumber], // Unique cache key
+        queryFn: () => fetchInvestigationRegistrations({ limit, skip, patientId, startDate, endDate, refNumber }, signal),
+        staleTime: 1000 * 60 * 5, // Cache data for 5 minutes
+        refetchOnWindowFocus: false, // Avoid refetching when switching tabs
+    });
 };
 
 export default useGetInvestigationRegisters;
+

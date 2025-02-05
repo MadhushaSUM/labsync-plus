@@ -13,7 +13,6 @@ const useGetPatients = ({ limit, skip, search }: PatientRequestDtoType) => {
         queryFn: () => fetchPatients({ limit, skip, search }, signal),
         staleTime: 1000 * 60 * 5, // Cache data for 5 minutes
         refetchOnWindowFocus: false, // Avoid refetching when switching tabs
-        // keepPreviousData: true, // Keeps old data while fetching new data
     });
 };
 

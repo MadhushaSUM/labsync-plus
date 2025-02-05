@@ -63,13 +63,7 @@ export default function AuditTrail() {
         }
 
     }
-    const onSearchDateClear = () => {
-        setSearchDates({
-            startDate: undefined,
-            endDate: undefined
-        });
-    }
-
+    
     return (
         <div>
             <Card className="apply_shadow">

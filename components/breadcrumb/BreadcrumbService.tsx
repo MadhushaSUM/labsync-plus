@@ -16,6 +16,8 @@ const breadcrumbNameMap: { [key: string]: string } = {
     "/doctors/add": "Add",
     "/doctors/edit": "Edit",
     "/audit-trail": "Audit Trail",
+    "/registrations": "Registrations",
+    "/registrations/add": "Add",
 };
 
 export default function Breadcrumbs() {

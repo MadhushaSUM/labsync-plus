@@ -1,13 +1,29 @@
 import { AddInvestigationDataRequestDto, TestAnalysisDataRequestDto, UpdateInvestigationDataRequestDto } from "@/types/Dto/InvestigationData";
 import { InvestigationRegistryRequestDtoType, NewInvestigationRegistryRequestDtoType } from "@/types/Dto/InvestigationRegistryDto";
-import { InvestigationRegisterType } from "@/types/entity/investigationRegister";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_INVESTIGATION_REGISTER_BASE_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const fetchInvestigationRegistrations = async ({ limit, skip }: InvestigationRegistryRequestDtoType, signal: AbortSignal) => {
-    const response = await fetch(`${API_BASE_URL}/investigationRegister/getAll?limit=${limit}&skip=${skip}`, { signal });
+export const fetchInvestigationRegistrations = async ({ limit, skip, patientId, startDate, endDate, refNumber }: InvestigationRegistryRequestDtoType, signal: AbortSignal) => {
+    let params = `limit=${limit}&offset=${skip}`;
+    
+    if (patientId) {
+        params += `&patientId=${patientId}`;
+    }
+    if (startDate) {
+        params += `&startDate=${startDate}`;
+    }
+    if (endDate) {
+        params += `&endDate=${endDate}`;
+    }
+    if (refNumber) {
+        params += `&refNumber=${refNumber}`;
+    }
+    
+    const response = await fetch(`${API_BASE_URL}/investigation-registration/all?${params}`, { signal });
+    
     if (!response.ok) {
-        throw new Error('Failed to fetch investigation registry');
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch registrations");
     }
 
     return response.json();
@@ -42,7 +58,7 @@ export const updateInvestigationRegistrations = async (investigationRegisterId: 
         throw new Error('Failed to update investigation registration');
     }
 
-    return response; 
+    return response;
 };
 
 export const addInvestigationData = async (investigationData: AddInvestigationDataRequestDto) => {
@@ -56,7 +72,7 @@ export const addInvestigationData = async (investigationData: AddInvestigationDa
     if (!response.ok) {
         throw new Error('Failed to add investigation data');
     }
-    
+
     return response;
 };
 
