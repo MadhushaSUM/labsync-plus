@@ -26,3 +26,10 @@ export interface NormalRangeType {
     valueLowerBound: number,
     valueUpperBound: number
 }
+
+export interface NormalRange {
+    id: number,
+    test_id: number,
+    test_field_id: number,
+    rules: object[]
+}
