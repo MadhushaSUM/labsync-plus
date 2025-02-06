@@ -1,24 +1,24 @@
 import { updateInvestigationRegistrations } from '@/services/investigationRegistrationAPI';
-import { NewInvestigationRegistryRequestDtoType } from '@/types/Dto/InvestigationRegistryDto';
-import { useState } from 'react';
+import { UpdateRegistrationRequestDtoType } from '@/types/Dto/InvestigationRegistryDto';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-const useUpdateInvestigationRegister = () => {
-    const [loadingUpdate, setLoadingUpdate] = useState<boolean>(false);
-    const [errorUpdate, setErrorUpdate] = useState<Error | null>(null);
+const useUpdateRegistration = () => {
+    const queryClient = useQueryClient();
 
-    const updateExistingInvestigationRegister = async (investigationRegisterId: number, investigationRegisterData: NewInvestigationRegistryRequestDtoType, signal?: AbortSignal) => {
-        setLoadingUpdate(true);
-        try {
-            const updatedPatient = await updateInvestigationRegistrations(investigationRegisterId, investigationRegisterData, signal);
-            return updatedPatient;
-        } catch (error: any) {
-            setErrorUpdate(error);
-        } finally {
-            setLoadingUpdate(false);
+    const mutation = useMutation({
+        mutationFn: ({ registrationId, registrationData, signal }: { registrationId: number; registrationData: UpdateRegistrationRequestDtoType; signal?: AbortSignal }) =>
+            updateInvestigationRegistrations(registrationId, registrationData, signal),
+
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["registrations"], exact: false });
+        },
+
+        onError: (error) => {
+            console.error("Error updating registration:", error);
         }
-    };
+    });
 
-    return { updateExistingInvestigationRegister, loadingUpdate, errorUpdate };
+    return mutation;
 };
 
-export default useUpdateInvestigationRegister;
+export default useUpdateRegistration;

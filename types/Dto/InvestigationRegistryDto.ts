@@ -8,9 +8,27 @@ export interface InvestigationRegistryRequestDtoType {
 }
 
 export interface NewInvestigationRegistryRequestDtoType {
+    date: Date;
     patient_id: number;
-    doctor_id: number;
-    investigation_ids: number[];
-    investigation_date: Date;
-    investigation_cost: number;
+    doctor_id?: number;
+    investigations: number[],
+    totalCost: number;
+    paid: number;
+    branch_id: number;
+    refNumber?: number;
+    version: number;
+}
+
+export interface UpdateRegistrationRequestDtoType {
+    id: number;
+    patient_id: number;
+    doctor_id?: number;
+    refNumber: number | null;
+    date: Date;
+    investigations: number[],
+    totalCost: number;
+    paid: number;
+    collected: boolean;
+    branch_id: number;
+    version: number;
 }

@@ -1,15 +1,18 @@
 "use client";
 
 import { Registration } from "@/types/entity/investigationRegister";
-import { Card, Button, Table, Input, TableColumnsType, Flex, Tag } from "antd";
+import { Card, Button, Table, TableColumnsType, Flex, Tag, InputNumber, DatePicker, Select, Spin } from "antd";
 import { formatISO } from "date-fns";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import useGetInvestigationRegisters from "@/hooks/api/investigationRegister/useGetInvestigationRegisters";
+import { calculateAge } from "@/lib/date-utils";
+import useGetPatients from "@/hooks/api/useGetPatients";
+import { debounce } from "lodash";
 
 const { Meta } = Card;
-const { Search } = Input;
+const { Option } = Select;
 
 export default function InvestigationRegistration() {
     const router = useRouter();
@@ -17,10 +20,53 @@ export default function InvestigationRegistration() {
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
 
-    const { data, error, isLoading } = useGetInvestigationRegisters({ limit: pageSize, skip: (currentPage - 1) * pageSize })
+    const [filters, setFilters] = useState({
+        patientId: undefined,
+        refNumber: undefined,
+        dateRange: { fromDate: undefined, toDate: undefined },
+    });
+
+    const [debouncedFilters, setDebouncedFilters] = useState(filters);
+
+    const updateFilter = (key: any, value: any) => {
+        setFilters((prev) => ({ ...prev, [key]: value }));
+    };
+
+    const debouncedUpdate = useMemo(
+        () =>
+            debounce((newFilters) => {
+                setDebouncedFilters(newFilters);
+            }, 500),
+        []
+    );
+
+    useEffect(() => {
+        debouncedUpdate(filters);
+        return () => debouncedUpdate.cancel();
+    }, [filters, debouncedUpdate]);
+
+    const { data, error, isLoading } = useGetInvestigationRegisters({
+        limit: pageSize,
+        skip: (currentPage - 1) * pageSize,
+        patientId: debouncedFilters.patientId,
+        refNumber: debouncedFilters.refNumber,
+        startDate: debouncedFilters.dateRange.fromDate,
+        endDate: debouncedFilters.dateRange.toDate,
+    });
 
     if (error) {
         toast.error(error.message);
+    }
+
+    // Patient
+    const [patientSearchPhrase, setPatientSearchPhrase] = useState("");
+
+    const { data: patientResults, error: patientFetchError, isLoading: patientLoading } = useGetPatients({ limit: 5, skip: 0, search: patientSearchPhrase });
+    if (patientFetchError) {
+        toast.error(patientFetchError.message);
+    }
+    const onPatientSearch = (value: string) => {
+        setPatientSearchPhrase(value);
     }
 
     const [testRegistrations, setTestRegistrations] = useState<Registration[]>([]);
@@ -71,7 +117,10 @@ export default function InvestigationRegistration() {
                         size='small'
                         variant='outlined'
                         color='default'
-                        onClick={() => { }}
+                        onClick={() => {
+                            const registrationData = encodeURIComponent(JSON.stringify(record));
+                            router.push(`/registrations/edit?data=${registrationData}`)
+                        }}
                     >
                         Edit
                     </Button>
@@ -200,7 +249,40 @@ export default function InvestigationRegistration() {
 
                 <div className="mt-5">
                     <div className="flex flex-row gap-5 mb-2 justify-between">
-                        <Search placeholder="Search by name" style={{ width: "20%" }} allowClear />
+                        <div className="flex flex-row gap-2">
+                            <Select
+                                showSearch
+                                allowClear
+                                placeholder="Search for a patient"
+                                onSearch={onPatientSearch}
+                                onSelect={(value) => updateFilter("patientId", value)}
+                                onClear={() => updateFilter("patientId", undefined)}
+                                notFoundContent={patientLoading ? <Spin size="small" /> : "No patients found"}
+                                filterOption={false}
+                                style={{ width: 300 }}
+                            >
+                                {patientResults && patientResults.content.map((patient) => (
+                                    <Option key={patient.id} value={patient.id}>
+                                        {patient.name} [{calculateAge(patient.date_of_birth)}]
+                                    </Option>
+                                ))}
+                            </Select>
+                            <InputNumber
+                                placeholder="Reference Number"
+                                controls={false}
+                                style={{ width: 150 }}
+                                onChange={(value) => updateFilter("refNumber", value)}
+                            />
+                            <DatePicker.RangePicker
+                                onChange={(_, dateStrings) => {
+                                    updateFilter("dateRange", {
+                                        fromDate: dateStrings[0] ? formatISO(new Date(dateStrings[0]), { representation: "date" }) : undefined,
+                                        toDate: dateStrings[1] ? formatISO(new Date(dateStrings[1]), { representation: "date" }) : undefined,
+                                    });
+                                }}
+                                allowClear
+                            />
+                        </div>
                         <Button color="primary" variant="solid" onClick={onClickAdd}>Add</Button>
                     </div>
                     <Table
@@ -220,7 +302,7 @@ export default function InvestigationRegistration() {
                         }}
                     />
                 </div>
-            </Card>
-        </div>
+            </Card >
+        </div >
     );
 }

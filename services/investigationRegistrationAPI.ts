@@ -1,11 +1,11 @@
 import { AddInvestigationDataRequestDto, TestAnalysisDataRequestDto, UpdateInvestigationDataRequestDto } from "@/types/Dto/InvestigationData";
-import { InvestigationRegistryRequestDtoType, NewInvestigationRegistryRequestDtoType } from "@/types/Dto/InvestigationRegistryDto";
+import { InvestigationRegistryRequestDtoType, NewInvestigationRegistryRequestDtoType, UpdateRegistrationRequestDtoType } from "@/types/Dto/InvestigationRegistryDto";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const fetchInvestigationRegistrations = async ({ limit, skip, patientId, startDate, endDate, refNumber }: InvestigationRegistryRequestDtoType, signal: AbortSignal) => {
     let params = `limit=${limit}&offset=${skip}`;
-    
+
     if (patientId) {
         params += `&patientId=${patientId}`;
     }
@@ -18,9 +18,9 @@ export const fetchInvestigationRegistrations = async ({ limit, skip, patientId, 
     if (refNumber) {
         params += `&refNumber=${refNumber}`;
     }
-    
+
     const response = await fetch(`${API_BASE_URL}/investigation-registration/all?${params}`, { signal });
-    
+
     if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to fetch registrations");
@@ -30,23 +30,25 @@ export const fetchInvestigationRegistrations = async ({ limit, skip, patientId, 
 };
 
 export const addInvestigationRegistrations = async (investigationRegister: NewInvestigationRegistryRequestDtoType) => {
-    const response = await fetch(`${API_BASE_URL}/investigationRegister/add`, {
+    const response = await fetch(`${API_BASE_URL}/investigation-registration`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(investigationRegister)
     });
+
     if (!response.ok) {
-        throw new Error('Failed to add investigation registration');
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to add registration");
     }
 
     return response;
 };
 
-export const updateInvestigationRegistrations = async (investigationRegisterId: number, investigationRegisterData: NewInvestigationRegistryRequestDtoType, signal?: AbortSignal) => {
+export const updateInvestigationRegistrations = async (investigationRegisterId: number, investigationRegisterData: UpdateRegistrationRequestDtoType, signal?: AbortSignal) => {
 
-    const response = await fetch(`${API_BASE_URL}/investigationRegister/update?id=${investigationRegisterId}`, {
+    const response = await fetch(`${API_BASE_URL}/investigation-registration/${investigationRegisterId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -55,7 +57,8 @@ export const updateInvestigationRegistrations = async (investigationRegisterId: 
     });
 
     if (!response.ok) {
-        throw new Error('Failed to update investigation registration');
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update registration");
     }
 
     return response;

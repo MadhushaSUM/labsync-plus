@@ -1,26 +1,21 @@
-
 import { addInvestigationRegistrations } from '@/services/investigationRegistrationAPI';
 import { NewInvestigationRegistryRequestDtoType } from '@/types/Dto/InvestigationRegistryDto';
-import { useState } from 'react';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const useAddInvestigationRegister = () => {
-    const [loadingAdd, setLoadingAdd] = useState<boolean>(true);
-    const [errorAdd, setErrorAdd] = useState<Error | null>(null);
+    const queryClient = useQueryClient();
 
-    const createNewInvestigationRegister = async (investigationRegister: NewInvestigationRegistryRequestDtoType) => {
-        setLoadingAdd(true);
-        try {
-            const newPatient = await addInvestigationRegistrations(investigationRegister);
-            return newPatient; // Return the created patient
-        } catch (error: any) {            
-            setErrorAdd(error);
-        } finally {
-            setLoadingAdd(false);
-        }
-    };
+    const mutation = useMutation({
+        mutationFn: (investigationRegister: NewInvestigationRegistryRequestDtoType) => addInvestigationRegistrations(investigationRegister),
+        onSuccess: (investigationRegister) => {
+            queryClient.invalidateQueries({ queryKey: ["registrations"], exact: false });
+        },
+        onError: (error) => {
+            console.error("Error adding registration:", error);
+        },
+    });
 
-    return { createNewInvestigationRegister, loadingAdd, errorAdd };
+    return mutation;
 };
-
 
 export default useAddInvestigationRegister;
