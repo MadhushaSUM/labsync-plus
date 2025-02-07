@@ -1,5 +1,6 @@
 import { NormalRangesDto } from "@/types/commonTypes";
 import { PatientRequestDtoType } from "@/types/Dto/patientDto";
+import { Test } from "@/types/entity/investigation";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -41,4 +42,25 @@ export const addNormalRanges = async (normalRanges: NormalRangesDto) => {
     }
 
     return response;
+};
+
+export const updateInvestigationPrice = async (id: number, investigation: Test, signal?: AbortSignal): Promise<Test> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/investigations/price/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(investigation),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to update investigation price");
+        }
+
+        return response.json();
+    } catch (error) {
+        throw error;
+    }
 };
