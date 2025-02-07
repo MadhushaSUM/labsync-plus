@@ -17,3 +17,5 @@ const useGetInvestigations = ({ limit, skip, search }: PatientRequestDtoType) =>
 };
 
 export default useGetInvestigations;
+
+//TODO: this hook must be updated not to use back-end. This data is not subjected to change therefore can hardcode to front-end to cost optimize

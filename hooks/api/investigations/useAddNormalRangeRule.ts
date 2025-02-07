@@ -1,26 +1,21 @@
-
 import { addNormalRanges } from '@/services/investigationAPI';
-import { NormalRangesDto } from '@/types/commonTypes';
-import { useState } from 'react';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { NormalRange } from '@/types/entity/investigation';
 
 const useAddNormalRangeRule = () => {
-    const [loadingAdd, setLoadingAdd] = useState<boolean>(true);
-    const [errorAdd, setErrorAdd] = useState<Error | null>(null);
+    const queryClient = useQueryClient();
 
-    const addNormalRangeRule = async (normalRangeRule: NormalRangesDto) => {
-        setLoadingAdd(true);
-        try {
-            const response = await addNormalRanges(normalRangeRule);
-            return response;
-        } catch (error: any) {            
-            setErrorAdd(error);
-        } finally {
-            setLoadingAdd(false);
+    const mutation = useMutation({
+        mutationFn: (normalRanges: NormalRange) => addNormalRanges(normalRanges),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["normal-ranges"], exact: false });
+        },
+        onError: (error) => {
+            console.error("Error updating normal range rules:", error);
         }
-    };
+    });
 
-    return { addNormalRangeRule, loadingAdd, errorAdd };
+    return mutation;
 };
-
 
 export default useAddNormalRangeRule;

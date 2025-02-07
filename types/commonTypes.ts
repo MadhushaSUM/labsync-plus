@@ -1,22 +1,3 @@
-import { PatientType } from "./entity/patient";
-
-export interface SearchBoxItem {
-    id?: number;
-    name: string;
-}
-
-export interface InvestigationFormProps {
-    patient: PatientType;
-    investigationRegisterId: number;
-    investigationId: number;
-}
-
-export interface NormalRangesDto {
-    id?: number;
-    investigationId: number;
-    fieldName: string;
-    normalRanges: NormalRangeType[];
-}
 
 export interface NormalRangeType {
     id?: string;
@@ -25,11 +6,4 @@ export interface NormalRangeType {
     ageUpperBound: number,
     valueLowerBound: number,
     valueUpperBound: number
-}
-
-export interface NormalRange {
-    id: number,
-    test_id: number,
-    test_field_id: number,
-    rules: object[]
 }
