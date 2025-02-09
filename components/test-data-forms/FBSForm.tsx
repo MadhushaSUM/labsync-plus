@@ -1,126 +1,50 @@
-import { Button, Divider, Form, Input, message, Select, Spin } from "antd";
-import { debounce } from "lodash";
-import { useEffect, useState } from "react";
+import { Button, Divider, Form, Input, Select, Spin } from "antd";
+import { useState } from "react";
 import { DataEmptyTests } from "@/types/entity/investigation";
-import { NormalRange } from "@/types/commonTypes";
-import { isWithinNormalRange } from "@/lib/normalRangeFlag";
+import { displayNormalRange, setFlag } from "@/lib/normalRangeFlag";
+import { DoctorType } from "@/types/entity/doctor";
+import useGetDoctors from "@/hooks/api/doctors/useGetDoctors";
+import { toast } from "sonner";
+import useGetNormalRangesByTest from "@/hooks/api/investigations/useGetNormalRangesByTest";
+import useGetInvestigationFields from "@/hooks/api/investigations/useGetInvestigationFields";
+import useUpdateInvestigationData from "@/hooks/api/investigationData/useUpdateInvestigationData";
 
 const { Option } = Select;
 
 const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () => void }) => {
-    const [loading, setLoading] = useState(false);
-    const [messageApi, contextHolder] = message.useMessage();
     const [form] = Form.useForm();
 
-    const [doctors, setDoctors] = useState<Doctor[]>([]);
-    const [selectedDoctor, setSelectedDoctor] = useState<string | null>(null);
-    const [selectedDoctorId, setSelectedDoctorId] = useState<number | undefined>(undefined);
+    // Doctor
+    const [doctorSearchPhrase, setDoctorSearchPhrase] = useState("");
+    const [selectedDoctor, setSelectedDoctor] = useState<DoctorType>();
 
-    const [normalRanges, setNormalRanges] = useState<NormalRange[]>([]);
-    const [testFields, setTestFields] = useState<TestField[]>([]);
-
-    const fetchDoctors = debounce(async (search: string) => {
-        try {
-            setLoading(true);
-            const data = await window.electron.doctors.get(1, 5, search);
-            setDoctors(data.doctors);
-        } catch (error) {
-            console.error("Failed to fetch doctor data:", error);
-        } finally {
-            setLoading(false);
-        }
-    }, 500);
-
-    const fetchNormalRanges = async () => {
-        const res = await window.electron.normalRanges.getForTest(data.testId);
-        setNormalRanges(res.normalRanges);
+    const { data: doctorResults, error: doctorFetchError, isLoading: doctorLoading } = useGetDoctors({ limit: 5, skip: 0, search: doctorSearchPhrase });
+    if (doctorFetchError) {
+        toast.error(doctorFetchError.message);
+    }
+    const onDoctorSearch = (value: string) => {
+        setDoctorSearchPhrase(value);
+    }
+    const handleDoctorSelect = (value: number) => {
+        setSelectedDoctor(doctorResults?.content.find(doc => doc.id == value));
     }
 
-    const fetchTestFields = async () => {
-        const res = await window.electron.testFields.getForTest(data.testId);
-        setTestFields(res.test_fields);
+    // Get normal range rules
+    const { data: normalRangeRulesResults, error: rulesFetchError, isLoading: rulesLoading } = useGetNormalRangesByTest(data.testId);
+    if (rulesFetchError) {
+        toast.error(rulesFetchError.message);
     }
 
-    const handleDoctorSelect = (value: string) => {
-        setSelectedDoctor(value);
-        setSelectedDoctorId(doctors.find((doctor) => doctor.name === value)?.id);
-    };
-    const handleDoctorClear = () => {
-        setSelectedDoctor(null);
-        setSelectedDoctorId(undefined);
+    // Investigation Fields
+    const { data: investigationFieldsResults, error: investigationFieldsFetchError, isLoading: investigationFieldsLoading } = useGetInvestigationFields(data.testId);
+    if (investigationFieldsFetchError) {
+        toast.error(investigationFieldsFetchError.message);
     }
 
-    const setFlag = (label: string, value: string) => {
-        const valueNum = Number(value);
-        const fieldId = testFields.find((item) => item.name == label)?.id;
-
-        if (fieldId) {
-            const normalRangeRules: any = normalRanges.find((item) => item.test_field_id == fieldId)?.rules;
-            if (normalRangeRules) {
-                for (const rule of normalRangeRules) {
-                    if (isWithinNormalRange(data.patientDOB, data.patientGender, rule))
-                        if (rule.type == "range") {
-                            if (valueNum > rule.valueUpper) {
-                                form.setFieldValue(`${label}Flag`, 'High');
-                            } else if (valueNum < rule.valueLower) {
-                                form.setFieldValue(`${label}Flag`, 'Low');
-                            } else {
-                                form.setFieldValue(`${label}Flag`, null);
-                            }
-                        } else if (rule.type == "≥") {
-                            if (valueNum < rule.valueLower) {
-                                form.setFieldValue(`${label}Flag`, 'Low');
-                            } else {
-                                form.setFieldValue(`${label}Flag`, null);
-                            }
-                        } else {
-                            if (valueNum > rule.valueUpper) {
-                                form.setFieldValue(`${label}Flag`, 'High');
-                            } else {
-                                form.setFieldValue(`${label}Flag`, null);
-                            }
-                        }
-                    break;
-                }
-            }
-        }
-    }
-
-    const displayNormalRange = (label: string) => {
-        const fieldId = testFields.find((item) => item.name == label)?.id;
-        if (fieldId) {
-            const normalRangeRules: any = normalRanges.find((item) => item.test_field_id == fieldId)?.rules;
-            if (normalRangeRules) {
-                for (const rule of normalRangeRules) {
-                    if (isWithinNormalRange(data.patientDOB, data.patientGender, rule)) {
-                        if (rule.type == "range") {
-                            return `${rule.valueLower} - ${rule.valueUpper}`;
-                        } else if (rule.type == "≥") {
-                            return `≥ ${rule.valueLower}`;
-                        } else {
-                            return `≤ ${rule.valueUpper}`;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    useEffect(() => {
-        if (data.doctorId) {
-            setSelectedDoctorId(Number(data.doctorId));
-        }
-        fetchNormalRanges();
-        fetchTestFields();
-    }, [data]);
-
+    const { mutateAsync: updateRegistrationData, isPending } = useUpdateInvestigationData();
     const onFinish = async (values: any) => {
+
         try {
-            messageApi.open({
-                key: "saving_message",
-                type: "loading",
-                content: "Saving test data..."
-            });
             const savingData = {
                 fbsValue: Number(values.fbsValue),
                 fbsValueFlag: values.fbsValueFlag,
@@ -129,29 +53,33 @@ const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
             const options = {
                 preferred_age_format: JSON.parse(values.ageFormat)
             }
-            const res = await window.electron.testRegister.addData(data.testRegisterId, data.testId, savingData, options, selectedDoctorId);
-            if (res.success) {
+            const promise = updateRegistrationData({
+                investigationRegisterId: data.testRegisterId,
+                investigationId: data.testId,
+                body: {
+                    data: savingData,
+                    options: options,
+                    version: data.version,
+                    doctor_id: selectedDoctor?.id,
+                },
+            });
+            toast.promise(promise, {
+                loading: "Updating the registration",
+            });
+            try {
+                const res = await (await promise).json();
+                toast.success(res.message);
                 clearScreen();
-            } else {
-                messageApi.open({
-                    key: "saving_message",
-                    type: "error",
-                    content: "Error occurred while saving data!"
-                });
+            } catch (error: any) {
+                toast.error(error.toString())
             }
         } catch (error) {
             console.error(error);
-            messageApi.open({
-                key: "saving_message",
-                type: "error",
-                content: "Error occurred while saving data!"
-            });
         }
     };
 
     return (
         <div className="w-full">
-            {contextHolder}
             <p className="w-full text-lg text-center m-5 font-bold">
                 Fasting Blood Sugar
             </p>
@@ -161,6 +89,7 @@ const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 16 }}
                 form={form}
+                disabled={isPending || rulesLoading || doctorLoading || investigationFieldsLoading}
                 initialValues={
                     {
                         "patient": data.patientName,
@@ -187,16 +116,16 @@ const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                         showSearch
                         allowClear
                         placeholder="Search for a doctor"
-                        onSearch={fetchDoctors}
+                        onSearch={onDoctorSearch}
                         onSelect={handleDoctorSelect}
-                        onClear={handleDoctorClear}
-                        notFoundContent={loading ? <Spin size="small" /> : "No doctors found"}
+                        onClear={() => setSelectedDoctor(undefined)}
+                        notFoundContent={doctorLoading ? <Spin size="small" /> : "No doctors found"}
                         filterOption={false}
                         style={{ width: 300 }}
-                        value={selectedDoctor}
+                        value={selectedDoctor?.id}
                     >
-                        {doctors.map((doctor) => (
-                            <Option key={doctor.id} value={doctor.name}>
+                        {doctorResults && doctorResults.content.map((doctor) => (
+                            <Option key={doctor.id} value={doctor.id}>
                                 {doctor.name}
                             </Option>
                         ))}
@@ -227,7 +156,7 @@ const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                         rules={[{ required: true }]}
                         style={{ display: 'inline-block', width: '200px' }}
                     >
-                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('fbsValue', e.target.value)} />
+                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('fbsValue', e.target.value, investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender, form)} />
                     </Form.Item>
                     <div className="flex-row items-center inline-flex">
                         <Form.Item
@@ -240,7 +169,7 @@ const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                             </Select>
                         </Form.Item>
                         <span>
-                            {displayNormalRange('fbsValue')}
+                            {displayNormalRange('fbsValue', investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender)}
                         </span>
                     </div>
                 </Form.Item>

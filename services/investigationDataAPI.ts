@@ -33,3 +33,28 @@ export const fetchDataEmptyInvestigations = async (signal: AbortSignal) => {
 
     return response.json();
 }
+
+export const updateInvestigationData = async (
+    investigationRegisterId: number,
+    investigationId: number,
+    body: { data: object; options: object; doctor_id?: number; version: number; }
+) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/investigation-data?investigationRegisterId=${investigationRegisterId}&investigationId=${investigationId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to update investigation data");
+        }
+
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};

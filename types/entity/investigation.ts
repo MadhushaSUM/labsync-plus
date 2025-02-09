@@ -35,6 +35,7 @@ export interface DataEmptyTests {
     doctorId?: number;
     doctorName?: string;
     data?: Record<string, any>;
+    version: number;
 }
 
 export interface NormalRange {

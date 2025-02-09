@@ -1,24 +1,24 @@
-import { useState } from 'react';
-import { UpdateInvestigationDataRequestDto } from '@/types/Dto/InvestigationData';
-import { updateInvestigationData } from '@/services/investigationRegistrationAPI';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateInvestigationData } from '@/services/investigationDataAPI';
 
 const useUpdateInvestigationData = () => {
-    const [loadingUpdate, setLoadingUpdate] = useState<boolean>(false);
-    const [errorUpdate, setErrorUpdate] = useState<Error | null>(null);
+    const queryClient = useQueryClient();
 
-    const updateExistingInvestigationData = async (updatingData: UpdateInvestigationDataRequestDto) => {
-        setLoadingUpdate(true);
-        try {
-            const res = await updateInvestigationData(updatingData);
-            return res;
-        } catch (error: any) {
-            setErrorUpdate(error);
-        } finally {
-            setLoadingUpdate(false);
+    const mutation = useMutation({
+        mutationFn: ({
+            investigationRegisterId, investigationId, body }: { investigationRegisterId: number, investigationId: number, body: { data: object; options: object; doctor_id?: number; version: number; } }) =>
+            updateInvestigationData(investigationRegisterId, investigationId, body),
+
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["investigation-data"], exact: false });
+        },
+
+        onError: (error) => {
+            console.error("Error updating investigation data:", error);
         }
-    };
+    });
 
-    return { updateExistingInvestigationData, loadingUpdate, errorUpdate };
+    return mutation;
 };
 
 export default useUpdateInvestigationData;

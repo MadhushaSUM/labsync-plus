@@ -3,6 +3,8 @@ import { NormalRangeType } from "@/types/commonTypes";
 import { PatientType } from "@/types/entity/patient";
 import { calculateAge } from "./date-utils";
 import { differenceInDays, differenceInMonths, differenceInYears } from "date-fns";
+import { FormInstance } from "antd";
+import { NormalRange, TestField } from "@/types/entity/investigation";
 
 export function getNormalRangeFlag(
     patient: PatientType,
@@ -71,4 +73,75 @@ export function isWithinNormalRange(patientDOB: Date, patientGender: string, nor
     const isGenderValid = normalRange.gender.includes(patientGender);
 
     return isAgeWithinRange && isGenderValid;
+}
+
+export const setFlag = (
+    label: string,
+    value: string,
+    investigationFieldsResults: TestField[] | undefined,
+    normalRangeRulesResults: NormalRange[] | undefined,
+    patientDOB: Date,
+    patientGender: string,
+    form: FormInstance,
+) => {
+    const valueNum = Number(value);
+    const fieldId = investigationFieldsResults?.find((item) => item.code == label)?.id;
+
+    if (fieldId) {
+        const normalRangeRules: any = normalRangeRulesResults?.find((item) => item.test_field_id == fieldId)?.rules;
+        if (normalRangeRules) {
+            for (const rule of normalRangeRules) {
+                if (isWithinNormalRange(patientDOB, patientGender, rule))
+                    if (rule.type == "range") {
+                        if (valueNum > rule.valueUpper) {
+                            form.setFieldValue(`${label}Flag`, 'High');
+                        } else if (valueNum < rule.valueLower) {
+                            form.setFieldValue(`${label}Flag`, 'Low');
+                        } else {
+                            form.setFieldValue(`${label}Flag`, null);
+                        }
+                    } else if (rule.type == "≥") {
+                        if (valueNum < rule.valueLower) {
+                            form.setFieldValue(`${label}Flag`, 'Low');
+                        } else {
+                            form.setFieldValue(`${label}Flag`, null);
+                        }
+                    } else {
+                        if (valueNum > rule.valueUpper) {
+                            form.setFieldValue(`${label}Flag`, 'High');
+                        } else {
+                            form.setFieldValue(`${label}Flag`, null);
+                        }
+                    }
+                break;
+            }
+        }
+    }
+}
+
+export const displayNormalRange = (
+    label: string,
+    investigationFieldsResults: TestField[] | undefined,
+    normalRangeRulesResults: NormalRange[] | undefined,
+    patientDOB: Date,
+    patientGender: string,
+) => {
+    const fieldId = investigationFieldsResults?.find((item) => item.code == label)?.id;
+
+    if (fieldId) {
+        const normalRangeRules: any = normalRangeRulesResults?.find((item) => item.test_field_id == fieldId)?.rules;
+        if (normalRangeRules) {
+            for (const rule of normalRangeRules) {
+                if (isWithinNormalRange(patientDOB, patientGender, rule)) {
+                    if (rule.type == "range") {
+                        return `${rule.valueLower} - ${rule.valueUpper}`;
+                    } else if (rule.type == "≥") {
+                        return `≥ ${rule.valueLower}`;
+                    } else {
+                        return `≤ ${rule.valueUpper}`;
+                    }
+                }
+            }
+        }
+    }
 }

@@ -79,22 +79,6 @@ export const addInvestigationData = async (investigationData: AddInvestigationDa
     return response;
 };
 
-export const updateInvestigationData = async (updatingData: UpdateInvestigationDataRequestDto) => {
-    const response = await fetch(`${API_BASE_URL}/investigationRegister/updateInvestigationData`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatingData),
-    });
-
-    if (!response.ok) {
-        throw new Error('Failed to update investigation data');
-    }
-
-    return response;
-}
-
 export const fetchTestAnalysisOverview = async (
     query: TestAnalysisDataRequestDto,
     signal: AbortSignal

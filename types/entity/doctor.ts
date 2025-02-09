@@ -1,6 +1,5 @@
-import { SearchBoxItem } from "../commonTypes";
 
-export interface DoctorType extends SearchBoxItem {
+export interface DoctorType {
     id?: number;
     name: string;
     version: number;
