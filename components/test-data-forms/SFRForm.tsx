@@ -1,52 +1,34 @@
-import { Button, Divider, Form, Input, message, Select, Spin } from "antd";
-import { debounce } from "lodash";
-import { useEffect, useState } from "react";
+import useGetDoctors from "@/hooks/api/doctors/useGetDoctors";
+import useUpdateInvestigationData from "@/hooks/api/investigationData/useUpdateInvestigationData";
+import { DoctorType } from "@/types/entity/doctor";
+import { DataEmptyTests } from "@/types/entity/investigation";
+import { Button, Divider, Form, Input, Select, Spin } from "antd";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const { Option } = Select;
 
-const SFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () => void }) => {
-    const [loading, setLoading] = useState(false);
-    const [messageApi, contextHolder] = message.useMessage();
+const SFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (testRegisterId: number, testId: number) => void }) => {
     const [form] = Form.useForm();
 
-    const [doctors, setDoctors] = useState<Doctor[]>([]);
-    const [selectedDoctor, setSelectedDoctor] = useState<string | null>(null);
-    const [selectedDoctorId, setSelectedDoctorId] = useState<number | undefined>(undefined);
+    // Doctor
+    const [doctorSearchPhrase, setDoctorSearchPhrase] = useState("");
+    const [selectedDoctor, setSelectedDoctor] = useState<DoctorType>();
 
-    const fetchDoctors = debounce(async (search: string) => {
-        try {
-            setLoading(true);
-            const data = await window.electron.doctors.get(1, 5, search);
-            setDoctors(data.doctors);
-        } catch (error) {
-            console.error("Failed to fetch doctor data:", error);
-        } finally {
-            setLoading(false);
-        }
-    }, 500);
-
-    const handleDoctorSelect = (value: string) => {
-        setSelectedDoctor(value);
-        setSelectedDoctorId(doctors.find((doctor) => doctor.name === value)?.id);
-    };
-    const handleDoctorClear = () => {
-        setSelectedDoctor(null);
-        setSelectedDoctorId(undefined);
+    const { data: doctorResults, error: doctorFetchError, isLoading: doctorLoading } = useGetDoctors({ limit: 5, skip: 0, search: doctorSearchPhrase });
+    if (doctorFetchError) {
+        toast.error(doctorFetchError.message);
+    }
+    const onDoctorSearch = (value: string) => {
+        setDoctorSearchPhrase(value);
+    }
+    const handleDoctorSelect = (value: number) => {
+        setSelectedDoctor(doctorResults?.content.find(doc => doc.id == value));
     }
 
-    useEffect(() => {
-        if (data.doctorId) {
-            setSelectedDoctorId(Number(data.doctorId));
-        }
-    }, [data]);
-
+    const { mutateAsync: updateRegistrationData, isPending } = useUpdateInvestigationData();
     const onFinish = async (values: any) => {
         try {
-            messageApi.open({
-                key: "saving_message",
-                type: "loading",
-                content: "Saving test data..."
-            });
             const savingData = {
                 colour: values.colour,
                 appearance: values.appearance,
@@ -64,29 +46,33 @@ const SFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
             const options = {
                 preferred_age_format: JSON.parse(values.ageFormat)
             }
-            const res = await window.electron.testRegister.addData(data.testRegisterId, data.testId, savingData, options, selectedDoctorId);
-            if (res.success) {
-                clearScreen();
-            } else {
-                messageApi.open({
-                    key: "saving_message",
-                    type: "error",
-                    content: "Error occurred while saving data!"
-                });
+            const promise = updateRegistrationData({
+                investigationRegisterId: data.testRegisterId,
+                investigationId: data.testId,
+                body: {
+                    data: savingData,
+                    options: options,
+                    version: data.version,
+                    doctor_id: selectedDoctor?.id,
+                },
+            });
+            toast.promise(promise, {
+                loading: "Updating the registration",
+            });
+            try {
+                const res = await (await promise).json();
+                toast.success(res.message);
+                clearScreen(data.testRegisterId, data.testId);
+            } catch (error: any) {
+                toast.error(error.toString())
             }
         } catch (error) {
             console.error(error);
-            messageApi.open({
-                key: "saving_message",
-                type: "error",
-                content: "Error occurred while saving data!"
-            });
         }
     };
 
     return (
         <div className="w-full">
-            {contextHolder}
             <p className="w-full text-lg text-center m-5 font-bold">
                 Stool Full Report
             </p>
@@ -96,6 +82,7 @@ const SFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 16 }}
                 form={form}
+                disabled={isPending || doctorLoading}
                 initialValues={
                     {
                         "patient": data.patientName,
@@ -131,16 +118,16 @@ const SFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                         showSearch
                         allowClear
                         placeholder="Search for a doctor"
-                        onSearch={fetchDoctors}
+                        onSearch={onDoctorSearch}
                         onSelect={handleDoctorSelect}
-                        onClear={handleDoctorClear}
-                        notFoundContent={loading ? <Spin size="small" /> : "No doctors found"}
+                        onClear={() => setSelectedDoctor(undefined)}
+                        notFoundContent={doctorLoading ? <Spin size="small" /> : "No doctors found"}
                         filterOption={false}
                         style={{ width: 300 }}
-                        value={selectedDoctor}
+                        value={selectedDoctor?.id}
                     >
-                        {doctors.map((doctor) => (
-                            <Option key={doctor.id} value={doctor.name}>
+                        {doctorResults && doctorResults.content.map((doctor) => (
+                            <Option key={doctor.id} value={doctor.id}>
                                 {doctor.name}
                             </Option>
                         ))}
@@ -226,7 +213,7 @@ const SFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                         <Option value="Nil">Nil</Option>
                         <Option value="Occasional">Occasional</Option>
                         <Option value="1 - 3">1 - 3</Option>
-                        <Option value="3 - 5">3 - 5</Option>
+                        <Option value="2 - 5">2 - 5</Option>
                         <Option value="Mod. field full">Mod. field full</Option>
                         <Option value="Field full">Field full</Option>
                     </Select>
@@ -241,7 +228,7 @@ const SFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                         <Option value="Nil">Nil</Option>
                         <Option value="Occasional">Occasional</Option>
                         <Option value="1 - 3">1 - 3</Option>
-                        <Option value="3 - 5">3 - 5</Option>
+                        <Option value="2 - 5">2 - 5</Option>
                         <Option value="Mod. field full">Mod. field full</Option>
                         <Option value="Field full">Field full</Option>
                     </Select>

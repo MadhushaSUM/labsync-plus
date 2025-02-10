@@ -11,7 +11,7 @@ import useUpdateInvestigationData from "@/hooks/api/investigationData/useUpdateI
 
 const { Option } = Select;
 
-const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () => void }) => {
+const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (testRegisterId: number, testId: number) => void }) => {
     const [form] = Form.useForm();
 
     // Doctor
@@ -69,7 +69,7 @@ const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
             try {
                 const res = await (await promise).json();
                 toast.success(res.message);
-                clearScreen();
+                clearScreen(data.testRegisterId, data.testId);
             } catch (error: any) {
                 toast.error(error.toString())
             }

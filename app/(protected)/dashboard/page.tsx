@@ -6,7 +6,7 @@ import useGetDataEmptyInvestigations from "@/hooks/api/investigationData/useGetD
 import { DataEmptyTests } from "@/types/entity/investigation";
 import { Card, Col, List, Row } from "antd";
 import { formatISO } from "date-fns";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const { Meta } = Card;
@@ -14,7 +14,9 @@ const { Meta } = Card;
 export default function Dashboard() {
     const [selectedTest, setSelectedTest] = useState<DataEmptyTests | null>(null);
 
-    const { data, error, isLoading } = useGetDataEmptyInvestigations();
+    const [fetchedTestList, setFetchedTestList] = useState<DataEmptyTests[]>();
+
+    const { data, error, isLoading, } = useGetDataEmptyInvestigations();
     if (error) {
         toast.error(error.message);
     }
@@ -22,9 +24,16 @@ export default function Dashboard() {
     const handleListItemClick = (item: DataEmptyTests) => {
         setSelectedTest(item);
     }
-    const clearSelectedTest = () => {
+    const clearSelectedTest = (testRegisterId: number, testId: number) => {
         setSelectedTest(null);
+        setFetchedTestList(fetchedTestList?.filter((item) => (item.testRegisterId != testRegisterId || item.testId != testId)));
     }
+
+    useEffect(() => {
+        if (data?.content) {
+            setFetchedTestList(data.content);
+        }
+    }, [data]);
 
     return (
         <div>
@@ -47,7 +56,7 @@ export default function Dashboard() {
                                         size="small"
                                         loading={isLoading}
                                         style={{ height: "calc(100vh - 220px)" }}
-                                        dataSource={data?.content}
+                                        dataSource={fetchedTestList}
                                         renderItem={(item) => {
                                             return (
                                                 <List.Item

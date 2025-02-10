@@ -11,33 +11,34 @@ import RHFactorForm from "./RHFactorForm";
 import SCalciumForm from "./SCalcium";
 import UFRForm from "./UFRForm";
 import WBCDCForm from "./WBCDCForm";
-import SElectrolyteForm from "./SElectrolytes.tsx";
-import OralGlucoseForm from "./OralGlucoseForm.tsx";
-import PPBSForm from "./PPBSForm.tsx";
-import SFRForm from "./SFRForm.tsx";
-import LFTForm from "./LFTForm.tsx";
-import SCreatinineForm from "./SCreatinineForm.tsx";
-import BloodUreaForm from "./BloodUreaForm.tsx";
-import SProteinsForm from "./SProteinsForm.tsx";
-import BilirubinForm from "./BilirubinForm.tsx";
-import SAlkPhosphataseForm from "./SAlkPhosphataseForm.tsx";
-import SCholesterolForm from "./SCholesterol.tsx";
-import GammaGTForm from "./GammaGTForm.tsx";
-import RBSForm from "./RBSForm.tsx";
-import EGFRForm from "./EGFRForm.tsx";
-import GlycosilatedHBForm from "./GlycosilatedHBForm.tsx";
-import HIVForm from "./HIVForm.tsx";
-import BloodGroupForm from "./BloodGroupForm.tsx";
-import BloodSugarProfileForm from "./BloodSugarProfile.tsx";
-import UrineSugarForm from "./UrineSugarForm.tsx";
-import CardiacTroponinTForm from "./CardiacTroponinTForm.tsx";
-import CardiacTroponinIForm from "./CardiacTroponinIForm.tsx";
-import RCholesterolForm from "./rCholesterolForm.tsx";
+import SElectrolyteForm from "./SElectrolytes";
+import OralGlucoseForm from "./OralGlucoseForm";
+import PPBSForm from "./PPBSForm";
+import SFRForm from "./SFRForm";
+import LFTForm from "./LFTForm";
+import SCreatinineForm from "./SCreatinineForm";
+import BloodUreaForm from "./BloodUreaForm";
+import SProteinsForm from "./SProteinsForm";
+import BilirubinForm from "./BilirubinForm";
+import SAlkPhosphataseForm from "./SAlkPhosphataseForm";
+import SCholesterolForm from "./SCholesterol";
+import GammaGTForm from "./GammaGTForm";
+import RBSForm from "./RBSForm";
+import EGFRForm from "./EGFRForm";
+import GlycosilatedHBForm from "./GlycosilatedHBForm";
+import HIVForm from "./HIVForm";
+import BloodGroupForm from "./BloodGroupForm";
+import BloodSugarProfileForm from "./BloodSugarProfile";
+import UrineSugarForm from "./UrineSugarForm";
+import CardiacTroponinTForm from "./CardiacTroponinTForm";
+import CardiacTroponinIForm from "./CardiacTroponinIForm";
+import RCholesterolForm from "./rCholesterolForm";
+import { DataEmptyTests } from "@/types/entity/investigation";
 
 
-const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, clearScreen: () => void }> } = {
+const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, clearScreen: (testRegisterId: number, testId: number) => void }> } = {
     1: FBSForm,
-    2: FBCForm,
+    2: RBSForm,
     3: LipidProfileForm,
     4: UFRForm,
     5: CRPForm,
@@ -61,7 +62,7 @@ const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, c
     23: SAlkPhosphataseForm,
     24: SCholesterolForm,
     25: GammaGTForm,
-    26: RBSForm,
+    26: FBCForm,
     27: EGFRForm,
     28: GlycosilatedHBForm,
     29: HIVForm,
