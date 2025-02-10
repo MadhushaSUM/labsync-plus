@@ -22,6 +22,7 @@ const breadcrumbNameMap: { [key: string]: string } = {
     "/settings": "Settings",
     "/settings/investigations": "Investigation settings",
     "/settings/normal-ranges": "Normal Ranges",
+    "/reports": "Reports",
 };
 
 export default function Breadcrumbs() {

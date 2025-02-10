@@ -34,6 +34,45 @@ export const fetchDataEmptyInvestigations = async (signal: AbortSignal) => {
     return response.json();
 }
 
+export const fetchDataAddedInvestigations = async ({ limit, skip, patientId, startDate, endDate, refNumber, allReports }: {
+    limit: number;
+    skip: number;
+    patientId?: number;
+    startDate?: string;
+    endDate?: string;
+    refNumber?: number;
+    allReports?: boolean;
+},
+    signal: AbortSignal
+) => {
+    let params = `limit=${limit}&offset=${skip}`;
+
+    if (patientId) {
+        params += `&patientId=${patientId}`;
+    }
+    if (startDate) {
+        params += `&startDate=${startDate}`;
+    }
+    if (endDate) {
+        params += `&endDate=${endDate}`;
+    }
+    if (refNumber) {
+        params += `&refNumber=${refNumber}`;
+    }
+    if (allReports) {
+        params += `&allReports=${allReports}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/investigation-data/data-added?${params}`, { signal });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch data added registrations");
+    }
+
+    return response.json();
+};
+
 export const updateInvestigationData = async (
     investigationRegisterId: number,
     investigationId: number,
