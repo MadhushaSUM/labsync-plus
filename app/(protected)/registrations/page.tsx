@@ -137,7 +137,7 @@ export default function InvestigationRegistration() {
                     <p>{value.name}</p>
                 )
             },
-            width: 150,
+            width: 250,
         },
         {
             title: 'Requested doctor', dataIndex: 'doctor', key: 'doctorName',

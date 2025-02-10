@@ -81,7 +81,7 @@ function EditRegistrationForm() {
     }
 
     // Investigation
-    const { data: investigationResults, error: investigationFetchError, isLoading: investigationLoading } = useGetInvestigations({ limit: 5, skip: 0 });
+    const { data: investigationResults, error: investigationFetchError, isLoading: investigationLoading } = useGetInvestigations({ limit: 50, skip: 0 });
     if (investigationFetchError) {
         toast.error(investigationFetchError.message);
     }

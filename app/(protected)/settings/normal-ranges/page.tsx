@@ -22,7 +22,7 @@ export default function NormalRangesSettings() {
     const [investigationSearchPhrase, setInvestigationSearchPhrase] = useState("");
     const [selectedInvestigation, setSelectedInvestigation] = useState<Test>();
 
-    const { data: investigationResults, error: investigationFetchError, isLoading: investigationLoading } = useGetInvestigations({ limit: 5, skip: 0, search: investigationSearchPhrase });
+    const { data: investigationResults, error: investigationFetchError, isLoading: investigationLoading } = useGetInvestigations({ limit: 50, skip: 0, search: investigationSearchPhrase });
     if (investigationFetchError) {
         toast.error(investigationFetchError.message);
     }
