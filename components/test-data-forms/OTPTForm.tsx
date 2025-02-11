@@ -45,9 +45,9 @@ const OTPTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (t
     const onFinish = async (values: any) => {
         try {
             const savingData = {
-                sgotValue: values.sgotValue,
+                sgotValue: Number(values.sgotValue),
                 sgotValueFlag: values.sgotValueFlag,
-                sgptValue: values.sgptValue,
+                sgptValue: Number(values.sgptValue),
                 sgptValueFlag: values.sgptValueFlag,
                 comment: values.comment
             };

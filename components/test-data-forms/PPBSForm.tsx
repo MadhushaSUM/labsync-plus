@@ -84,7 +84,7 @@ const PPBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (t
     return (
         <div className="w-full">
             <p className="w-full text-lg text-center m-5 font-bold">
-                Oral Glucose Tolerance
+                Post Prandial Blood Sugar
             </p>
             <Form
                 name="complex-form"

@@ -45,7 +45,7 @@ const HBForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (tes
     const onFinish = async (values: any) => {
         try {
             const savingData = {
-                hbValue: values.hbValue,
+                hbValue: Number(values.hbValue),
                 hbValueFlag: values.hbValueFlag,
                 comment: values.comment
             };

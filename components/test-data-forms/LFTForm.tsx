@@ -53,17 +53,17 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
                 sAlkalinePhosValueFlag: values.sAlkalinePhosValueFlag,
                 totalBilirubinValue: Number(values.totalBilirubinValue),
                 totalBilirubinValueFlag: values.totalBilirubinValueFlag,
-                // directBilirubinValue: Number(values.directBilirubinValue),
-                // directBilirubinValueFlag: values.directBilirubinValueFlag,
-                // indirectBilirubinValue: Number(values.indirectBilirubinValue),
-                // indirectBilirubinValueFlag: values.indirectBilirubinValueFlag,
+                directBilirubinValue: Number(values.directBilirubinValue),
+                directBilirubinValueFlag: values.directBilirubinValueFlag,
+                indirectBilirubinValue: Number(values.indirectBilirubinValue),
+                indirectBilirubinValueFlag: values.indirectBilirubinValueFlag,
                 totalProteinsValue: Number(values.totalProteinsValue),
                 totalProteinsValueFlag: values.totalProteinsValueFlag,
-                // albuminValue: Number(values.albuminValue),
-                // albuminValueFlag: values.albuminValueFlag,
-                // globulinValue: Number(values.globulinValue),
-                // globulinValueFlag: values.globulinValueFlag,
-                // agRatioValue: Number(values.agRatioValue),
+                albuminValue: Number(values.albuminValue),
+                albuminValueFlag: values.albuminValueFlag,
+                globulinValue: Number(values.globulinValue),
+                globulinValueFlag: values.globulinValueFlag,
+                agRatioValue: Number(values.agRatioValue),
                 gammaGtValue: Number(values.gammaGtValue),
                 gammaGtValueFlag: values.gammaGtValueFlag,
                 comment: values.comment
@@ -120,17 +120,17 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
                         "sAlkalinePhosValueFlag": data.data?.sAlkalinePhosValueFlag,
                         "totalBilirubinValue": data.data?.totalBilirubinValue,
                         "totalBilirubinValueFlag": data.data?.totalBilirubinValueFlag,
-                        // "directBilirubinValue": data.data?.directBilirubinValue,
-                        // "directBilirubinValueFlag": data.data?.directBilirubinValueFlag,
-                        // "indirectBilirubinValue": data.data?.indirectBilirubinValue,
-                        // "indirectBilirubinValueFlag": data.data?.indirectBilirubinValueFlag,
+                        "directBilirubinValue": data.data?.directBilirubinValue,
+                        "directBilirubinValueFlag": data.data?.directBilirubinValueFlag,
+                        "indirectBilirubinValue": data.data?.indirectBilirubinValue,
+                        "indirectBilirubinValueFlag": data.data?.indirectBilirubinValueFlag,
                         "totalProteinsValue": data.data?.totalProteinsValue,
                         "totalProteinsValueFlag": data.data?.totalProteinsValueFlag,
-                        // "albuminValue": data.data?.albuminValue,
-                        // "albuminValueFlag": data.data?.albuminValueFlag,
-                        // "globulinValue": data.data?.globulinValue,
-                        // "globulinValueFlag": data.data?.globulinValueFlag,
-                        // "agRatioValue": data.data?.agRatioValue,
+                        "albuminValue": data.data?.albuminValue,
+                        "albuminValueFlag": data.data?.albuminValueFlag,
+                        "globulinValue": data.data?.globulinValue,
+                        "globulinValueFlag": data.data?.globulinValueFlag,
+                        "agRatioValue": data.data?.agRatioValue,
                         "gammaGtValue": data.data?.gammaGtValue,
                         "gammaGtValueFlag": data.data?.gammaGtValueFlag,
                         "comment": data.data?.comment,
@@ -280,13 +280,13 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
                     </div>
                 </Form.Item>
 
-                {/* <Form.Item label="Direct Bilirubin" style={{ marginBottom: 0 }}>
+                <Form.Item label="Direct Bilirubin" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="directBilirubinValue"
                         rules={[{ required: true }]}
                         style={{ display: 'inline-block', width: '200px' }}
                     >
-                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('directBilirubinValue', e.target.value)} />
+                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('directBilirubinValue', e.target.value, investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender, form)} />
                     </Form.Item>
                     <div className="flex-row items-center inline-flex">
                         <Form.Item
@@ -299,7 +299,7 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
                             </Select>
                         </Form.Item>
                         <span>
-                            {displayNormalRange('directBilirubinValue')}
+                            {displayNormalRange('directBilirubinValue', investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender)}
                         </span>
                     </div>
                 </Form.Item>
@@ -309,7 +309,7 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
                         rules={[{ required: true }]}
                         style={{ display: 'inline-block', width: '200px' }}
                     >
-                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('indirectBilirubinValue', e.target.value)} />
+                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('indirectBilirubinValue', e.target.value, investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender, form)} />
                     </Form.Item>
                     <div className="flex-row items-center inline-flex">
                         <Form.Item
@@ -322,10 +322,10 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
                             </Select>
                         </Form.Item>
                         <span>
-                            {displayNormalRange('indirectBilirubinValue')}
+                            {displayNormalRange('indirectBilirubinValue', investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender)}
                         </span>
                     </div>
-                </Form.Item> */}
+                </Form.Item>
                 <Form.Item label="Total Proteins" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="totalProteinsValue"
@@ -349,7 +349,7 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
                         </span>
                     </div>
                 </Form.Item>
-                
+
                 <Form.Item label="Total Bilirubin" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="totalBilirubinValue"
@@ -373,13 +373,13 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
                         </span>
                     </div>
                 </Form.Item>
-                {/* <Form.Item label="Albumin" style={{ marginBottom: 0 }}>
+                <Form.Item label="Albumin" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="albuminValue"
                         rules={[{ required: true }]}
                         style={{ display: 'inline-block', width: '200px' }}
                     >
-                        <Input addonAfter="g/dl" placeholder="value" onChange={(e) => setFlag('albuminValue', e.target.value)} />
+                        <Input addonAfter="g/dl" placeholder="value" onChange={(e) => setFlag('albuminValue', e.target.value, investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender, form)} />
                     </Form.Item>
                     <div className="flex-row items-center inline-flex">
                         <Form.Item
@@ -392,7 +392,7 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
                             </Select>
                         </Form.Item>
                         <span>
-                            {displayNormalRange('albuminValue')}
+                            {displayNormalRange('albuminValue', investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender)}
                         </span>
                     </div>
                 </Form.Item>
@@ -402,7 +402,7 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
                         rules={[{ required: true }]}
                         style={{ display: 'inline-block', width: '200px' }}
                     >
-                        <Input addonAfter="g/dl" placeholder="value" onChange={(e) => setFlag('globulinValue', e.target.value)} />
+                        <Input addonAfter="g/dl" placeholder="value" onChange={(e) => setFlag('globulinValue', e.target.value, investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender, form)} />
                     </Form.Item>
                     <div className="flex-row items-center inline-flex">
                         <Form.Item
@@ -415,7 +415,7 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
                             </Select>
                         </Form.Item>
                         <span>
-                            {displayNormalRange('globulinValue')}
+                            {displayNormalRange('globulinValue', investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender)}
                         </span>
                     </div>
                 </Form.Item>
@@ -425,7 +425,7 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
                     rules={[{ required: true }]}
                 >
                     <Input placeholder="value" style={{ width: 370 }} />
-                </Form.Item> */}
+                </Form.Item>
 
                 <Form.Item
                     label="Comment"

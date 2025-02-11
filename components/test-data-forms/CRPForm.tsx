@@ -58,10 +58,28 @@ const CRPForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
             const options = {
                 preferred_age_format: JSON.parse(values.ageFormat)
             }
-
+            const promise = updateRegistrationData({
+                investigationRegisterId: data.testRegisterId,
+                investigationId: data.testId,
+                body: {
+                    data: savingData,
+                    options: options,
+                    version: data.version,
+                    doctor_id: selectedDoctor?.id,
+                },
+            });
+            toast.promise(promise, {
+                loading: "Updating the registration",
+            });
+            try {
+                const res = await (await promise).json();
+                toast.success(res.message);
+                clearScreen(data.testRegisterId, data.testId);
+            } catch (error: any) {
+                toast.error(error.toString())
+            }
         } catch (error) {
             console.error(error);
-
         }
     };
 
@@ -152,7 +170,6 @@ const CRPForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
                 <Form.Item label="CRP Titre" style={{ marginBottom: 0 }} >
                     <Form.Item
                         name="crpTitreValue"
-                        rules={[{ required: true }]}
                         style={{ display: 'inline-block', width: '200px' }}
                     >
                         <Input placeholder="value" onChange={(e) => setFlag('crpTitreValue', e.target.value, investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender, form)} disabled={crp == "Negative"} />

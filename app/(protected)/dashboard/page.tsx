@@ -49,7 +49,7 @@ export default function Dashboard() {
                     <Row gutter={[10, 10]}>
                         <Col span={6}>
                             <ScrollArea
-                                className="ring-1 ring-gray-300 rounded-lg"
+                                className="ring-1 ring-gray-300/20 rounded-lg"
                             >
                                 <div>
                                     <List<DataEmptyTests>
@@ -71,7 +71,7 @@ export default function Dashboard() {
                             </ScrollArea>
                         </Col>
 
-                        <Col span={18}>
+                        <Col span={18} className="ring-1 ring-gray-300/20 rounded-lg">
                             <ScrollArea>
                                 <div
                                     style={{ height: "calc(100vh - 220px)" }}

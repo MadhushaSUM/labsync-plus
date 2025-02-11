@@ -173,6 +173,7 @@ const OralGlucoseForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScr
                 <Form.Item label="FBS" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="fbsValue"
+                        rules={[{ required: true }]}
                         style={{ display: 'inline-block', width: '200px' }}
                     >
                         <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('fbsValue', e.target.value, investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender, form)} />

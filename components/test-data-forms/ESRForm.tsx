@@ -46,7 +46,7 @@ const ESRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
         try {
 
             const savingData = {
-                esr1sthrValue: values.esr1sthrValue,
+                esr1sthrValue: Number(values.esr1sthrValue),
                 esr1sthrValueFlag: values.esr1sthrValueFlag,
                 comment: values.comment
             };

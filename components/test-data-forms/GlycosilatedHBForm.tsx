@@ -47,8 +47,8 @@ const GlycosilatedHBForm = ({ data, clearScreen }: { data: DataEmptyTests, clear
             const savingData = {
                 glycoHBValue: Number(values.glycoHBValue),
                 glycoHBValueFlag: values.glycoHBValueFlag,
-                // meanBloodGlucoseValue: Number(values.meanBloodGlucoseValue),
-                // meanBloodGlucoseValueFlag: values.meanBloodGlucoseValueFlag,
+                meanBloodGlucoseValue: Number(values.meanBloodGlucoseValue),
+                meanBloodGlucoseValueFlag: values.meanBloodGlucoseValueFlag,
                 comment: values.comment
             };
             const options = {
@@ -97,8 +97,8 @@ const GlycosilatedHBForm = ({ data, clearScreen }: { data: DataEmptyTests, clear
                         "doctor": data.doctorName,
                         "glycoHBValue": data.data?.glycoHBValue,
                         "glycoHBValueFlag": data.data?.glycoHBValueFlag,
-                        // "meanBloodGlucoseValue": data.data?.meanBloodGlucoseValue,
-                        // "meanBloodGlucoseValueFlag": data.data?.meanBloodGlucoseValueFlag,
+                        "meanBloodGlucoseValue": data.data?.meanBloodGlucoseValue,
+                        "meanBloodGlucoseValueFlag": data.data?.meanBloodGlucoseValueFlag,
                         "comment": data.data?.comment,
                         "ageFormat": data.options.preferred_age_format ? JSON.stringify(data.options.preferred_age_format) : '["years"]'
                     }
@@ -176,7 +176,7 @@ const GlycosilatedHBForm = ({ data, clearScreen }: { data: DataEmptyTests, clear
                         </span>
                     </div>
                 </Form.Item>
-                {/* <Form.Item label="Mean blood glucose" style={{ marginBottom: 0 }}>
+                <Form.Item label="Mean blood glucose" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="meanBloodGlucoseValue"
                         rules={[{ required: true }]}
@@ -195,7 +195,7 @@ const GlycosilatedHBForm = ({ data, clearScreen }: { data: DataEmptyTests, clear
                             </Select>
                         </Form.Item>
                     </div>
-                </Form.Item> */}
+                </Form.Item>
 
                 <Form.Item
                     label="Comment"
