@@ -38,6 +38,23 @@ export interface DataEmptyTests {
     version: number;
 }
 
+export interface FlattenedDataEmptyTests {
+    testRegisterId: number;
+    testId: number;
+    date: string | Date;
+    testName: string;
+    patientId: number;
+    patientName: string;
+    patientDOB: Date;
+    patientGender: string;
+    options: Record<string, any>;
+    ref_number?: number;
+    doctorId?: number;
+    doctorName?: string;
+    version: number;
+    [key: string]: any;
+  }
+
 export interface NormalRange {
     id?: number;
     test_id: number;

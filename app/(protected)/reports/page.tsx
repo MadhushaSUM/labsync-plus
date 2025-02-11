@@ -2,19 +2,25 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Button, Card, DatePicker, Flex, InputNumber, Select, Spin, Switch, Table, Tag, Typography } from "antd";
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { CheckOutlined, CloseOutlined, DownloadOutlined, ExportOutlined } from "@ant-design/icons";
 import { calculateAge } from '@/lib/date-utils';
 import { formatISO } from 'date-fns';
 import { toast } from 'sonner';
 import useGetPatients from '@/hooks/api/useGetPatients';
 import { debounce } from 'lodash';
 import useGetDataAddedInvestigations from '@/hooks/api/investigationData/useGetDataAddedInvestigations';
+import { DataEmptyTests } from '@/types/entity/investigation';
+import pdfTemplateMapper from '@/lib/pdf/pdfTemplateMapper';
+import useGetNormalRangesByTest from '@/hooks/api/investigations/useGetNormalRangesByTest';
+import { useQueryClient } from '@tanstack/react-query';
+import { fetchNormalRangesByInvestigationId } from '@/services/investigationAPI';
 
 const { Meta } = Card;
 const { Option } = Select;
 const { Text } = Typography;
 
 export default function Reports() {
+    const [loading, setLoading] = useState(false);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [mergeDisabled, setMergeDisabled] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState(1);
@@ -94,14 +100,11 @@ export default function Reports() {
             title: "Action",
             render: (record: any) => (
                 <div style={{ display: "flex", gap: "5px" }}>
-                    <Button size="small" onClick={() => handlePrintReport(record.key)}>
-                        Print
-                    </Button>
-                    <Button size="small" onClick={() => handlePrintPreview(record.key)}>
-                        Preview
+                    <Button loading={loading} size="small" onClick={() => handleDownloadReport(record.key)}>
+                        {<DownloadOutlined />}
                     </Button>
                     <Button size="small" onClick={() => handleExportReports(record.key)}>
-                        Export
+                        {<ExportOutlined />}
                     </Button>
                 </div>
             ),
@@ -109,9 +112,26 @@ export default function Reports() {
     ], [data?.content]);
 
 
-    const handlePrintReport = (key: string | undefined) => {
-    };
-    const handlePrintPreview = (key: string) => {
+    const queryClient = useQueryClient();
+    const handleDownloadReport = async (key: string | undefined) => {
+        try {
+            setLoading(true);
+            const selectedItem = data?.content.find((item) =>
+                `${item.testId},${item.testRegisterId}` === key
+            ) as DataEmptyTests;
+
+            const normalRanges = await queryClient.fetchQuery({
+                queryKey: ["normal-ranges", selectedItem.testId],
+                queryFn: ({ signal }) => fetchNormalRangesByInvestigationId(selectedItem.testId, signal),
+                staleTime: 1000 * 60 * 60, // Keep for this time
+            });
+
+            await pdfTemplateMapper(selectedItem, normalRanges.content);
+        } catch (error: any) {
+            toast.error(error.message);
+        } finally {
+            setLoading(false);
+        }
     };
     const handleMergeReports = () => {
     }
@@ -174,7 +194,7 @@ export default function Reports() {
                             </Flex>
 
                             <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
-                                <Button onClick={() => handlePrintReport(undefined)} disabled={!selectedRowKeys.length}>Print</Button>
+                                <Button onClick={() => handleDownloadReport(undefined)} disabled={!selectedRowKeys.length}>Print</Button>
                                 <Button onClick={handleMergeReports} disabled={mergeDisabled}>Merge</Button>
                                 <Button onClick={() => handleExportReports(undefined)} disabled={!selectedRowKeys.length}>Export</Button>
                             </div>
@@ -186,7 +206,7 @@ export default function Reports() {
                             onChange: (keys) => setSelectedRowKeys(keys),
                         }}
                         columns={columns}
-                        dataSource={data?.content.map((value) => ({ ...value, key: `${value},${value.testRegisterId}` }))}
+                        dataSource={data?.content.map((value) => ({ ...value, key: `${value.testId},${value.testRegisterId}` }))}
                         loading={isLoading}
                         pagination={{
                             current: currentPage,

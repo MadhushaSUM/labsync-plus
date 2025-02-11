@@ -280,6 +280,30 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
                     </div>
                 </Form.Item>
 
+                <Form.Item label="Total Bilirubin" style={{ marginBottom: 0 }}>
+                    <Form.Item
+                        name="totalBilirubinValue"
+                        rules={[{ required: true }]}
+                        style={{ display: 'inline-block', width: '200px' }}
+                    >
+                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('totalBilirubinValue', e.target.value, investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender, form)} />
+                    </Form.Item>
+                    <div className="flex-row items-center inline-flex">
+                        <Form.Item
+                            name="totalBilirubinValueFlag"
+                            style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
+                        >
+                            <Select placeholder="flag" mode="tags" maxCount={1}>
+                                <Option value="Low">Low</Option>
+                                <Option value="High">High</Option>
+                            </Select>
+                        </Form.Item>
+                        <span>
+                            {displayNormalRange('totalBilirubinValue', investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender)}
+                        </span>
+                    </div>
+                </Form.Item>
+
                 <Form.Item label="Direct Bilirubin" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="directBilirubinValue"
@@ -350,29 +374,6 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (te
                     </div>
                 </Form.Item>
 
-                <Form.Item label="Total Bilirubin" style={{ marginBottom: 0 }}>
-                    <Form.Item
-                        name="totalBilirubinValue"
-                        rules={[{ required: true }]}
-                        style={{ display: 'inline-block', width: '200px' }}
-                    >
-                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('totalBilirubinValue', e.target.value, investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender, form)} />
-                    </Form.Item>
-                    <div className="flex-row items-center inline-flex">
-                        <Form.Item
-                            name="totalBilirubinValueFlag"
-                            style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
-                        >
-                            <Select placeholder="flag" mode="tags" maxCount={1}>
-                                <Option value="Low">Low</Option>
-                                <Option value="High">High</Option>
-                            </Select>
-                        </Form.Item>
-                        <span>
-                            {displayNormalRange('totalBilirubinValue', investigationFieldsResults?.content, normalRangeRulesResults?.content, data.patientDOB, data.patientGender)}
-                        </span>
-                    </div>
-                </Form.Item>
                 <Form.Item label="Albumin" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="albuminValue"

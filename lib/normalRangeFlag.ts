@@ -145,3 +145,35 @@ export const displayNormalRange = (
         }
     }
 }
+
+export function findTheCorrectNormalRangeRule(
+    normalRanges: NormalRange[] | undefined,
+    testFieldId: number,
+    patientDateOfBirth: Date,
+    patientGender: string,
+    unit: string
+) {
+
+    if (testFieldId == -1 || normalRanges == undefined) {
+        return "";
+    }
+
+    const normalRangeRules: any = normalRanges.find((item) => item.test_field_id == testFieldId)?.rules;
+    if (!normalRangeRules) {
+        return "";
+    }
+
+    for (const rule of normalRangeRules) {
+        if (isWithinNormalRange(patientDateOfBirth, patientGender, rule)) {
+            if (rule.type == "range") {
+                return `${rule.valueLower} - ${rule.valueUpper}`;
+            } else if (rule.type == "≥") {
+                return `>= ${rule.valueLower}`;
+            } else {
+                return `<= ${rule.valueUpper}`;
+            }
+        }
+    }
+
+    return "";
+}
