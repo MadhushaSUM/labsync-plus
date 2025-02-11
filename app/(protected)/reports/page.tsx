@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Button, Card, DatePicker, Flex, InputNumber, Select, Spin, Switch, Table, Tag, Typography } from "antd";
-import { CheckOutlined, CloseOutlined, DownloadOutlined, ExportOutlined } from "@ant-design/icons";
+import { CheckOutlined, CloseOutlined, DownloadOutlined, ExportOutlined, PrinterOutlined } from "@ant-design/icons";
 import { calculateAge } from '@/lib/date-utils';
 import { formatISO } from 'date-fns';
 import { toast } from 'sonner';
@@ -11,16 +11,17 @@ import { debounce } from 'lodash';
 import useGetDataAddedInvestigations from '@/hooks/api/investigationData/useGetDataAddedInvestigations';
 import { DataEmptyTests } from '@/types/entity/investigation';
 import pdfTemplateMapper from '@/lib/pdf/pdfTemplateMapper';
-import useGetNormalRangesByTest from '@/hooks/api/investigations/useGetNormalRangesByTest';
 import { useQueryClient } from '@tanstack/react-query';
 import { fetchNormalRangesByInvestigationId } from '@/services/investigationAPI';
+import useUpdateInvestigationAsPrinted from '@/hooks/api/investigationData/useUpdateInvestigationAsPrinted';
 
 const { Meta } = Card;
 const { Option } = Select;
 const { Text } = Typography;
 
 export default function Reports() {
-    const [loading, setLoading] = useState(false);
+    const [downloadLoading, setDownloadLoading] = useState(false);
+    const [printingLoading, setPrintingLoading] = useState(false);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [mergeDisabled, setMergeDisabled] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState(1);
@@ -97,10 +98,13 @@ export default function Reports() {
         },
         { title: "Test", dataIndex: "testName" },
         {
-            title: "Action",
+            title: "Actions",
             render: (record: any) => (
                 <div style={{ display: "flex", gap: "5px" }}>
-                    <Button loading={loading} size="small" onClick={() => handleDownloadReport(record.key)}>
+                    <Button loading={printingLoading} size="small" onClick={() => handlePrintReports(record.key)}>
+                        {<PrinterOutlined />}
+                    </Button>
+                    <Button loading={downloadLoading} size="small" onClick={() => handleDownloadReport(record.key)}>
                         {<DownloadOutlined />}
                     </Button>
                     <Button size="small" onClick={() => handleExportReports(record.key)}>
@@ -115,7 +119,7 @@ export default function Reports() {
     const queryClient = useQueryClient();
     const handleDownloadReport = async (key: string | undefined) => {
         try {
-            setLoading(true);
+            setDownloadLoading(true);
             const selectedItem = data?.content.find((item) =>
                 `${item.testId},${item.testRegisterId}` === key
             ) as DataEmptyTests;
@@ -126,18 +130,49 @@ export default function Reports() {
                 staleTime: 1000 * 60 * 60, // Keep for this time
             });
 
-            await pdfTemplateMapper(selectedItem, normalRanges.content);
+            await pdfTemplateMapper(false, selectedItem, normalRanges.content);
         } catch (error: any) {
             toast.error(error.message);
         } finally {
-            setLoading(false);
+            setDownloadLoading(false);
         }
     };
     const handleMergeReports = () => {
     }
+
+    const { mutateAsync: updatePrintedStatus } = useUpdateInvestigationAsPrinted();
+    const handlePrintReports = async (key: string | undefined) => {
+        try {
+            setPrintingLoading(true);
+            const selectedItem = data?.content.find((item) => `${item.testId},${item.testRegisterId}` === key) as DataEmptyTests;
+
+            const normalRanges = await queryClient.fetchQuery({
+                queryKey: ["normal-ranges", selectedItem.testId],
+                queryFn: ({ signal }) => fetchNormalRangesByInvestigationId(selectedItem.testId, signal),
+                staleTime: 1000 * 60 * 60, // Keep for this time
+            });
+
+            await pdfTemplateMapper(true, selectedItem, normalRanges.content);
+
+            const promise = updatePrintedStatus({ investigationRegisterId: selectedItem.testRegisterId, investigationId: selectedItem.testId });
+            toast.promise(promise, {
+                loading: "Updating printed status",
+                success: "Printed status updated!"
+            });
+            try {
+                await promise;
+                queryClient.invalidateQueries({ queryKey: ["data-added-investigations"], exact: false });
+            } catch (error: any) {
+                toast.error(error.toString())
+            }
+        } catch (error: any) {
+            toast.error(error.message);
+        } finally {
+            setPrintingLoading(false);
+        }
+    }
     const handleExportReports = (key: string | undefined) => {
     };
-
 
     return (
         <div>

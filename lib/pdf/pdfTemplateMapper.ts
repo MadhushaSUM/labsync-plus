@@ -38,7 +38,7 @@ import { getUrineSugarTemplate } from "./templates/UrineSugar";
 import { getCardiacTroponinTTemplate } from "./templates/CardiacTroponinT";
 import { getCardiacTroponinITemplate } from "./templates/CardiacTroponinI";
 
-export default async function pdfTemplateMapper(reportData: DataEmptyTests, normalRanges?: NormalRange[]) {
+export default async function pdfTemplateMapper(print: boolean, reportData: DataEmptyTests, normalRanges?: NormalRange[]) {
     const generator = new PDFGenerator({ width: 595, height: 842 });
 
     const flattenedTestData = await flattenTestData(reportData);
@@ -364,7 +364,11 @@ export default async function pdfTemplateMapper(reportData: DataEmptyTests, norm
             throw new Error(`Invalid investigation id ${reportData.testId}`);
     }
 
-    generator.download(`${reportData.patientName}-${reportData.testName.replaceAll('/', '')}-${formatISO(reportData.date, { representation: 'date' })}.pdf`);
+    if (print) {
+        generator.print();
+    } else {
+        generator.download(`${reportData.patientName}-${reportData.testName.replaceAll('/', '')}-${formatISO(reportData.date, { representation: 'date' })}.pdf`);
+    }
 }
 
 async function flattenTestData(test: DataEmptyTests): Promise<FlattenedDataEmptyTests> {

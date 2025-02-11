@@ -97,3 +97,26 @@ export const updateInvestigationData = async (
         throw error;
     }
 };
+
+export const updateInvestigationPrintedStatus = async (
+    investigationRegisterId: number,
+    investigationId: number,
+) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/investigation-data/printed?investigationRegisterId=${investigationRegisterId}&investigationId=${investigationId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to update investigation as printed");
+        }
+
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};

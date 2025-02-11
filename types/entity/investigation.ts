@@ -53,7 +53,7 @@ export interface FlattenedDataEmptyTests {
     doctorName?: string;
     version: number;
     [key: string]: any;
-  }
+}
 
 export interface NormalRange {
     id?: number;

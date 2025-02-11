@@ -93,7 +93,7 @@ export class PDFGenerator {
         return elements;
     }
 
-    public async generatePDF(template: ReportTemplate, data: any) {        
+    public async generatePDF(template: ReportTemplate, data: any) {
         // Register the template
         this.templates.set(template.id, template);
 
@@ -110,5 +110,37 @@ export class PDFGenerator {
 
     public download(filename: string) {
         this.doc.save(filename);
+    }
+
+    public async print(): Promise<void> {
+        try {
+            const pdfOutput = this.doc.output('blob');
+            const blobUrl = URL.createObjectURL(pdfOutput);
+
+            const printFrame = document.createElement('iframe');
+            printFrame.style.display = 'none';
+            document.body.appendChild(printFrame);
+
+            await new Promise((resolve) => {
+                printFrame.onload = resolve;
+                printFrame.src = blobUrl;
+            });
+
+            const frameWindow = printFrame.contentWindow;
+            if (!frameWindow) {
+                throw new Error('Could not access print frame window');
+            }
+
+            frameWindow.print();
+
+            setTimeout(() => {
+                document.body.removeChild(printFrame);
+                URL.revokeObjectURL(blobUrl);
+            }, 1000);
+
+        } catch (error) {
+            console.error('Error printing PDF:', error);
+            throw new Error(`Failed to print PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        }
     }
 }
