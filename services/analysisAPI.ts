@@ -19,3 +19,23 @@ export const fetchPatientAnalysisData = async ({ patientId, startDate, endDate }
 
     return response.json();
 };
+
+export const fetchInvestigationAnalysisData = async ({ startDate, endDate }: { startDate?: string, endDate?: string }, signal: AbortSignal) => {
+    let params = "?";
+
+    if (startDate) {
+        params += `startDate=${startDate}`;
+    }
+    if (endDate) {
+        params += `&endDate=${endDate}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/analysis/investigation${params}`, { signal });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch investigation analysis data!");
+    }
+
+    return response.json();
+};

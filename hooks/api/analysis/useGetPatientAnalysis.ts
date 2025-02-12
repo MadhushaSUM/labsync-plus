@@ -7,7 +7,7 @@ const useGetPatientAnalysis = ({ patientId, startDate, endDate }: { patientId?: 
     const { signal } = controller;
 
     return useQuery<{ content?: AnalysisData }>({
-        queryKey: ["registrations", patientId, startDate, endDate], // Unique cache key
+        queryKey: ["patient-analysis", patientId, startDate, endDate], // Unique cache key
         queryFn: () => {
             if (!patientId) {
                 return { content: undefined };
