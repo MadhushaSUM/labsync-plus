@@ -39,3 +39,23 @@ export const fetchInvestigationAnalysisData = async ({ startDate, endDate }: { s
 
     return response.json();
 };
+
+export const fetchFinancialAnalysisData = async ({ step, startDate, endDate }: { step: string, startDate?: string, endDate?: string }, signal: AbortSignal) => {
+    let params = `step=${step}`;
+
+    if (startDate) {
+        params += `&startDate=${startDate}`;
+    }
+    if (endDate) {
+        params += `&endDate=${endDate}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/analysis/financial?${params}`, { signal });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch financial analysis data!");
+    }
+
+    return response.json();
+};

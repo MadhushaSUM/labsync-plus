@@ -58,6 +58,10 @@ const siderItems: MenuProps['items'] = [
                 key: "/analysis/patient-analysis",
                 label: "Patient"
             },
+            {
+                key: "/analysis/financial-analysis",
+                label: "Financial"
+            },
         ]
     },
     {

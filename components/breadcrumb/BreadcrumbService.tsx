@@ -26,6 +26,7 @@ const breadcrumbNameMap: { [key: string]: string } = {
     "/analysis": "Analysis",
     "/analysis/patient-analysis": "Patient",
     "/analysis/investigation-analysis": "Investigation",
+    "/analysis/financial-analysis": "Financial",
 };
 
 export default function Breadcrumbs() {
