@@ -4,7 +4,7 @@ import "antd/dist/reset.css";
 import { Button, ConfigProvider, Layout, Menu, theme, MenuProps } from "antd";
 import { useState, useEffect } from "react";
 import React from 'react';
-import { AuditOutlined, FolderOpenOutlined, HomeOutlined, MenuFoldOutlined, MenuUnfoldOutlined, PrinterOutlined, SettingOutlined, UserOutlined, } from '@ant-design/icons';
+import { AuditOutlined, FolderOpenOutlined, HomeOutlined, LineChartOutlined, MenuFoldOutlined, MenuUnfoldOutlined, PrinterOutlined, SettingOutlined, UserOutlined, } from '@ant-design/icons';
 import ToggleThemeButton from "@/components/ToggleThemeButton";
 import { useRouter } from "next/navigation";
 import Breadcrumbs from "@/components/breadcrumb/BreadcrumbService";
@@ -43,6 +43,22 @@ const siderItems: MenuProps['items'] = [
         key: "/audit-trail",
         icon: React.createElement(AuditOutlined),
         label: "Audit trail",
+    },
+    {
+        key: "/analysis",
+        icon: React.createElement(LineChartOutlined),
+        label: "Analysis",
+
+        children: [
+            {
+                key: "/analysis/investigation-analysis",
+                label: "Investigation"
+            },
+            {
+                key: "/analysis/patient-analysis",
+                label: "Patient"
+            },
+        ]
     },
     {
         key: "/settings",

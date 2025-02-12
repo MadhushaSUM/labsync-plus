@@ -62,3 +62,34 @@ export interface NormalRange {
     rules: object[];
     version: number;
 }
+
+export interface AnalysisData {
+    totalTestNumber: number,
+    pieChartData: {
+        testId: number,
+        testName: string,
+        count: number,
+        tests: {
+            date: Date,
+            refNumber?: number,
+            testRegisterId: number,
+            data?: object,
+        }[]
+    }[],
+}
+
+export interface FinancialAnalysisOutput {
+    totalCost: number;
+    totalPaid: number;
+    periods: {
+        startDate: Date;
+        endDate: Date;
+        periodCost: number;
+        periodPaid: number;
+        tests: {
+            testId: number;
+            testName: string;
+            testTotalCost: number;
+        }[]
+    }[]
+}
