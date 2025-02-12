@@ -1,18 +1,18 @@
 import jsPDF from 'jspdf';
 import { ReportTemplate, TextElement, LineElement, ImageElement, ReportElement } from '@/types/pdf';
-import { baseTemplate } from './templates/baseTemplate';
+import { getBaseTemplate } from './templates/baseTemplate';
 
 export class PDFGenerator {
     private doc: jsPDF;
     private templates: Map<string, ReportTemplate>;
 
-    constructor(pageSize: { width: number; height: number }) {
+    constructor(pageSize: { width: number; height: number }, isExport: boolean) {
         this.doc = new jsPDF({
             unit: 'pt',
             format: [pageSize.width, pageSize.height],
         });
         this.templates = new Map();
-        this.templates.set('base-template', baseTemplate);
+        this.templates.set('base-template', getBaseTemplate(isExport));
     }
 
     private replaceePlaceholders(text: string, data: any): string {

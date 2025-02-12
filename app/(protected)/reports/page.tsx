@@ -22,6 +22,7 @@ const { Text } = Typography;
 export default function Reports() {
     const [downloadLoading, setDownloadLoading] = useState(false);
     const [printingLoading, setPrintingLoading] = useState(false);
+    const [exportLoading, setExportLoading] = useState(false);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [mergeDisabled, setMergeDisabled] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState(1);
@@ -107,7 +108,7 @@ export default function Reports() {
                     <Button loading={downloadLoading} size="small" onClick={() => handleDownloadReport(record.key)}>
                         {<DownloadOutlined />}
                     </Button>
-                    <Button size="small" onClick={() => handleExportReports(record.key)}>
+                    <Button loading={exportLoading} size="small" onClick={() => handleExportReports(record.key)}>
                         {<ExportOutlined />}
                     </Button>
                 </div>
@@ -117,7 +118,7 @@ export default function Reports() {
 
 
     const queryClient = useQueryClient();
-    const handleDownloadReport = async (key: string | undefined) => {
+    const handleDownloadReport = async (key: string) => {
         try {
             setDownloadLoading(true);
             const selectedItem = data?.content.find((item) =>
@@ -130,7 +131,7 @@ export default function Reports() {
                 staleTime: 1000 * 60 * 60, // Keep for this time
             });
 
-            await pdfTemplateMapper(false, selectedItem, normalRanges.content);
+            await pdfTemplateMapper(false, false, selectedItem, normalRanges.content);
         } catch (error: any) {
             toast.error(error.message);
         } finally {
@@ -141,7 +142,7 @@ export default function Reports() {
     }
 
     const { mutateAsync: updatePrintedStatus } = useUpdateInvestigationAsPrinted();
-    const handlePrintReports = async (key: string | undefined) => {
+    const handlePrintReports = async (key: string) => {
         try {
             setPrintingLoading(true);
             const selectedItem = data?.content.find((item) => `${item.testId},${item.testRegisterId}` === key) as DataEmptyTests;
@@ -152,7 +153,7 @@ export default function Reports() {
                 staleTime: 1000 * 60 * 60, // Keep for this time
             });
 
-            await pdfTemplateMapper(true, selectedItem, normalRanges.content);
+            await pdfTemplateMapper(true, false, selectedItem, normalRanges.content);
 
             const promise = updatePrintedStatus({ investigationRegisterId: selectedItem.testRegisterId, investigationId: selectedItem.testId });
             toast.promise(promise, {
@@ -171,7 +172,25 @@ export default function Reports() {
             setPrintingLoading(false);
         }
     }
-    const handleExportReports = (key: string | undefined) => {
+    const handleExportReports = async (key: string) => {
+        try {
+            setExportLoading(true);
+            const selectedItem = data?.content.find((item) =>
+                `${item.testId},${item.testRegisterId}` === key
+            ) as DataEmptyTests;
+
+            const normalRanges = await queryClient.fetchQuery({
+                queryKey: ["normal-ranges", selectedItem.testId],
+                queryFn: ({ signal }) => fetchNormalRangesByInvestigationId(selectedItem.testId, signal),
+                staleTime: 1000 * 60 * 60, // Keep for this time
+            });
+
+            await pdfTemplateMapper(false, true, selectedItem, normalRanges.content);
+        } catch (error: any) {
+            toast.error(error.message);
+        } finally {
+            setExportLoading(false);
+        }
     };
 
     return (
@@ -229,9 +248,9 @@ export default function Reports() {
                             </Flex>
 
                             <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
-                                <Button onClick={() => handleDownloadReport(undefined)} disabled={!selectedRowKeys.length}>Print</Button>
+                                <Button onClick={() => { }} disabled={!selectedRowKeys.length}>Print</Button>
                                 <Button onClick={handleMergeReports} disabled={mergeDisabled}>Merge</Button>
-                                <Button onClick={() => handleExportReports(undefined)} disabled={!selectedRowKeys.length}>Export</Button>
+                                <Button onClick={() => { }} disabled={!selectedRowKeys.length}>Export</Button>
                             </div>
                         </Flex>
                     </div>

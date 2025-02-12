@@ -38,8 +38,8 @@ import { getUrineSugarTemplate } from "./templates/UrineSugar";
 import { getCardiacTroponinTTemplate } from "./templates/CardiacTroponinT";
 import { getCardiacTroponinITemplate } from "./templates/CardiacTroponinI";
 
-export default async function pdfTemplateMapper(print: boolean, reportData: DataEmptyTests, normalRanges?: NormalRange[]) {
-    const generator = new PDFGenerator({ width: 595, height: 842 });
+export default async function pdfTemplateMapper(print: boolean, isExport: boolean, reportData: DataEmptyTests, normalRanges?: NormalRange[]) {
+    const generator = new PDFGenerator({ width: 595, height: 842 }, isExport);
 
     const flattenedTestData = await flattenTestData(reportData);
 
