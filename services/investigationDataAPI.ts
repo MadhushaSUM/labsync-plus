@@ -73,6 +73,29 @@ export const fetchDataAddedInvestigations = async ({ limit, skip, patientId, sta
     return response.json();
 };
 
+export const updateInvestigationDataAddedStatus = async (
+    investigationRegisterId: number,
+    investigationId: number,
+) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/investigation-data/data-added?investigationRegisterId=${investigationRegisterId}&investigationId=${investigationId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to update investigation as data not added!");
+        }
+
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const updateInvestigationData = async (
     investigationRegisterId: number,
     investigationId: number,

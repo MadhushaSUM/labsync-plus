@@ -1,7 +1,7 @@
 "use client";
 
 import { Registration } from "@/types/entity/investigationRegister";
-import { Card, Button, Table, TableColumnsType, Flex, Tag, InputNumber, DatePicker, Select, Spin } from "antd";
+import { Card, Button, Table, TableColumnsType, Flex, Tag, InputNumber, DatePicker, Select, Spin, Modal } from "antd";
 import { formatISO } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -10,6 +10,8 @@ import useGetInvestigationRegisters from "@/hooks/api/investigationRegister/useG
 import { calculateAge } from "@/lib/date-utils";
 import useGetPatients from "@/hooks/api/useGetPatients";
 import { debounce } from "lodash";
+import ShowData from "@/components/custom-ui/ShowData";
+import useUpdateInvestigationAsDataNotAdded from "@/hooks/api/investigationData/useUpdateInvestigationAsDataNotAdded";
 
 const { Meta } = Card;
 const { Option } = Select;
@@ -129,6 +131,8 @@ export default function InvestigationRegistration() {
         },
     ];
 
+    const { mutateAsync: updateDataAddedStatus } = useUpdateInvestigationAsDataNotAdded();
+    const [loadingRows, setLoadingRows] = useState<Record<string, boolean>>({});
     const expandColumns: TableColumnsType = [
         {
             title: 'Test', dataIndex: 'test', key: 'testName',
@@ -158,7 +162,7 @@ export default function InvestigationRegistration() {
                                 size="small"
                                 color="primary"
                                 variant="outlined"
-                                onClick={() => { }}
+                                onClick={() => showDataInModal(value)}
                             >
                                 View
                             </Button>
@@ -198,17 +202,42 @@ export default function InvestigationRegistration() {
             title: 'Action',
             dataIndex: '',
             key: 'a',
-            render: (_, record) => (
-                <Button
-                    size='small'
-                    variant='outlined'
-                    color='primary'
-                    onClick={() => { }}
-                >
-                    Edit
-                </Button>
+            width: 150,
+            render: (_, record) => {
+                const rowKey = `${record.testRegisterId}-${record.test.id}`;
 
-            ),
+                return (
+                    <Button
+                        size='small'
+                        variant='outlined'
+                        color='primary'
+                        loading={loadingRows[rowKey]}
+                        onClick={async () => {
+                            setLoadingRows(prev => ({ ...prev, [rowKey]: true }));
+
+                            const promise = updateDataAddedStatus({
+                                investigationRegisterId: Number(record.testRegisterId),
+                                investigationId: Number(record.test.id),
+                            });
+
+                            toast.promise(promise, {
+                                loading: "Adding investigation to dashboard",
+                                success: "Investigation added to dashboard",
+                            });
+
+                            try {
+                                await promise;
+                            } catch (error: any) {
+                                toast.error(error.toString());
+                            } finally {
+                                setLoadingRows(prev => ({ ...prev, [rowKey]: false }));
+                            }
+                        }}
+                    >
+                        Edit
+                    </Button>
+                );
+            },
         },
     ];
 
@@ -237,6 +266,19 @@ export default function InvestigationRegistration() {
             setTestRegistrations([]);
         }
     }, [data]);
+
+    const showDataInModal = (data: any) => {
+        Modal.info({
+            width: "50%",
+            title: 'Investigation data',
+            content: (
+                <div>
+                    <ShowData data={data} />
+                </div>
+            ),
+            onOk() { },
+        });
+    }
 
     return (
         <div>
