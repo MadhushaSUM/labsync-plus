@@ -23,6 +23,7 @@ const breadcrumbNameMap: { [key: string]: string } = {
     "/settings/investigations": "Investigation settings",
     "/settings/normal-ranges": "Normal Ranges",
     "/settings/users": "Users",
+    "/settings/users/edit": "Edit",
     "/settings/branches": "Branches",
     "/settings/branches/add": "Add",
     "/settings/branches/edit": "Edit",

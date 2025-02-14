@@ -58,8 +58,6 @@ export default function BranchSettings() {
     const [searchPhrase, setSearchPhrase] = useState<string | undefined>(undefined);
     const { data, isLoading, error } = useGetBranches({ limit: pageSize, skip: (currentPage - 1) * pageSize, search: searchPhrase });
 
-    console.log(data);
-    
     if (error) {
         toast.error(error.message);
     }
@@ -91,7 +89,7 @@ export default function BranchSettings() {
                         <Button color="primary" variant="solid" onClick={onClickAdd}>Add</Button>
                     </div>
                     <Table
-                        dataSource={data?.content?.map(patient => ({ ...patient, key: patient.id }))}
+                        dataSource={data?.content?.map(branch => ({ ...branch, key: branch.id }))}
                         columns={getColumns(onClickEditPatient)}
                         loading={isLoading}
                         pagination={{
@@ -105,7 +103,6 @@ export default function BranchSettings() {
                             },
                         }}
                     />
-
                 </div>
             </Card>
         </div>
