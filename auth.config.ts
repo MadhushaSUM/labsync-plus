@@ -23,10 +23,10 @@ export default {
 
                         if (!response.ok) {
                             const errorData = await response.json();
-                            throw new Error(errorData.message || "Failed to add patient");
+                            throw new Error(errorData.message || "Failed to login!");
                         }
 
-                        const user = await response.json();
+                        const user = (await response.json()).user;
 
                         return {
                             id: user.id,
