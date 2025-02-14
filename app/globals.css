@@ -89,6 +89,10 @@
     @apply shadow-lg;
   }
 
+  html,body,:root {
+    height: 100%;
+  }
+
   .AccordionChevron {
     transition: transform 300ms;
   }

@@ -8,8 +8,8 @@ import { AuditOutlined, FolderOpenOutlined, HomeOutlined, LineChartOutlined, Men
 import ToggleThemeButton from "@/components/ToggleThemeButton";
 import { useRouter } from "next/navigation";
 import Breadcrumbs from "@/components/breadcrumb/BreadcrumbService";
-import QueryProviders from "@/context/QueryProvider";
 import { Toaster } from "sonner";
+import { logout } from "@/actions/logout";
 
 const { Header, Content, Sider } = Layout;
 
@@ -122,6 +122,10 @@ export default function ProtectedLayout({
         router.push(key);
     }
 
+    const onClickSignOut = () => {
+        logout();
+    }
+
     return (
         <div>
             <ConfigProvider theme={{ algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm }}>
@@ -142,7 +146,10 @@ export default function ProtectedLayout({
                             <h1 className="text-lg font-black text-cyan-400 ring-1 rounded-lg px-2 py-1 ring-cyan-300">
                                 LabSync - Plus
                             </h1>
-                            <ToggleThemeButton toggleTheme={toggleTheme} darkTheme={isDarkMode} />
+                            <div className="flex flex-row gap-2 justify-center content-center items-center">
+                                <Button onClick={onClickSignOut}>Sign out</Button>
+                                <ToggleThemeButton toggleTheme={toggleTheme} darkTheme={isDarkMode} />
+                            </div>
                         </div>
                     </Header>
                     <Layout>
@@ -179,9 +186,7 @@ export default function ProtectedLayout({
                                     borderRadius: borderRadiusLG,
                                 }}
                             >
-                                <QueryProviders>
-                                    {children}
-                                </QueryProviders>
+                                {children}
                             </Content>
                         </Layout>
                     </Layout>

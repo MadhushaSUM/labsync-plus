@@ -9,8 +9,6 @@ import { formatISO } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-const { Meta } = Card;
-
 export default function Dashboard() {
     const [selectedTest, setSelectedTest] = useState<DataEmptyTests | null>(null);
 
@@ -40,11 +38,6 @@ export default function Dashboard() {
             <Card
                 className="apply_shadow"
             >
-                <Meta
-                    title="LabSync - Plus"
-                    description="Your trusted medical laboratory management software"
-                />
-
                 <div className="mt-5">
                     <Row gutter={[10, 10]}>
                         <Col span={6}>
