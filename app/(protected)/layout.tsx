@@ -77,6 +77,14 @@ const siderItems: MenuProps['items'] = [
                 key: "/settings/normal-ranges",
                 label: "Normal Ranges"
             },
+            {
+                key: "/settings/users",
+                label: "Users"
+            },
+            {
+                key: "/settings/branches",
+                label: "Branches"
+            },
         ]
     },
 ];
