@@ -70,7 +70,13 @@ function UserForm() {
                     name: values.name,
                     email: oldUser.email,
                     role: values.role,
-                    branch: selectedBranch.id,
+                    branch: {
+                        id: selectedBranch.id,
+                        name: selectedBranch.name,
+                        address: selectedBranch.address,
+                        telephone: selectedBranch.telephone,
+                        version: selectedBranch.version
+                    },
                     version: oldUser.version,
                 };
 

@@ -35,6 +35,11 @@ const getColumns = (editHandle: (record: any) => void) => {
             title: 'Branch',
             dataIndex: 'branch',
             key: 'branch',
+            render(value) {
+                return (
+                    <>{value.name}</>
+                )
+            },
         },
         {
             title: 'Action',

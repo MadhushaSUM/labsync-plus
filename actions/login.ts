@@ -15,7 +15,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
     const { email, password } = validatedFields.data;
 
-    try {        
+    try {
         await signIn("credentials", {
             email,
             password,
@@ -27,11 +27,13 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
                 case "CredentialsSignin":
                     return { error: "Invalid credentials!" };
                 default:
-                    return { error: "Something went wrong!" };
+                    if (error.cause?.err?.cause === "NO_BRANCH_ASSIGNED") {
+                        return { error: "Your account is not assigned to any branch. Please contact your administrator." };
+                    }
+
+                    return { error: "Something went wrong! IDK :(" };
             }
-
         }
-
         throw error;
     }
 }

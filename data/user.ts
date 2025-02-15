@@ -1,3 +1,4 @@
+import { UserType } from "@/types/entity/user";
 
 export async function fetchUserById(id?: string) {
     if (!id) {
@@ -12,5 +13,5 @@ export async function fetchUserById(id?: string) {
     }
 
     const res = await response.json()
-    return res.user;
+    return res.user as UserType;
 }

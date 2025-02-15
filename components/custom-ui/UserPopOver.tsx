@@ -1,9 +1,10 @@
-import { Avatar, Button, Col, Popover, Row, Tag } from "antd";
+import { Avatar, Button, Col, Popover, Row, Tag, Typography } from "antd";
 import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
 import { HiOutlineMoon, HiOutlineSun } from "react-icons/hi";
 import { useState } from "react";
 import { logout } from "@/actions/logout";
 import { User } from "next-auth";
+import { BranchType } from "@/types/entity/branch";
 
 const UserPopOver = (
     {
@@ -12,16 +13,16 @@ const UserPopOver = (
         toggleTheme,
         isDarkMode
     }: {
-        currentUser: ({ role: string; branch: number; } & User) | undefined,
+        currentUser: ({ role: string; branch: BranchType; } & User) | undefined,
         onClickSignOut: () => void,
         toggleTheme: () => void,
         isDarkMode: boolean
     }
 ) => {
     return (
-        <div className="flex flex-col gap-1 mt-5">
-            <Row>
-                <Col span={10}>
+        <div className="flex flex-col gap-1 px-2 mt-5">
+            <Row gutter={50}>
+                <Col span={6}>
                     <p>Role:</p>
                 </Col>
                 <Col span={10}>
@@ -31,12 +32,22 @@ const UserPopOver = (
                     }
                 </Col>
             </Row>
-            <Row>
+            <Row gutter={50}>
+                <Col span={6}>
+                    <p>Email:</p>
+                </Col>
                 <Col span={10}>
+                    <span>
+                        {currentUser?.email}
+                    </span>
+                </Col>
+            </Row>
+            <Row gutter={50}>
+                <Col span={6}>
                     <p>Branch:</p>
                 </Col>
                 <Col span={10}>
-                    <p>{currentUser?.branch || "Matara"}</p>
+                    <p>{currentUser?.branch.name}</p>
                 </Col>
             </Row>
             <div className="flex flex-row gap-1">

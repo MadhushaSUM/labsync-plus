@@ -4,13 +4,14 @@ import authConfig from "@/auth.config"
 import PostgresAdapter from "@auth/pg-adapter"
 import { Pool } from "pg";
 import { fetchUserById } from "./data/user";
+import { BranchType } from "./types/entity/branch";
 
 
 declare module "next-auth" {
     interface Session {
         user: {
             role: string;
-            branch: number;
+            branch: BranchType;
         } & DefaultSession["user"]
     }
 }
@@ -31,8 +32,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         async signIn({ user }) {
             const existingUser = await fetchUserById(user.id);
 
-            if (!existingUser.emailVerified) {
-                return false;
+            if (!existingUser.branch.id) {
+                throw new Error("NO_BRANCH_ASSIGNED", { cause: "NO_BRANCH_ASSIGNED" });
             }
 
             return true;
@@ -45,7 +46,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 session.user.role = token.role as string;
             }
             if (token.branch && session.user) {
-                session.user.branch = Number(token.branch as string);
+                session.user.branch = token.branch as BranchType;
             }
 
             return session;
