@@ -1,7 +1,7 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const fetchAuditTrails = async ({ limit, skip, startDate, endDate }: { limit: number, skip: number, startDate?: string, endDate?: string }, signal: AbortSignal) => {
-    let params = `limit=${limit}&offset=${skip}`;
+export const fetchAuditTrails = async ({ limit, skip, startDate, endDate }: { limit: number, skip: number, startDate?: string, endDate?: string }, signal: AbortSignal, userId?: string) => {
+    let params = `userId=${userId}&limit=${limit}&offset=${skip}`;
     if (startDate) {
         params += `&startDate=${startDate}`;
     }

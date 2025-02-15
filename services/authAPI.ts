@@ -24,8 +24,8 @@ export const addUser = async (user: { name: string, email: string, password: str
     }
 };
 
-export const fetchUsers = async ({ limit, skip, search }: PatientRequestDtoType, signal: AbortSignal) => {
-    let params = `limit=${limit}&offset=${skip}`;
+export const fetchUsers = async ({ limit, skip, search }: PatientRequestDtoType, signal: AbortSignal, userId?: string) => {
+    let params = `userId=${userId}&limit=${limit}&offset=${skip}`;
     if (search) {
         params += `&search=${search}`;
     }
@@ -39,9 +39,9 @@ export const fetchUsers = async ({ limit, skip, search }: PatientRequestDtoType,
     return response.json();
 };
 
-export const updateUser = async (userId: number, userData: UserType, signal?: AbortSignal): Promise<UserType> => {
+export const updateUser = async (userId: number, userData: UserType, signal?: AbortSignal, currentUserId?: string): Promise<UserType> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/auth/users/${userId}`, {
+        const response = await fetch(`${API_BASE_URL}/auth/users/${userId}?userId=${currentUserId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

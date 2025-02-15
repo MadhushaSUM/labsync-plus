@@ -1,16 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchInvestigationFields } from "@/services/investigationAPI";
 import { TestField } from "@/types/entity/investigation";
+import { useCurrentUser } from "../auth/useCurrentUser";
 
 const useGetInvestigationFields = (testId?: number) => {
     const controller = new AbortController();
     const { signal } = controller;
+    const currentUser = useCurrentUser();
 
     return useQuery<{ content: TestField[] }>({
         queryKey: ["investigation-fields", testId], // Unique cache key
         queryFn: () => {
             if (testId) {
-                return fetchInvestigationFields(testId, signal);
+                return fetchInvestigationFields(testId, signal, currentUser?.id);
             }
             return { content: [] };
         },

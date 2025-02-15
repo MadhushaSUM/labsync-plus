@@ -1,12 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateInvestigationDataAddedStatus } from '@/services/investigationDataAPI';
+import { useCurrentUser } from "../auth/useCurrentUser";
 
 const useUpdateInvestigationAsDataNotAdded = () => {
     const queryClient = useQueryClient();
+    const currentUser = useCurrentUser();
 
     const mutation = useMutation({
         mutationFn: ({ investigationRegisterId, investigationId }: { investigationRegisterId: number, investigationId: number }) =>
-            updateInvestigationDataAddedStatus(investigationRegisterId, investigationId),
+            updateInvestigationDataAddedStatus(investigationRegisterId, investigationId, currentUser?.id),
 
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["registrations"], exact: false });

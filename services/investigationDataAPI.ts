@@ -2,8 +2,8 @@ import { PatientAnalysisDataRequestDto } from "@/types/Dto/InvestigationData";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const fetchInvestigationData = async (investigationRegisterId: number, investigationId: number, signal: AbortSignal) => {
-    const response = await fetch(`${API_BASE_URL}/investigationData/get?investigationRegisterId=${investigationRegisterId}&investigationId=${investigationId}`, { signal });
+export const fetchInvestigationData = async (investigationRegisterId: number, investigationId: number, signal: AbortSignal, userId?: string) => {
+    const response = await fetch(`${API_BASE_URL}/investigationData/get?userId=${userId}&investigationRegisterId=${investigationRegisterId}&investigationId=${investigationId}`, { signal });
     if (!response.ok) {
         throw new Error('Failed to fetch investigation data');
     }
@@ -23,8 +23,8 @@ export const fetchPatientInvestigationData = async (
     return response.json();
 };
 
-export const fetchDataEmptyInvestigations = async (signal: AbortSignal) => {
-    const response = await fetch(`${API_BASE_URL}/investigation-data/data-empty`, { signal });
+export const fetchDataEmptyInvestigations = async (userId?: string, signal?: AbortSignal) => {
+    const response = await fetch(`${API_BASE_URL}/investigation-data/data-empty?userId=${userId}`, { signal });
 
     if (!response.ok) {
         const errorData = await response.json();
@@ -43,9 +43,10 @@ export const fetchDataAddedInvestigations = async ({ limit, skip, patientId, sta
     refNumber?: number;
     allReports?: boolean;
 },
-    signal: AbortSignal
+    signal: AbortSignal,
+    userId?: string,
 ) => {
-    let params = `limit=${limit}&offset=${skip}`;
+    let params = `userId=${userId}&limit=${limit}&offset=${skip}`;
 
     if (patientId) {
         params += `&patientId=${patientId}`;
@@ -76,9 +77,10 @@ export const fetchDataAddedInvestigations = async ({ limit, skip, patientId, sta
 export const updateInvestigationDataAddedStatus = async (
     investigationRegisterId: number,
     investigationId: number,
+    userId?: string,
 ) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/investigation-data/data-added?investigationRegisterId=${investigationRegisterId}&investigationId=${investigationId}`, {
+        const response = await fetch(`${API_BASE_URL}/investigation-data/data-added?userId=${userId}&investigationRegisterId=${investigationRegisterId}&investigationId=${investigationId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -99,10 +101,11 @@ export const updateInvestigationDataAddedStatus = async (
 export const updateInvestigationData = async (
     investigationRegisterId: number,
     investigationId: number,
-    body: { data: object; options: object; doctor_id?: number; version: number; }
+    body: { data: object; options: object; doctor_id?: number; version: number; },
+    userId?: string,
 ) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/investigation-data?investigationRegisterId=${investigationRegisterId}&investigationId=${investigationId}`, {
+        const response = await fetch(`${API_BASE_URL}/investigation-data?userId=${userId}&investigationRegisterId=${investigationRegisterId}&investigationId=${investigationId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -124,9 +127,10 @@ export const updateInvestigationData = async (
 export const updateInvestigationPrintedStatus = async (
     investigationRegisterId: number,
     investigationId: number,
+    userId?: string
 ) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/investigation-data/printed?investigationRegisterId=${investigationRegisterId}&investigationId=${investigationId}`, {
+        const response = await fetch(`${API_BASE_URL}/investigation-data/printed?userId=${userId}&investigationRegisterId=${investigationRegisterId}&investigationId=${investigationId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

@@ -3,8 +3,8 @@ import { BranchType } from "@/types/entity/branch";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const fetchBranches = async ({ limit, skip, search }: PatientRequestDtoType, signal: AbortSignal) => {
-    let params = `limit=${limit}&offset=${skip}`;
+export const fetchBranches = async ({ limit, skip, search }: PatientRequestDtoType, signal: AbortSignal, userId?: string) => {
+    let params = `userId=${userId}&limit=${limit}&offset=${skip}`;
     if (search) {
         params += `&search=${search}`;
     }
@@ -18,9 +18,9 @@ export const fetchBranches = async ({ limit, skip, search }: PatientRequestDtoTy
     return response.json();
 };
 
-export const addBranch = async (branch: BranchType) => {
+export const addBranch = async (branch: BranchType, userId?: string) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/branches`, {
+        const response = await fetch(`${API_BASE_URL}/branches?userId=${userId}`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -39,9 +39,9 @@ export const addBranch = async (branch: BranchType) => {
     }
 };
 
-export const updateBranch = async (branchId: number, branchData: BranchType, signal?: AbortSignal): Promise<BranchType> => {
+export const updateBranch = async (branchId: number, branchData: BranchType, signal?: AbortSignal, userId?: string): Promise<BranchType> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/branches/${branchId}`, {
+        const response = await fetch(`${API_BASE_URL}/branches/${branchId}?userId=${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

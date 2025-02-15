@@ -1,7 +1,7 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const fetchPatientAnalysisData = async ({ patientId, startDate, endDate }: { patientId: number, startDate?: string, endDate?: string }, signal: AbortSignal) => {
-    let params = `patientId=${patientId}`;
+export const fetchPatientAnalysisData = async ({ patientId, startDate, endDate }: { patientId: number, startDate?: string, endDate?: string }, signal: AbortSignal, userId?: string) => {
+    let params = `userId=${userId}&patientId=${patientId}`;
 
     if (startDate) {
         params += `&startDate=${startDate}`;
@@ -20,11 +20,11 @@ export const fetchPatientAnalysisData = async ({ patientId, startDate, endDate }
     return response.json();
 };
 
-export const fetchInvestigationAnalysisData = async ({ startDate, endDate }: { startDate?: string, endDate?: string }, signal: AbortSignal) => {
-    let params = "?";
+export const fetchInvestigationAnalysisData = async ({ startDate, endDate }: { startDate?: string, endDate?: string }, signal: AbortSignal, userId?: string) => {
+    let params = `?userId=${userId}`;
 
     if (startDate) {
-        params += `startDate=${startDate}`;
+        params += `&startDate=${startDate}`;
     }
     if (endDate) {
         params += `&endDate=${endDate}`;
@@ -40,8 +40,8 @@ export const fetchInvestigationAnalysisData = async ({ startDate, endDate }: { s
     return response.json();
 };
 
-export const fetchFinancialAnalysisData = async ({ step, startDate, endDate }: { step: string, startDate?: string, endDate?: string }, signal: AbortSignal) => {
-    let params = `step=${step}`;
+export const fetchFinancialAnalysisData = async ({ step, startDate, endDate }: { step: string, startDate?: string, endDate?: string }, signal: AbortSignal, userId?: string) => {
+    let params = `userId=${userId}&step=${step}`;
 
     if (startDate) {
         params += `&startDate=${startDate}`;

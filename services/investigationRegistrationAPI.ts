@@ -3,8 +3,8 @@ import { InvestigationRegistryRequestDtoType, NewInvestigationRegistryRequestDto
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const fetchInvestigationRegistrations = async ({ limit, skip, patientId, startDate, endDate, refNumber }: InvestigationRegistryRequestDtoType, signal: AbortSignal) => {
-    let params = `limit=${limit}&offset=${skip}`;
+export const fetchInvestigationRegistrations = async ({ limit, skip, patientId, startDate, endDate, refNumber }: InvestigationRegistryRequestDtoType, signal: AbortSignal, userId?: string) => {
+    let params = `userId=${userId}&limit=${limit}&offset=${skip}`;
 
     if (patientId) {
         params += `&patientId=${patientId}`;
@@ -29,8 +29,8 @@ export const fetchInvestigationRegistrations = async ({ limit, skip, patientId, 
     return response.json();
 };
 
-export const addInvestigationRegistrations = async (investigationRegister: NewInvestigationRegistryRequestDtoType) => {
-    const response = await fetch(`${API_BASE_URL}/investigation-registration`, {
+export const addInvestigationRegistrations = async (investigationRegister: NewInvestigationRegistryRequestDtoType, userId?: string) => {
+    const response = await fetch(`${API_BASE_URL}/investigation-registration?userId=${userId}`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -46,9 +46,9 @@ export const addInvestigationRegistrations = async (investigationRegister: NewIn
     return response;
 };
 
-export const updateInvestigationRegistrations = async (investigationRegisterId: number, investigationRegisterData: UpdateRegistrationRequestDtoType, signal?: AbortSignal) => {
+export const updateInvestigationRegistrations = async (investigationRegisterId: number, investigationRegisterData: UpdateRegistrationRequestDtoType, signal?: AbortSignal, userId?: string) => {
 
-    const response = await fetch(`${API_BASE_URL}/investigation-registration/${investigationRegisterId}`, {
+    const response = await fetch(`${API_BASE_URL}/investigation-registration/${investigationRegisterId}?userId=${userId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

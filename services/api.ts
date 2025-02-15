@@ -5,8 +5,8 @@ import { PatientType } from "@/types/entity/patient";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const fetchPatients = async ({ limit, skip, search }: PatientRequestDtoType, signal: AbortSignal) => {
-    let params = `limit=${limit}&offset=${skip}`;
+export const fetchPatients = async ({ limit, skip, search }: PatientRequestDtoType, signal: AbortSignal, userId?: string) => {
+    let params = `userId=${userId}&limit=${limit}&offset=${skip}`;
     if (search) {
         params += `&search=${search}`;
     }
@@ -30,9 +30,9 @@ export const searchPatientsByName = async (query: string, signal: AbortSignal) =
     return response.json();
 };
 
-export const addPatient = async (patient: PatientType) => {
+export const addPatient = async (patient: PatientType, userId?: string) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/patient`, {
+        const response = await fetch(`${API_BASE_URL}/patient?userId=${userId}`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -51,9 +51,9 @@ export const addPatient = async (patient: PatientType) => {
     }
 };
 
-export const updatePatient = async (patientId: number, patientData: PatientType, signal?: AbortSignal): Promise<PatientType> => {
+export const updatePatient = async (patientId: number, patientData: PatientType, signal?: AbortSignal, userId?: string): Promise<PatientType> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/patient/${patientId}`, {
+        const response = await fetch(`${API_BASE_URL}/patient/${patientId}?userId=${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -91,8 +91,8 @@ export const deletePatient = async (patientIds: number[], signal?: AbortSignal):
 };
 
 
-export const fetchDoctors = async ({ limit, skip, search }: DoctorRequestDtoType, signal: AbortSignal) => {
-    let params = `limit=${limit}&offset=${skip}`;
+export const fetchDoctors = async ({ limit, skip, search }: DoctorRequestDtoType, signal: AbortSignal, userId?: string) => {
+    let params = `userId=${userId}&limit=${limit}&offset=${skip}`;
     if (search) {
         params += `&search=${search}`;
     }
@@ -116,15 +116,15 @@ export const searchDoctorsByName = async (query: string, signal: AbortSignal) =>
     return response.json();
 };
 
-export const addDoctor = async (doctor: DoctorType) => {
-    const response = await fetch(`${API_BASE_URL}/doctor`, {
+export const addDoctor = async (doctor: DoctorType, userId?: string) => {
+    const response = await fetch(`${API_BASE_URL}/doctor?userId=${userId}`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(doctor)
     });
-    
+
     if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to add patient");
@@ -133,9 +133,9 @@ export const addDoctor = async (doctor: DoctorType) => {
     return response.json();
 };
 
-export const updateDoctor = async (doctorId: number, doctorData: DoctorType, signal?: AbortSignal): Promise<DoctorType> => {
+export const updateDoctor = async (doctorId: number, doctorData: DoctorType, signal?: AbortSignal, userId?: string): Promise<DoctorType> => {
 
-    const response = await fetch(`${API_BASE_URL}/doctor/${doctorId}`, {
+    const response = await fetch(`${API_BASE_URL}/doctor/${doctorId}?userId=${userId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

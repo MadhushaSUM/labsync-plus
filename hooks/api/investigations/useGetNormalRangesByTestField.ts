@@ -1,16 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchNormalRangesByInvestigationFieldId } from "@/services/investigationAPI";
 import { NormalRange } from "@/types/entity/investigation";
+import { useCurrentUser } from "../auth/useCurrentUser";
 
 const useGetNormalRangesByTestField = (testFieldId?: number) => {
     const controller = new AbortController();
     const { signal } = controller;
+    const currentUser = useCurrentUser();
 
     return useQuery<{ content?: NormalRange }>({
         queryKey: ["normal-ranges", testFieldId], // Unique cache key
         queryFn: () => {
             if (testFieldId) {
-                return fetchNormalRangesByInvestigationFieldId(testFieldId, signal)
+                return fetchNormalRangesByInvestigationFieldId(testFieldId, signal, currentUser?.id)
             }
             return { content: undefined };
         },

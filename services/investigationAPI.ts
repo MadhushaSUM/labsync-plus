@@ -3,8 +3,8 @@ import { NormalRange, Test } from "@/types/entity/investigation";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const fetchInvestigations = async ({ limit, skip, search }: PatientRequestDtoType, signal: AbortSignal) => {
-    let params = `limit=${limit}&offset=${skip}`;
+export const fetchInvestigations = async ({ limit, skip, search }: PatientRequestDtoType, signal: AbortSignal, userId?: string) => {
+    let params = `userId=${userId}&limit=${limit}&offset=${skip}`;
     if (search) {
         params += `&search=${search}`;
     }
@@ -18,8 +18,8 @@ export const fetchInvestigations = async ({ limit, skip, search }: PatientReques
     return response.json();
 }
 
-export const fetchInvestigationFields = async (testId: number, signal: AbortSignal) => {
-    const response = await fetch(`${API_BASE_URL}/investigations/fields?testId=${testId}`, { signal });
+export const fetchInvestigationFields = async (testId: number, signal: AbortSignal, userId?: string) => {
+    const response = await fetch(`${API_BASE_URL}/investigations/fields?userId=${userId}&testId=${testId}`, { signal });
 
     if (!response.ok) {
         const errorData = await response.json();
@@ -29,8 +29,8 @@ export const fetchInvestigationFields = async (testId: number, signal: AbortSign
     return response.json();
 }
 
-export const fetchNormalRangesByInvestigationId = async (testId: number, signal: AbortSignal) => {
-    const response = await fetch(`${API_BASE_URL}/investigations/normal-ranges/investigation?testId=${testId}`, { signal });
+export const fetchNormalRangesByInvestigationId = async (testId: number, signal: AbortSignal, userId?: string) => {
+    const response = await fetch(`${API_BASE_URL}/investigations/normal-ranges/investigation?userId=${userId}&testId=${testId}`, { signal });
 
     if (!response.ok) {
         const errorData = await response.json();
@@ -40,8 +40,8 @@ export const fetchNormalRangesByInvestigationId = async (testId: number, signal:
     return response.json();
 };
 
-export const fetchNormalRangesByInvestigationFieldId = async (testFieldId: number, signal: AbortSignal) => {
-    const response = await fetch(`${API_BASE_URL}/investigations/normal-ranges/field?testFieldId=${testFieldId}`, { signal });
+export const fetchNormalRangesByInvestigationFieldId = async (testFieldId: number, signal: AbortSignal, userId?: string) => {
+    const response = await fetch(`${API_BASE_URL}/investigations/normal-ranges/field?userId=${userId}&testFieldId=${testFieldId}`, { signal });
 
     if (!response.ok) {
         const errorData = await response.json();
@@ -51,8 +51,8 @@ export const fetchNormalRangesByInvestigationFieldId = async (testFieldId: numbe
     return response.json();
 };
 
-export const addNormalRanges = async (normalRanges: NormalRange) => {
-    const response = await fetch(`${API_BASE_URL}/investigations/normal-ranges`, {
+export const addNormalRanges = async (normalRanges: NormalRange, userId?: string) => {
+    const response = await fetch(`${API_BASE_URL}/investigations/normal-ranges?userId=${userId}`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -67,9 +67,9 @@ export const addNormalRanges = async (normalRanges: NormalRange) => {
     return response;
 };
 
-export const updateInvestigationPrice = async (id: number, investigation: Test, signal?: AbortSignal): Promise<Test> => {
+export const updateInvestigationPrice = async (id: number, investigation: Test, signal?: AbortSignal, userId?: string): Promise<Test> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/investigations/price/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/investigations/price/${id}?userId=${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
