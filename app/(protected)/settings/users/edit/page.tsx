@@ -46,11 +46,12 @@ function UserForm() {
 
         const parsedData = JSON.parse(data)
         setOldUser(parsedData);
+        
 
         form.setFieldsValue({
             "name": parsedData.name,
             "role": parsedData.role,
-            "branch": parsedData.branch,
+            "branch": parsedData.branch.id,
             "image": parsedData.image,
         });
     }, [data, router, form]);
