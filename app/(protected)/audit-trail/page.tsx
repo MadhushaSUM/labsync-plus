@@ -2,7 +2,7 @@
 
 import useGetAuditTrails from "@/hooks/api/auditTrails/useGetAuditTrails";
 import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
-import { Card, Table, TableColumnsType, DatePicker } from "antd";
+import { Card, Table, TableColumnsType, DatePicker, Typography } from "antd";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -14,28 +14,32 @@ const columns: TableColumnsType = [
         title: 'ID',
         dataIndex: 'id',
         key: 'id',
+        width: 80,
     },
     {
         title: 'Timestamp',
         dataIndex: 'time_stamp',
         key: 'timestamp',
+        width: 220,
     },
     {
         title: 'User',
-        dataIndex: 'user_id',
-        key: 'userId',
+        dataIndex: 'user_name',
+        key: 'user_name',
+        width: 150,
     },
     {
         title: 'Operation',
         dataIndex: 'operation',
         key: 'operation',
+        width: 200,
     },
     {
         title: 'Payload',
         dataIndex: 'payload',
         key: 'payload',
         render(value) {
-            return <p>{JSON.stringify(value, null, 2)}</p>
+            return <>{JSON.stringify(value, null, 2)}</>
         },
     },
 ];
@@ -50,7 +54,7 @@ export default function AuditTrail() {
             router.push("/dashboard");
             return;
         }
-    },[currentUser]);
+    }, [currentUser]);
 
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
@@ -76,8 +80,8 @@ export default function AuditTrail() {
 
     }
 
-    if (currentUser?.role != "admin") return null; 
-    
+    if (currentUser?.role != "admin") return null;
+
     return (
         <div>
             <Card className="apply_shadow">
