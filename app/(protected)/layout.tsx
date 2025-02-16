@@ -9,85 +9,92 @@ import { useRouter } from "next/navigation";
 import Breadcrumbs from "@/components/breadcrumb/BreadcrumbService";
 import { Toaster } from "sonner";
 import UserAvatar from "@/components/custom-ui/UserPopOver";
+import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
 
 const { Header, Content, Sider } = Layout;
 
-const siderItems: MenuProps['items'] = [
-    {
-        key: "/dashboard",
-        icon: React.createElement(HomeOutlined),
-        label: "Home",
-    },
-    {
-        key: "/registrations",
-        icon: React.createElement(FolderOpenOutlined),
-        label: "Registrations",
-    },
-    {
-        key: "/reports",
-        icon: React.createElement(PrinterOutlined),
-        label: "Reports",
-    },
-    {
-        key: "/patients",
-        icon: React.createElement(UserOutlined),
-        label: "Patients",
-    },
-    {
-        key: "/doctors",
-        icon: React.createElement(UserOutlined),
-        label: "Doctors",
-    },
-    {
-        key: "/audit-trail",
-        icon: React.createElement(AuditOutlined),
-        label: "Audit trail",
-    },
-    {
-        key: "/analysis",
-        icon: React.createElement(LineChartOutlined),
-        label: "Analysis",
+function getSiderItems(isAdmin: boolean) {
+    const siderItems: MenuProps['items'] = [
+        {
+            key: "/dashboard",
+            icon: React.createElement(HomeOutlined),
+            label: "Home",
+        },
+        {
+            key: "/registrations",
+            icon: React.createElement(FolderOpenOutlined),
+            label: "Registrations",
+        },
+        {
+            key: "/reports",
+            icon: React.createElement(PrinterOutlined),
+            label: "Reports",
+        },
+        {
+            key: "/patients",
+            icon: React.createElement(UserOutlined),
+            label: "Patients",
+        },
+        {
+            key: "/doctors",
+            icon: React.createElement(UserOutlined),
+            label: "Doctors",
+        },
+        {
+            key: "/audit-trail",
+            icon: React.createElement(AuditOutlined),
+            label: "Audit trail",
+            disabled: !isAdmin,
+        },
+        {
+            key: "/analysis",
+            icon: React.createElement(LineChartOutlined),
+            label: "Analysis",
+            disabled: !isAdmin,
 
-        children: [
-            {
-                key: "/analysis/investigation-analysis",
-                label: "Investigation"
-            },
-            {
-                key: "/analysis/patient-analysis",
-                label: "Patient"
-            },
-            {
-                key: "/analysis/financial-analysis",
-                label: "Financial"
-            },
-        ]
-    },
-    {
-        key: "/settings",
-        icon: React.createElement(SettingOutlined),
-        label: "Settings",
+            children: [
+                {
+                    key: "/analysis/investigation-analysis",
+                    label: "Investigation"
+                },
+                {
+                    key: "/analysis/patient-analysis",
+                    label: "Patient"
+                },
+                {
+                    key: "/analysis/financial-analysis",
+                    label: "Financial"
+                },
+            ]
+        },
+        {
+            key: "/settings",
+            icon: React.createElement(SettingOutlined),
+            label: "Settings",
+            disabled: !isAdmin,
+            children: [
+                {
+                    key: "/settings/investigations",
+                    label: "Investigations"
+                },
+                {
+                    key: "/settings/normal-ranges",
+                    label: "Normal Ranges"
+                },
+                {
+                    key: "/settings/users",
+                    label: "Users"
+                },
+                {
+                    key: "/settings/branches",
+                    label: "Branches"
+                },
+            ]
+        },
+    ];
 
-        children: [
-            {
-                key: "/settings/investigations",
-                label: "Investigations"
-            },
-            {
-                key: "/settings/normal-ranges",
-                label: "Normal Ranges"
-            },
-            {
-                key: "/settings/users",
-                label: "Users"
-            },
-            {
-                key: "/settings/branches",
-                label: "Branches"
-            },
-        ]
-    },
-];
+    return siderItems;
+}
 
 export default function ProtectedLayout({
     children,
@@ -129,6 +136,8 @@ export default function ProtectedLayout({
         router.push(key);
     }
 
+    const currentUser = useCurrentUser();
+
     return (
         <div>
             <ConfigProvider theme={{ algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm }}>
@@ -165,7 +174,7 @@ export default function ProtectedLayout({
                                 defaultOpenKeys={['sub1']}
                                 style={{ height: '100%', borderRight: 0 }}
                                 onClick={({ key }) => navigateToKey(key)}
-                                items={siderItems}
+                                items={getSiderItems(currentUser?.role == "admin")}
                             />
                         </Sider>
                         <Layout style={{ padding: '0 24px 24px' }}>

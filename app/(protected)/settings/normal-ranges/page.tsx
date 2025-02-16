@@ -9,12 +9,24 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import useAddNormalRangeRule from "@/hooks/api/investigations/useAddNormalRangeRule";
 import useGetNormalRangesByTestField from "@/hooks/api/investigations/useGetNormalRangesByTestField";
+import { useRouter } from "next/navigation";
+import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
 
 const { Meta } = Card;
 const { Option } = Select;
 
 
 export default function NormalRangesSettings() {
+    const router = useRouter();
+    const currentUser = useCurrentUser();
+    useEffect(() => {
+        if (currentUser?.role != "admin") {
+            toast.error("Admin privileges required!");
+            router.push("/dashboard");
+            return;
+        }
+    },[currentUser]);
+
     const [form] = Form.useForm();
     const [coveredPercent, setCoveredPercent] = useState<{ male: number, female: number, other: number }>({ male: 0, female: 0, other: 0 });
 
@@ -101,6 +113,8 @@ export default function NormalRangesSettings() {
             toast.error(error.toString())
         }
     }
+
+    if (currentUser?.role != "admin") return null; 
 
     return (
         <div>

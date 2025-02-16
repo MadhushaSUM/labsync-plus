@@ -12,11 +12,21 @@ import {
 import { Suspense, useEffect, useState } from "react";
 import { BranchType } from "@/types/entity/branch";
 import useUpdateBranch from "@/hooks/api/branches/useUpdateBranch";
+import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
 
 const { Meta } = Card;
 
 function BranchForm() {
     const router = useRouter();
+    const currentUser = useCurrentUser();
+    useEffect(() => {
+        if (currentUser?.role != "admin") {
+            toast.error("Admin privileges required!");
+            router.push("/dashboard");
+            return;
+        }
+    },[currentUser]);
+
     const [form] = Form.useForm();
     const [oldBranch, setOldBranch] = useState<BranchType>();
 
@@ -65,6 +75,7 @@ function BranchForm() {
         }
     }
 
+    if (currentUser?.role != "admin") return null; 
     if (!data) return null;
 
     return (

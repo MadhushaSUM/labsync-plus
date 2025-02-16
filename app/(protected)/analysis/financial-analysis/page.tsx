@@ -17,6 +17,8 @@ import { Bar, Doughnut, getElementAtEvent } from 'react-chartjs-2';
 import { formatISO } from "date-fns";
 import useGetFinancialAnalysis from "@/hooks/api/analysis/useGetFinancialAnalysis";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
 
 ChartJS.register(
     CategoryScale,
@@ -33,9 +35,18 @@ const { Option } = Select;
 const { Meta } = Card;
 
 export default function FinancialAnalysis() {
+    const router = useRouter();
+    const currentUser = useCurrentUser();
+    useEffect(() => {
+        if (currentUser?.role != "admin") {
+            toast.error("Admin privileges required!");
+            router.push("/dashboard");
+            return;
+        }
+    },[currentUser]);
+
     const [form] = Form.useForm();
     const chartRef = useRef<ChartJS<"bar">>(null);
-
 
     const [analysisParams, setAnalysisParams] = useState<{ step?: string, startDate?: string, endDate?: string }>();
     const { data, error, isLoading } = useGetFinancialAnalysis({ step: analysisParams?.step, startDate: analysisParams?.startDate, endDate: analysisParams?.endDate });
@@ -130,6 +141,8 @@ export default function FinancialAnalysis() {
             });
         }
     }, [pieChartData]);
+
+    if (currentUser?.role != "admin") return null; 
 
     return (
         <div>

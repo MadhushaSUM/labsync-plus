@@ -12,6 +12,8 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import useGetPatientAnalysis from "@/hooks/api/analysis/useGetPatientAnalysis";
 import ShowData from "@/components/custom-ui/ShowData";
+import { useRouter } from "next/navigation";
+import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -19,6 +21,16 @@ const { Meta } = Card;
 const { Option } = Select;
 
 export default function PatientAnalysis() {
+    const router = useRouter();
+    const currentUser = useCurrentUser();
+    useEffect(() => {
+        if (currentUser?.role != "admin") {
+            toast.error("Admin privileges required!");
+            router.push("/dashboard");
+            return;
+        }
+    },[currentUser]);
+
     const chartRef = useRef<ChartJS<'doughnut'>>(null);
     const [form] = Form.useForm();
 
@@ -126,6 +138,8 @@ export default function PatientAnalysis() {
             onOk() { },
         });
     }
+
+    if (currentUser?.role != "admin") return null; 
 
     return (
         <div>

@@ -10,11 +10,22 @@ import {
 } from "antd";
 import useAddBranch from "@/hooks/api/branches/useAddBranch";
 import { BranchType } from "@/types/entity/branch";
+import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
+import { useEffect } from "react";
 
 const { Meta } = Card;
 
 export default function AddBranch() {
     const router = useRouter();
+    const currentUser = useCurrentUser();
+    useEffect(() => {
+        if (currentUser?.role != "admin") {
+            toast.error("Admin privileges required!");
+            router.push("/dashboard");
+            return;
+        }
+    },[currentUser]);
+
     const [form] = Form.useForm();
 
     const { mutateAsync: createNewBranch, isPending } = useAddBranch();
@@ -40,6 +51,8 @@ export default function AddBranch() {
             toast.error(error.toString())
         }
     }
+
+    if (currentUser?.role != "admin") return null; 
 
     return (
         <div>

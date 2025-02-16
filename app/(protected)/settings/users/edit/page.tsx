@@ -16,12 +16,22 @@ import { UserType } from "@/types/entity/user";
 import useUpdateUser from "@/hooks/api/auth/useUpdateUser";
 import { BranchType } from "@/types/entity/branch";
 import useGetBranches from "@/hooks/api/branches/useGetBranches";
+import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
 
 const { Meta } = Card;
 const { Option } = Select;
 
 function UserForm() {
     const router = useRouter();
+    const currentUser = useCurrentUser();
+    useEffect(() => {
+        if (currentUser?.role != "admin") {
+            toast.error("Admin privileges required!");
+            router.push("/dashboard");
+            return;
+        }
+    },[currentUser]);
+
     const [form] = Form.useForm();
     const [oldUser, setOldUser] = useState<UserType>();
 
@@ -96,6 +106,7 @@ function UserForm() {
         }
     }
 
+    if (currentUser?.role != "admin") return null; 
     if (!data) return null;
 
     return (

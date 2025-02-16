@@ -1,8 +1,10 @@
 "use client";
 
 import useGetAuditTrails from "@/hooks/api/auditTrails/useGetAuditTrails";
+import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
 import { Card, Table, TableColumnsType, DatePicker } from "antd";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const { Meta } = Card;
@@ -40,6 +42,16 @@ const columns: TableColumnsType = [
 
 
 export default function AuditTrail() {
+    const router = useRouter();
+    const currentUser = useCurrentUser();
+    useEffect(() => {
+        if (currentUser?.role != "admin") {
+            toast.error("Admin privileges required!");
+            router.push("/dashboard");
+            return;
+        }
+    },[currentUser]);
+
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [searchDates, setSearchDates] = useState<{ startDate: string | undefined, endDate: string | undefined }>({ startDate: undefined, endDate: undefined });
@@ -63,6 +75,8 @@ export default function AuditTrail() {
         }
 
     }
+
+    if (currentUser?.role != "admin") return null; 
     
     return (
         <div>

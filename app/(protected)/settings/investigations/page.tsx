@@ -1,11 +1,12 @@
 "use client";
 
+import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
 import useGetInvestigations from "@/hooks/api/investigations/useGetInvestigations";
 import useUpdateInvestigationPrice from "@/hooks/api/investigations/useUpdateInvestigationPrice";
 import { Test } from "@/types/entity/investigation";
 import { Button, Card, Form, Input, Modal, Table, TableColumnsType } from "antd";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const { Meta } = Card;
@@ -54,6 +55,14 @@ const getColumns = (editHandle: (record: any) => void) => {
 
 export default function InvestigationsSettings() {
     const router = useRouter();
+    const currentUser = useCurrentUser();
+    useEffect(() => {
+        if (currentUser?.role != "admin") {
+            toast.error("Admin privileges required!");
+            router.push("/dashboard");
+            return;
+        }
+    },[currentUser]);
 
     // Investigations
     const [currentPage, setCurrentPage] = useState(1);
@@ -113,6 +122,8 @@ export default function InvestigationsSettings() {
             }
         }
     }
+
+    if (currentUser?.role != "admin") return null; 
 
     return (
         <div>

@@ -1,9 +1,10 @@
 "use client";
 
+import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
 import useGetUsers from "@/hooks/api/auth/useGetUsers";
 import { Button, Card, Input, Table, TableColumnsType } from "antd";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const { Meta } = Card;
@@ -63,6 +64,15 @@ const getColumns = (editHandle: (record: any) => void) => {
 
 export default function UserSettings() {
     const router = useRouter();
+    const currentUser = useCurrentUser();
+    useEffect(() => {
+        if (currentUser?.role != "admin") {
+            toast.error("Admin privileges required!");
+            router.push("/dashboard");
+            return;
+        }
+    },[currentUser]);
+
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [searchPhrase, setSearchPhrase] = useState<string | undefined>(undefined);
@@ -81,6 +91,7 @@ export default function UserSettings() {
         router.push(`/settings/users/edit?data=${userData}`);
     }
 
+    if (currentUser?.role != "admin") return null; 
 
     return (
         <div>

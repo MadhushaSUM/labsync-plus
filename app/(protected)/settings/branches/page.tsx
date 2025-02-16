@@ -1,9 +1,10 @@
 "use client";
 
+import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
 import useGetBranches from "@/hooks/api/branches/useGetBranches";
 import { Button, Card, Input, Table, TableColumnsType } from "antd";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const { Meta } = Card;
@@ -53,6 +54,15 @@ const getColumns = (editHandle: (record: any) => void) => {
 
 export default function BranchSettings() {
     const router = useRouter();
+    const currentUser = useCurrentUser();
+    useEffect(() => {
+        if (currentUser?.role != "admin") {
+            toast.error("Admin privileges required!");
+            router.push("/dashboard");
+            return;
+        }
+    },[currentUser]);
+
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [searchPhrase, setSearchPhrase] = useState<string | undefined>(undefined);
@@ -75,6 +85,7 @@ export default function BranchSettings() {
         router.push(`/settings/branches/edit?data=${branchData}`);
     }
 
+    if (currentUser?.role != "admin") return null; 
 
     return (
         <div>

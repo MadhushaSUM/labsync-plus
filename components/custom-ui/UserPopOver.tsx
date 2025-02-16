@@ -1,10 +1,11 @@
-import { Avatar, Button, Col, Popover, Row, Tag, Typography } from "antd";
+import { Avatar, Button, Col, Popover, Row, Tag } from "antd";
 import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
 import { HiOutlineMoon, HiOutlineSun } from "react-icons/hi";
 import { useState } from "react";
 import { logout } from "@/actions/logout";
 import { User } from "next-auth";
 import { BranchType } from "@/types/entity/branch";
+import { signOut } from "next-auth/react";
 
 const UserPopOver = (
     {
@@ -79,8 +80,9 @@ const UserAvatar = (
         setOpen(newOpen);
     };
 
-    const onClickSignOut = () => {
-        logout();
+    const onClickSignOut = async () => {
+        await logout();
+        await signOut();
     }
 
     const currentUser = useCurrentUser();

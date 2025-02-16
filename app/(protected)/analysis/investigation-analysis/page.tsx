@@ -9,11 +9,23 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import ShowData from "@/components/custom-ui/ShowData";
 import useGetInvestigationAnalysis from "@/hooks/api/analysis/useGetInvestigationAnalysis";
+import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
+import { useRouter } from "next/navigation";
 
 const { Meta } = Card;
 Chart.register(ArcElement);
 
 export default function InvestigationAnalysis() {
+    const router = useRouter();
+    const currentUser = useCurrentUser();
+    useEffect(() => {
+        if (currentUser?.role != "admin") {
+            toast.error("Admin privileges required!");
+            router.push("/dashboard");
+            return;
+        }
+    },[currentUser]);
+
     const [form] = Form.useForm();
     const chartRef = useRef<ChartJS<'doughnut'>>(null);
 
@@ -102,6 +114,8 @@ export default function InvestigationAnalysis() {
             onOk() { },
         });
     }
+
+    if (currentUser?.role != "admin") return null; 
 
     return (
         <div>
