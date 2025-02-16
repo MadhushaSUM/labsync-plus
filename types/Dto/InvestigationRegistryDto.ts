@@ -5,6 +5,7 @@ export interface InvestigationRegistryRequestDtoType {
     startDate?: string;
     endDate?: string;
     refNumber?: number;
+    branchId?: number;
 }
 
 export interface NewInvestigationRegistryRequestDtoType {

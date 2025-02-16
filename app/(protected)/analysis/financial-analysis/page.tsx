@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, DatePicker, Form, Select } from "antd";
+import { Button, Card, DatePicker, Form, Select, Spin } from "antd";
 import { useEffect, useRef, useState } from "react";
 import {
     Chart as ChartJS,
@@ -19,6 +19,8 @@ import useGetFinancialAnalysis from "@/hooks/api/analysis/useGetFinancialAnalysi
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
+import { BranchType } from "@/types/entity/branch";
+import useGetBranches from "@/hooks/api/branches/useGetBranches";
 
 ChartJS.register(
     CategoryScale,
@@ -43,13 +45,28 @@ export default function FinancialAnalysis() {
             router.push("/dashboard");
             return;
         }
-    },[currentUser]);
+    }, [currentUser]);
 
     const [form] = Form.useForm();
     const chartRef = useRef<ChartJS<"bar">>(null);
 
-    const [analysisParams, setAnalysisParams] = useState<{ step?: string, startDate?: string, endDate?: string }>();
-    const { data, error, isLoading } = useGetFinancialAnalysis({ step: analysisParams?.step, startDate: analysisParams?.startDate, endDate: analysisParams?.endDate });
+    // Branch
+    const [branchSearchPhrase, setBranchSearchPhrase] = useState("");
+    const [selectedBranch, setSelectedBranch] = useState<BranchType>();
+
+    const { data: branchResults, error: branchFetchError, isLoading: branchLoading } = useGetBranches({ limit: 5, skip: 0, search: branchSearchPhrase });
+    if (branchFetchError) {
+        toast.error(branchFetchError.message);
+    }
+    const onBranchSearch = (value: string) => {
+        setBranchSearchPhrase(value);
+    }
+    const handleBranchSelect = (value: number) => {
+        setSelectedBranch(branchResults?.content.find(branch => branch.id == value));
+    }
+
+    const [analysisParams, setAnalysisParams] = useState<{ step?: string, startDate?: string, endDate?: string, branchId?: number }>();
+    const { data, error, isLoading } = useGetFinancialAnalysis({ step: analysisParams?.step, startDate: analysisParams?.startDate, endDate: analysisParams?.endDate, branchId: analysisParams?.branchId });
     if (error) {
         toast.error(error.message);
     }
@@ -62,12 +79,14 @@ export default function FinancialAnalysis() {
                     step: values.step,
                     startDate: values.dateRange[0],
                     endDate: values.dateRange[1],
+                    branchId: Number(values.branch),
                 });
             } else {
                 setAnalysisParams({
                     step: values.step,
                     startDate: undefined,
                     endDate: undefined,
+                    branchId: Number(values.branch),
                 });
             }
         } catch (error) {
@@ -142,7 +161,7 @@ export default function FinancialAnalysis() {
         }
     }, [pieChartData]);
 
-    if (currentUser?.role != "admin") return null; 
+    if (currentUser?.role != "admin") return null;
 
     return (
         <div>
@@ -179,6 +198,31 @@ export default function FinancialAnalysis() {
                                     <Option value="annually">Annually</Option>
                                 </Select>
                             </Form.Item>
+
+                            <Form.Item
+                                label="Branch"
+                                name="branch"
+                            >
+                                <Select
+                                    showSearch
+                                    allowClear
+                                    placeholder="Search for a branch"
+                                    onSearch={onBranchSearch}
+                                    onSelect={handleBranchSelect}
+                                    onClear={() => setSelectedBranch(undefined)}
+                                    notFoundContent={branchLoading ? <Spin size="small" /> : "No branch found"}
+                                    filterOption={false}
+                                    value={selectedBranch?.id}
+                                    style={{ width: 150 }}
+                                >
+                                    {branchResults && branchResults.content.map((branch) => (
+                                        <Option key={branch.id} value={branch.id}>
+                                            {branch.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+
                             <Form.Item>
                                 <Button loading={isLoading} type="primary" htmlType="submit">
                                     Search

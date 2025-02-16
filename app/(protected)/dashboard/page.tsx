@@ -2,19 +2,47 @@
 
 import { ScrollArea } from "@/components/custom-ui/ScrollArea";
 import formMapper from "@/components/test-data-forms/FormMapper";
+import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
+import useGetBranches from "@/hooks/api/branches/useGetBranches";
 import useGetDataEmptyInvestigations from "@/hooks/api/investigationData/useGetDataEmptyInvestigations";
+import { BranchType } from "@/types/entity/branch";
 import { DataEmptyTests } from "@/types/entity/investigation";
-import { Card, Col, List, Row } from "antd";
+import { Card, Col, List, Row, Select, Spin } from "antd";
 import { formatISO } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+const { Option } = Select;
+
 export default function Dashboard() {
     const [selectedTest, setSelectedTest] = useState<DataEmptyTests | null>(null);
 
+    // Branch
+    const [branchSearchPhrase, setBranchSearchPhrase] = useState("");
+    const [selectedBranch, setSelectedBranch] = useState<BranchType>();
+
+    const { data: branchResults, error: branchFetchError, isLoading: branchLoading } = useGetBranches({ limit: 5, skip: 0, search: branchSearchPhrase });
+    if (branchFetchError) {
+        toast.error(branchFetchError.message);
+    }
+    const onBranchSearch = (value: string) => {
+        setBranchSearchPhrase(value);
+    }
+    const handleBranchSelect = (value: number) => {
+        setSelectedBranch(branchResults?.content.find(branch => branch.id == value));
+    }
+
+    const currentUser = useCurrentUser();
+    
+    useEffect(() => {
+        setSelectedBranch(branchResults?.content.find(branch => branch.id == currentUser?.branch.id));
+        setFetchData(true);
+    }, [currentUser]);
+
     const [fetchedTestList, setFetchedTestList] = useState<DataEmptyTests[]>();
 
-    const { data, error, isLoading, } = useGetDataEmptyInvestigations();
+    const [fetchData, setFetchData] = useState<boolean>(false);
+    const { data, error, isLoading, } = useGetDataEmptyInvestigations(fetchData, selectedBranch?.id);
     if (error) {
         toast.error(error.message);
     }
@@ -32,7 +60,7 @@ export default function Dashboard() {
             setFetchedTestList(data.content);
         }
     }, [data]);
-    
+
 
     return (
         <div>
@@ -42,6 +70,26 @@ export default function Dashboard() {
                 <div className="mt-5">
                     <Row gutter={[10, 10]}>
                         <Col span={6}>
+                            <div className="ring-1 ring-gray-300/20 rounded-lg p-2 mb-2">
+                                <Select
+                                    showSearch
+                                    allowClear
+                                    placeholder="Search for a branch"
+                                    onSearch={onBranchSearch}
+                                    onSelect={handleBranchSelect}
+                                    onClear={() => setSelectedBranch(undefined)}
+                                    notFoundContent={branchLoading ? <Spin size="small" /> : "No branch found"}
+                                    filterOption={false}
+                                    className="w-full"
+                                    value={selectedBranch?.id}
+                                >
+                                    {branchResults && branchResults.content.map((branch) => (
+                                        <Option key={branch.id} value={branch.id}>
+                                            {branch.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </div>
                             <ScrollArea
                                 className="ring-1 ring-gray-300/20 rounded-lg"
                             >

@@ -14,6 +14,8 @@ import useGetPatientAnalysis from "@/hooks/api/analysis/useGetPatientAnalysis";
 import ShowData from "@/components/custom-ui/ShowData";
 import { useRouter } from "next/navigation";
 import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
+import { BranchType } from "@/types/entity/branch";
+import useGetBranches from "@/hooks/api/branches/useGetBranches";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -29,7 +31,7 @@ export default function PatientAnalysis() {
             router.push("/dashboard");
             return;
         }
-    },[currentUser]);
+    }, [currentUser]);
 
     const chartRef = useRef<ChartJS<'doughnut'>>(null);
     const [form] = Form.useForm();
@@ -49,8 +51,23 @@ export default function PatientAnalysis() {
         setSelectedPatient(patientResults?.content.find(patient => patient.id == value));
     }
 
-    const [analysisParams, setAnalysisParams] = useState<{ patientId?: number, startDate?: string, endDate?: string }>();
-    const { data, error, isLoading } = useGetPatientAnalysis({ patientId: analysisParams?.patientId, startDate: analysisParams?.startDate, endDate: analysisParams?.endDate });
+    // Branch
+    const [branchSearchPhrase, setBranchSearchPhrase] = useState("");
+    const [selectedBranch, setSelectedBranch] = useState<BranchType>();
+
+    const { data: branchResults, error: branchFetchError, isLoading: branchLoading } = useGetBranches({ limit: 5, skip: 0, search: branchSearchPhrase });
+    if (branchFetchError) {
+        toast.error(branchFetchError.message);
+    }
+    const onBranchSearch = (value: string) => {
+        setBranchSearchPhrase(value);
+    }
+    const handleBranchSelect = (value: number) => {
+        setSelectedBranch(branchResults?.content.find(branch => branch.id == value));
+    }
+
+    const [analysisParams, setAnalysisParams] = useState<{ patientId?: number, startDate?: string, endDate?: string, branchId?: number }>();
+    const { data, error, isLoading } = useGetPatientAnalysis({ patientId: analysisParams?.patientId, startDate: analysisParams?.startDate, endDate: analysisParams?.endDate, branchId: analysisParams?.branchId });
     if (error) {
         toast.error(error.message);
     }
@@ -63,12 +80,14 @@ export default function PatientAnalysis() {
                     patientId: selectedPatient.id,
                     startDate: values.dateRange[0],
                     endDate: values.dateRange[1],
+                    branchId: Number(values.branch),
                 });
             } else {
                 setAnalysisParams({
                     patientId: selectedPatient.id,
                     startDate: undefined,
                     endDate: undefined,
+                    branchId: Number(values.branch),
                 });
             }
         }
@@ -139,7 +158,7 @@ export default function PatientAnalysis() {
         });
     }
 
-    if (currentUser?.role != "admin") return null; 
+    if (currentUser?.role != "admin") return null;
 
     return (
         <div>
@@ -189,6 +208,31 @@ export default function PatientAnalysis() {
                                     allowEmpty={[false, false]}
                                 />
                             </Form.Item>
+
+                            <Form.Item
+                                label="Branch"
+                                name="branch"
+                            >
+                                <Select
+                                    showSearch
+                                    allowClear
+                                    placeholder="Search for a branch"
+                                    onSearch={onBranchSearch}
+                                    onSelect={handleBranchSelect}
+                                    onClear={() => setSelectedBranch(undefined)}
+                                    notFoundContent={branchLoading ? <Spin size="small" /> : "No branch found"}
+                                    filterOption={false}
+                                    value={selectedBranch?.id}
+                                    style={{ width: 150 }}
+                                >
+                                    {branchResults && branchResults.content.map((branch) => (
+                                        <Option key={branch.id} value={branch.id}>
+                                            {branch.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+
                             <Form.Item>
                                 <Button loading={isLoading} type="primary" htmlType="submit">
                                     Search

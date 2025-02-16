@@ -1,11 +1,11 @@
-import { AddInvestigationDataRequestDto, TestAnalysisDataRequestDto, UpdateInvestigationDataRequestDto } from "@/types/Dto/InvestigationData";
+import { AddInvestigationDataRequestDto, TestAnalysisDataRequestDto } from "@/types/Dto/InvestigationData";
 import { InvestigationRegistryRequestDtoType, NewInvestigationRegistryRequestDtoType, UpdateRegistrationRequestDtoType } from "@/types/Dto/InvestigationRegistryDto";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const fetchInvestigationRegistrations = async ({ limit, skip, patientId, startDate, endDate, refNumber }: InvestigationRegistryRequestDtoType, signal: AbortSignal, userId?: string) => {
+export const fetchInvestigationRegistrations = async ({ limit, skip, patientId, startDate, endDate, refNumber, branchId }: InvestigationRegistryRequestDtoType, signal: AbortSignal, userId?: string) => {
     let params = `userId=${userId}&limit=${limit}&offset=${skip}`;
-
+    
     if (patientId) {
         params += `&patientId=${patientId}`;
     }
@@ -17,6 +17,9 @@ export const fetchInvestigationRegistrations = async ({ limit, skip, patientId, 
     }
     if (refNumber) {
         params += `&refNumber=${refNumber}`;
+    }
+    if (branchId) {
+        params += `&branchId=${branchId}`;
     }
 
     const response = await fetch(`${API_BASE_URL}/investigation-registration/all?${params}`, { signal });

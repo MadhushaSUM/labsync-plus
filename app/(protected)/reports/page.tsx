@@ -14,12 +14,16 @@ import pdfTemplateMapper from '@/lib/pdf/pdfTemplateMapper';
 import { useQueryClient } from '@tanstack/react-query';
 import { fetchNormalRangesByInvestigationId } from '@/services/investigationAPI';
 import useUpdateInvestigationAsPrinted from '@/hooks/api/investigationData/useUpdateInvestigationAsPrinted';
+import useGetBranches from '@/hooks/api/branches/useGetBranches';
+import { useCurrentUser } from '@/hooks/api/auth/useCurrentUser';
 
 const { Meta } = Card;
 const { Option } = Select;
 const { Text } = Typography;
 
 export default function Reports() {
+    const currentUser = useCurrentUser();
+
     const [downloadLoading, setDownloadLoading] = useState(false);
     const [printingLoading, setPrintingLoading] = useState(false);
     const [exportLoading, setExportLoading] = useState(false);
@@ -27,12 +31,18 @@ export default function Reports() {
     const [mergeDisabled, setMergeDisabled] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
+
     const [filters, setFilters] = useState({
         patientId: undefined,
         refNumber: undefined,
+        branchId: currentUser?.branch.id,
         dateRange: { fromDate: undefined, toDate: undefined },
         allReports: false,
     });
+
+    useEffect(() => {
+        setFilters((prev) => ({ ...prev, branchId: currentUser?.branch.id }));
+    }, [currentUser]);
 
     const [debouncedFilters, setDebouncedFilters] = useState(filters);
 
@@ -53,6 +63,7 @@ export default function Reports() {
         skip: (currentPage - 1) * pageSize,
         patientId: debouncedFilters.patientId,
         refNumber: debouncedFilters.refNumber,
+        branchId: debouncedFilters.branchId,
         startDate: debouncedFilters.dateRange.fromDate,
         endDate: debouncedFilters.dateRange.toDate,
         allReports: debouncedFilters.allReports,
@@ -75,6 +86,17 @@ export default function Reports() {
     }
     const onPatientSearch = (value: string) => {
         setPatientSearchPhrase(value);
+    }
+
+    // Branch
+    const [branchSearchPhrase, setBranchSearchPhrase] = useState("");
+
+    const { data: branchResults, error: branchFetchError, isLoading: branchLoading } = useGetBranches({ limit: 5, skip: 0, search: branchSearchPhrase });
+    if (branchFetchError) {
+        toast.error(branchFetchError.message);
+    }
+    const onBranchSearch = (value: string) => {
+        setBranchSearchPhrase(value);
     }
 
     const columns = useMemo(() => [
@@ -201,9 +223,9 @@ export default function Reports() {
                     description="Print reports of data added investigations"
                 />
                 <div className="mt-5">
-                    <div className="mb-5">
+                    <div className="mb-2">
                         <Flex justify="space-between">
-                            <Flex gap={10} align="center">
+                            <div className="flex flex-row gap-2">
                                 <Select
                                     showSearch
                                     allowClear
@@ -221,6 +243,24 @@ export default function Reports() {
                                         </Option>
                                     ))}
                                 </Select>
+                                <Select
+                                    showSearch
+                                    allowClear
+                                    placeholder="Search for a branch"
+                                    onSearch={onBranchSearch}
+                                    onSelect={(value) => updateFilter("branchId", value)}
+                                    onClear={() => updateFilter("branchId", undefined)}
+                                    notFoundContent={branchLoading ? <Spin size="small" /> : "No branch found"}
+                                    filterOption={false}
+                                    style={{ width: 150 }}
+                                    value={filters.branchId}
+                                >
+                                    {branchResults && branchResults.content.map((branch) => (
+                                        <Option key={branch.id} value={branch.id}>
+                                            {branch.name}
+                                        </Option>
+                                    ))}
+                                </Select>
                                 <InputNumber
                                     placeholder="Reference Number"
                                     controls={false}
@@ -234,6 +274,7 @@ export default function Reports() {
                                             toDate: dateStrings[1] ? formatISO(new Date(dateStrings[1]), { representation: "date" }) : undefined,
                                         });
                                     }}
+                                    style={{ width: 250 }}
                                     allowClear
                                 />
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -245,11 +286,11 @@ export default function Reports() {
                                         unCheckedChildren={<CloseOutlined />}
                                     />
                                 </div>
-                            </Flex>
+                            </div>
 
                             <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
                                 <Button onClick={() => { }} disabled={!selectedRowKeys.length}>Print</Button>
-                                <Button onClick={handleMergeReports} disabled={mergeDisabled}>Merge</Button>
+                                {/* <Button onClick={handleMergeReports} disabled={mergeDisabled}>Merge</Button> */}
                                 <Button onClick={() => { }} disabled={!selectedRowKeys.length}>Export</Button>
                             </div>
                         </Flex>

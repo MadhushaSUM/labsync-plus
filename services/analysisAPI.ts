@@ -1,6 +1,6 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const fetchPatientAnalysisData = async ({ patientId, startDate, endDate }: { patientId: number, startDate?: string, endDate?: string }, signal: AbortSignal, userId?: string) => {
+export const fetchPatientAnalysisData = async ({ patientId, startDate, endDate }: { patientId: number, startDate?: string, endDate?: string }, signal: AbortSignal, userId?: string, branchId?: number) => {
     let params = `userId=${userId}&patientId=${patientId}`;
 
     if (startDate) {
@@ -8,6 +8,9 @@ export const fetchPatientAnalysisData = async ({ patientId, startDate, endDate }
     }
     if (endDate) {
         params += `&endDate=${endDate}`;
+    }
+    if (branchId) {
+        params += `&branchId=${branchId}`;
     }
 
     const response = await fetch(`${API_BASE_URL}/analysis/patient?${params}`, { signal });
@@ -20,7 +23,7 @@ export const fetchPatientAnalysisData = async ({ patientId, startDate, endDate }
     return response.json();
 };
 
-export const fetchInvestigationAnalysisData = async ({ startDate, endDate }: { startDate?: string, endDate?: string }, signal: AbortSignal, userId?: string) => {
+export const fetchInvestigationAnalysisData = async ({ startDate, endDate }: { startDate?: string, endDate?: string }, signal: AbortSignal, userId?: string, branchId?: number) => {
     let params = `?userId=${userId}`;
 
     if (startDate) {
@@ -28,6 +31,9 @@ export const fetchInvestigationAnalysisData = async ({ startDate, endDate }: { s
     }
     if (endDate) {
         params += `&endDate=${endDate}`;
+    }
+    if (branchId) {
+        params += `&branchId=${branchId}`;
     }
 
     const response = await fetch(`${API_BASE_URL}/analysis/investigation${params}`, { signal });
@@ -40,7 +46,7 @@ export const fetchInvestigationAnalysisData = async ({ startDate, endDate }: { s
     return response.json();
 };
 
-export const fetchFinancialAnalysisData = async ({ step, startDate, endDate }: { step: string, startDate?: string, endDate?: string }, signal: AbortSignal, userId?: string) => {
+export const fetchFinancialAnalysisData = async ({ step, startDate, endDate }: { step: string, startDate?: string, endDate?: string }, signal: AbortSignal, userId?: string, branchId?: number) => {
     let params = `userId=${userId}&step=${step}`;
 
     if (startDate) {
@@ -48,6 +54,9 @@ export const fetchFinancialAnalysisData = async ({ step, startDate, endDate }: {
     }
     if (endDate) {
         params += `&endDate=${endDate}`;
+    }
+    if (branchId) {
+        params += `&branchId=${branchId}`;
     }
 
     const response = await fetch(`${API_BASE_URL}/analysis/financial?${params}`, { signal });

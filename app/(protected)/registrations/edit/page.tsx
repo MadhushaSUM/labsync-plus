@@ -1,10 +1,13 @@
 "use client";
 
+import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
+import useGetBranches from "@/hooks/api/branches/useGetBranches";
 import useGetDoctors from "@/hooks/api/doctors/useGetDoctors";
 import useUpdateRegistration from "@/hooks/api/investigationRegister/useUpdateInvestigationRegister";
 import useGetInvestigations from "@/hooks/api/investigations/useGetInvestigations";
 import useGetPatients from "@/hooks/api/useGetPatients";
 import { calculateAge } from "@/lib/date-utils";
+import { BranchType } from "@/types/entity/branch";
 import { DoctorType } from "@/types/entity/doctor";
 import { Registration } from "@/types/entity/investigationRegister";
 import { PatientType } from "@/types/entity/patient";
@@ -41,6 +44,7 @@ function EditRegistrationForm() {
             "patient": `${parsedData.patient.name} [${calculateAge(parsedData.patient.date_of_birth)}]`,
             "doctor": parsedData.registeredTests[0].doctor?.name,
             "ref_number": Number(parsedData.ref_number) || undefined,
+            "branch": parsedData.branch.id,
             "date": dayjs(parsedData.date),
             "investigations": parsedData.registeredTests.map(item => item.test.id),
             "total_cost": parsedData.total_cost,
@@ -95,14 +99,30 @@ function EditRegistrationForm() {
         form.setFieldValue("total_cost", total_cost);
     }
 
+    // Branch
+    const [branchSearchPhrase, setBranchSearchPhrase] = useState("");
+    const [selectedBranch, setSelectedBranch] = useState<BranchType>();
+
+    const { data: branchResults, error: branchFetchError, isLoading: branchLoading } = useGetBranches({ limit: 5, skip: 0, search: branchSearchPhrase });
+    if (branchFetchError) {
+        toast.error(branchFetchError.message);
+    }
+    const onBranchSearch = (value: string) => {
+        setBranchSearchPhrase(value);
+    }
+    const handleBranchSelect = (value: number) => {
+        setSelectedBranch(branchResults?.content.find(branch => branch.id == value));
+    }
+
     const { mutateAsync: updateRegistration, isPending } = useUpdateRegistration();
     const onFormSubmit = async (values: any) => {
         console.log(values);
 
-        if (selectedPatient) {
+        if (selectedPatient && selectedBranch?.id) {
             const patientId = Number(selectedPatient.id);
             const doctorId = selectedDoctor?.id || undefined;
             const refNumber = values.ref_number ? values.ref_number : null;
+            const branchId = selectedBranch.id;
 
             let investigations = [];
             for (const investigationStr of values.investigations) {
@@ -119,8 +139,7 @@ function EditRegistrationForm() {
                     investigations: investigations,
                     totalCost: Number(values.total_cost),
                     paid: Number(values.paid_price),
-                    //TODO: this should be taken from the current session 
-                    branch_id: 1,
+                    branch_id: branchId,
                     collected: values.collected == true,
                     version: oldRegistration?.version!,
                 }
@@ -220,7 +239,33 @@ function EditRegistrationForm() {
                                 name="ref_number"
                                 rules={[{ type: "integer", message: "Only integers are accepted!" }]}
                             >
-                                <InputNumber controls={false} style={{ width: 100 }} />
+                                <InputNumber controls={false} style={{ width: 150 }} />
+                            </Form.Item>
+
+                            <Form.Item
+                                label="Branch"
+                                name="branch"
+                                required
+                                rules={[{ required: true, message: 'Please select a Branch!' }]}
+                            >
+                                <Select
+                                    showSearch
+                                    allowClear
+                                    placeholder="Search for a branch"
+                                    onSearch={onBranchSearch}
+                                    onSelect={handleBranchSelect}
+                                    onClear={() => setSelectedBranch(undefined)}
+                                    notFoundContent={branchLoading ? <Spin size="small" /> : "No branch found"}
+                                    filterOption={false}
+                                    value={selectedBranch?.id}
+                                    style={{ width: 150 }}
+                                >
+                                    {branchResults && branchResults.content.map((branch) => (
+                                        <Option key={branch.id} value={branch.id}>
+                                            {branch.name}
+                                        </Option>
+                                    ))}
+                                </Select>
                             </Form.Item>
 
                             <Form.Item
@@ -253,14 +298,14 @@ function EditRegistrationForm() {
                                 name="total_cost"
                                 label="Total cost"
                             >
-                                <Input readOnly style={{ width: 100 }} />
+                                <Input readOnly style={{ width: 150 }} />
                             </Form.Item>
 
                             <Form.Item
                                 name="paid_price"
                                 label="Paid"
                             >
-                                <InputNumber style={{ width: 100 }} />
+                                <InputNumber style={{ width: 150 }} />
                             </Form.Item>
 
                             <Form.Item

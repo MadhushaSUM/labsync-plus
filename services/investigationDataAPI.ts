@@ -23,8 +23,14 @@ export const fetchPatientInvestigationData = async (
     return response.json();
 };
 
-export const fetchDataEmptyInvestigations = async (userId?: string, signal?: AbortSignal) => {
-    const response = await fetch(`${API_BASE_URL}/investigation-data/data-empty?userId=${userId}`, { signal });
+export const fetchDataEmptyInvestigations = async (userId?: string, branchId?: number, signal?: AbortSignal) => {
+    let params = `userId=${userId}`;
+
+    if (branchId) {
+        params += `&branchId=${branchId}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/investigation-data/data-empty?${params}`, { signal });
 
     if (!response.ok) {
         const errorData = await response.json();
@@ -34,13 +40,14 @@ export const fetchDataEmptyInvestigations = async (userId?: string, signal?: Abo
     return response.json();
 }
 
-export const fetchDataAddedInvestigations = async ({ limit, skip, patientId, startDate, endDate, refNumber, allReports }: {
+export const fetchDataAddedInvestigations = async ({ limit, skip, patientId, startDate, endDate, refNumber, branchId, allReports }: {
     limit: number;
     skip: number;
     patientId?: number;
     startDate?: string;
     endDate?: string;
     refNumber?: number;
+    branchId?: number;
     allReports?: boolean;
 },
     signal: AbortSignal,
@@ -59,6 +66,9 @@ export const fetchDataAddedInvestigations = async ({ limit, skip, patientId, sta
     }
     if (refNumber) {
         params += `&refNumber=${refNumber}`;
+    }
+    if (branchId) {
+        params += `&branchId=${branchId}`;
     }
     if (allReports) {
         params += `&allReports=${allReports}`;

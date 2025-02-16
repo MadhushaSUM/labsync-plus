@@ -12,12 +12,15 @@ import useGetPatients from "@/hooks/api/useGetPatients";
 import { debounce } from "lodash";
 import ShowData from "@/components/custom-ui/ShowData";
 import useUpdateInvestigationAsDataNotAdded from "@/hooks/api/investigationData/useUpdateInvestigationAsDataNotAdded";
+import useGetBranches from "@/hooks/api/branches/useGetBranches";
+import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
 
 const { Meta } = Card;
 const { Option } = Select;
 
 export default function InvestigationRegistration() {
     const router = useRouter();
+    const currentUser = useCurrentUser();
 
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
@@ -25,8 +28,13 @@ export default function InvestigationRegistration() {
     const [filters, setFilters] = useState({
         patientId: undefined,
         refNumber: undefined,
+        branchId: currentUser?.branch.id,
         dateRange: { fromDate: undefined, toDate: undefined },
     });
+
+    useEffect(() => {
+        setFilters((prev) => ({ ...prev, branchId: currentUser?.branch.id }));
+    }, [currentUser]);
 
     const [debouncedFilters, setDebouncedFilters] = useState(filters);
 
@@ -52,6 +60,7 @@ export default function InvestigationRegistration() {
         skip: (currentPage - 1) * pageSize,
         patientId: debouncedFilters.patientId,
         refNumber: debouncedFilters.refNumber,
+        branchId: debouncedFilters.branchId,
         startDate: debouncedFilters.dateRange.fromDate,
         endDate: debouncedFilters.dateRange.toDate,
     });
@@ -69,6 +78,17 @@ export default function InvestigationRegistration() {
     }
     const onPatientSearch = (value: string) => {
         setPatientSearchPhrase(value);
+    }
+
+    // Branch
+    const [branchSearchPhrase, setBranchSearchPhrase] = useState("");
+
+    const { data: branchResults, error: branchFetchError, isLoading: branchLoading } = useGetBranches({ limit: 5, skip: 0, search: branchSearchPhrase });
+    if (branchFetchError) {
+        toast.error(branchFetchError.message);
+    }
+    const onBranchSearch = (value: string) => {
+        setBranchSearchPhrase(value);
     }
 
     const [testRegistrations, setTestRegistrations] = useState<Registration[]>([]);
@@ -99,6 +119,14 @@ export default function InvestigationRegistration() {
                 )
             }
         },
+        {
+            title: 'Branch', dataIndex: 'branch', key: 'branch',
+            render(value) {
+                return (
+                    <p>{value.name}</p>
+                )
+            }
+        },
         { title: 'Total cost', dataIndex: 'total_cost', key: 'totalCost' },
         { title: 'Paid price', dataIndex: 'paid_price', key: 'paidPrice' },
         {
@@ -106,27 +134,17 @@ export default function InvestigationRegistration() {
             dataIndex: '',
             key: 'a',
             render: (_, record) => (
-                <Flex gap={5}>
-                    <Button
-                        size='small'
-                        variant='outlined'
-                        color='primary'
-                        onClick={() => { }}
-                    >
-                        Print receipt
-                    </Button>
-                    <Button
-                        size='small'
-                        variant='outlined'
-                        color='default'
-                        onClick={() => {
-                            const registrationData = encodeURIComponent(JSON.stringify(record));
-                            router.push(`/registrations/edit?data=${registrationData}`)
-                        }}
-                    >
-                        Edit
-                    </Button>
-                </Flex>
+                <Button
+                    size='small'
+                    variant='outlined'
+                    color='default'
+                    onClick={() => {
+                        const registrationData = encodeURIComponent(JSON.stringify(record));
+                        router.push(`/registrations/edit?data=${registrationData}`)
+                    }}
+                >
+                    Edit
+                </Button>
             ),
         },
     ];
@@ -309,6 +327,24 @@ export default function InvestigationRegistration() {
                                     </Option>
                                 ))}
                             </Select>
+                            <Select
+                                showSearch
+                                allowClear
+                                placeholder="Search for a branch"
+                                onSearch={onBranchSearch}
+                                onSelect={(value) => updateFilter("branchId", value)}
+                                onClear={() => updateFilter("branchId", undefined)}
+                                notFoundContent={branchLoading ? <Spin size="small" /> : "No branch found"}
+                                filterOption={false}
+                                style={{ width: 150 }}
+                                value={filters.branchId}
+                            >
+                                {branchResults && branchResults.content.map((branch) => (
+                                    <Option key={branch.id} value={branch.id}>
+                                        {branch.name}
+                                    </Option>
+                                ))}
+                            </Select>
                             <InputNumber
                                 placeholder="Reference Number"
                                 controls={false}
@@ -323,6 +359,7 @@ export default function InvestigationRegistration() {
                                     });
                                 }}
                                 allowClear
+                                style={{ width: 250 }}
                             />
                         </div>
                         <Button color="primary" variant="solid" onClick={onClickAdd}>Add</Button>

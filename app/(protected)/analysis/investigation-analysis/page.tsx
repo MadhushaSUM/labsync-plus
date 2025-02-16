@@ -1,7 +1,7 @@
 "use client";
 
 import { ScrollArea } from "@/components/custom-ui/ScrollArea";
-import { Button, Card, DatePicker, Form, List, Modal } from "antd";
+import { Button, Card, DatePicker, Form, List, Modal, Select, Spin } from "antd";
 import { Chart as ChartJS, ArcElement, ChartData, Chart, ChartTypeRegistry, Point, BubbleDataPoint } from "chart.js";
 import { Doughnut, getElementAtEvent } from "react-chartjs-2";
 import { formatISO } from "date-fns";
@@ -11,8 +11,11 @@ import ShowData from "@/components/custom-ui/ShowData";
 import useGetInvestigationAnalysis from "@/hooks/api/analysis/useGetInvestigationAnalysis";
 import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
 import { useRouter } from "next/navigation";
+import { BranchType } from "@/types/entity/branch";
+import useGetBranches from "@/hooks/api/branches/useGetBranches";
 
 const { Meta } = Card;
+const {Option} = Select;
 Chart.register(ArcElement);
 
 export default function InvestigationAnalysis() {
@@ -24,13 +27,30 @@ export default function InvestigationAnalysis() {
             router.push("/dashboard");
             return;
         }
-    },[currentUser]);
+    }, [currentUser]);
 
     const [form] = Form.useForm();
     const chartRef = useRef<ChartJS<'doughnut'>>(null);
 
-    const [analysisParams, setAnalysisParams] = useState<{ initial: boolean, startDate?: string, endDate?: string }>({ initial: true });
-    const { data, error, isLoading } = useGetInvestigationAnalysis({ initial: analysisParams.initial, startDate: analysisParams?.startDate, endDate: analysisParams?.endDate });
+    const [analysisParams, setAnalysisParams] = useState<{ initial: boolean, startDate?: string, endDate?: string, branchId?: number }>({ initial: true });
+
+    // Branch
+    const [branchSearchPhrase, setBranchSearchPhrase] = useState("");
+    const [selectedBranch, setSelectedBranch] = useState<BranchType>();
+
+    const { data: branchResults, error: branchFetchError, isLoading: branchLoading } = useGetBranches({ limit: 5, skip: 0, search: branchSearchPhrase });
+    if (branchFetchError) {
+        toast.error(branchFetchError.message);
+    }
+    const onBranchSearch = (value: string) => {
+        setBranchSearchPhrase(value);
+    }
+    const handleBranchSelect = (value: number) => {
+        setSelectedBranch(branchResults?.content.find(branch => branch.id == value));
+    }
+
+
+    const { data, error, isLoading } = useGetInvestigationAnalysis({ initial: analysisParams.initial, startDate: analysisParams?.startDate, endDate: analysisParams?.endDate, branchId: analysisParams.branchId });
     if (error) {
         toast.error(error.message);
     }
@@ -41,12 +61,14 @@ export default function InvestigationAnalysis() {
                 initial: false,
                 startDate: values.dateRange[0],
                 endDate: values.dateRange[1],
+                branchId: Number(values.branch),
             });
         } else {
             setAnalysisParams({
                 initial: false,
                 startDate: undefined,
                 endDate: undefined,
+                branchId: Number(values.branch),
             });
         }
     }
@@ -115,7 +137,7 @@ export default function InvestigationAnalysis() {
         });
     }
 
-    if (currentUser?.role != "admin") return null; 
+    if (currentUser?.role != "admin") return null;
 
     return (
         <div>
@@ -140,6 +162,31 @@ export default function InvestigationAnalysis() {
                                     allowEmpty={[false, false]}
                                 />
                             </Form.Item>
+
+                            <Form.Item
+                                label="Branch"
+                                name="branch"
+                            >
+                                <Select
+                                    showSearch
+                                    allowClear
+                                    placeholder="Search for a branch"
+                                    onSearch={onBranchSearch}
+                                    onSelect={handleBranchSelect}
+                                    onClear={() => setSelectedBranch(undefined)}
+                                    notFoundContent={branchLoading ? <Spin size="small" /> : "No branch found"}
+                                    filterOption={false}
+                                    value={selectedBranch?.id}
+                                    style={{ width: 150 }}
+                                >
+                                    {branchResults && branchResults.content.map((branch) => (
+                                        <Option key={branch.id} value={branch.id}>
+                                            {branch.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+
                             <Form.Item>
                                 <Button loading={isLoading} type="primary" htmlType="submit">
                                     Search
@@ -180,7 +227,6 @@ export default function InvestigationAnalysis() {
                                                         >
                                                             View
                                                         </Button>
-
                                                     </div>
                                                 </List.Item>
                                             )
