@@ -103,20 +103,20 @@ export default function Reports() {
         {
             title: "Date",
             dataIndex: "date",
-            render: (value: any) => <p>{formatISO(value, { representation: "date" })}</p>,
+            render: (value: any) => <>{formatISO(value, { representation: "date" })}</>,
         },
         {
             title: "Patient Name",
             dataIndex: "patientName",
-            render: (value: any) => <p>{value}</p>,
+            render: (value: any) => <>{value}</>,
         },
         {
             title: "Reference Number",
             dataIndex: "ref_number",
             render: (value: any) => (
-                <p>
+                <>
                     {value ? value : <Tag color="warning">Empty</Tag>}
-                </p>
+                </>
             ),
         },
         { title: "Test", dataIndex: "testName" },
@@ -203,7 +203,7 @@ export default function Reports() {
 
             const normalRanges = await queryClient.fetchQuery({
                 queryKey: ["normal-ranges", selectedItem.testId],
-                queryFn: ({ signal }) => fetchNormalRangesByInvestigationId(selectedItem.testId, signal),
+                queryFn: ({ signal }) => fetchNormalRangesByInvestigationId(selectedItem.testId, signal, currentUser?.id),
                 staleTime: 1000 * 60 * 60, // Keep for this time
             });
 

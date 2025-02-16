@@ -99,7 +99,7 @@ export default function InvestigationRegistration() {
             title: 'Patient Name', dataIndex: 'patient', key: 'patientName',
             render(value) {
                 return (
-                    <p>{value.name}</p>
+                    <>{value.name}</>
                 )
             },
         },
@@ -107,7 +107,7 @@ export default function InvestigationRegistration() {
             title: 'Date', dataIndex: 'date', key: 'date',
             render(value) {
                 return (
-                    <p>{formatISO(value, { representation: "date" })}</p>
+                    <>{formatISO(value, { representation: "date" })}</>
                 )
             },
         },
@@ -115,7 +115,7 @@ export default function InvestigationRegistration() {
             title: 'Reference number', dataIndex: 'ref_number', key: 'refNumber',
             render(value) {
                 return (
-                    <p>{value ? value : <Tag bordered={false} color="warning">Empty</Tag>}</p>
+                    <>{value ? value : <Tag bordered={false} color="warning">Empty</Tag>}</>
                 )
             }
         },
@@ -123,7 +123,7 @@ export default function InvestigationRegistration() {
             title: 'Branch', dataIndex: 'branch', key: 'branch',
             render(value) {
                 return (
-                    <p>{value.name}</p>
+                    <>{value.name}</>
                 )
             }
         },
@@ -156,7 +156,7 @@ export default function InvestigationRegistration() {
             title: 'Test', dataIndex: 'test', key: 'testName',
             render(value) {
                 return (
-                    <p>{value.name}</p>
+                    <>{value.name}</>
                 )
             },
             width: 250,
@@ -165,7 +165,7 @@ export default function InvestigationRegistration() {
             title: 'Requested doctor', dataIndex: 'doctor', key: 'doctorName',
             render(value) {
                 return (
-                    <p>{value ? value.name : <Tag bordered={false} color="warning">Empty</Tag>}</p>
+                    <>{value ? value.name : <Tag bordered={false} color="warning">Empty</Tag>}</>
                 )
             },
             width: 300,
@@ -174,7 +174,7 @@ export default function InvestigationRegistration() {
             title: 'Data', dataIndex: 'data', key: 'data',
             render(value) {
                 return (
-                    <p>
+                    <>
                         {value ?
                             <Button
                                 size="small"
@@ -190,7 +190,7 @@ export default function InvestigationRegistration() {
                                 color="warning">
                                 Empty
                             </Tag>}
-                    </p>
+                    </>
                 )
             }
         },
