@@ -1,5 +1,6 @@
 export const publicRoutes = [
     "/",
+    "/patient-portal"
 ];
 
 export const authRoutes = [
