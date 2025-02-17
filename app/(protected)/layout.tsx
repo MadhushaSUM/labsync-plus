@@ -89,6 +89,10 @@ function getSiderItems(isAdmin: boolean) {
                     key: "/settings/branches",
                     label: "Branches"
                 },
+                {
+                    key: "/settings/whatsapp",
+                    label: "WhatsApp"
+                },
             ]
         },
     ];

@@ -27,6 +27,7 @@ const breadcrumbNameMap: { [key: string]: string } = {
     "/settings/branches": "Branches",
     "/settings/branches/add": "Add",
     "/settings/branches/edit": "Edit",
+    "/settings/whatsapp": "WhatsApp",
     "/reports": "Reports",
     "/analysis": "Analysis",
     "/analysis/patient-analysis": "Patient",
