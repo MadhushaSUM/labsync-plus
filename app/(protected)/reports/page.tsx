@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Button, Card, DatePicker, Flex, InputNumber, Select, Spin, Switch, Table, Tag, Typography } from "antd";
-import { CheckOutlined, CloseOutlined, DownloadOutlined, ExportOutlined, PrinterOutlined } from "@ant-design/icons";
+import { CheckOutlined, CloseOutlined, DownloadOutlined, ExportOutlined, PrinterOutlined, WhatsAppOutlined } from "@ant-design/icons";
 import { calculateAge } from '@/lib/date-utils';
 import { formatISO } from 'date-fns';
 import { toast } from 'sonner';
@@ -16,6 +16,7 @@ import { fetchNormalRangesByInvestigationId } from '@/services/investigationAPI'
 import useUpdateInvestigationAsPrinted from '@/hooks/api/investigationData/useUpdateInvestigationAsPrinted';
 import useGetBranches from '@/hooks/api/branches/useGetBranches';
 import { useCurrentUser } from '@/hooks/api/auth/useCurrentUser';
+import useSendWhatsAppMessage from '@/hooks/api/investigationData/useSendWhatsAppMessage';
 
 const { Meta } = Card;
 const { Option } = Select;
@@ -133,6 +134,9 @@ export default function Reports() {
                     <Button loading={exportLoading} size="small" onClick={() => handleExportReports(record.key)}>
                         {<ExportOutlined />}
                     </Button>
+                    <Button loading={exportLoading} size="small" onClick={() => handleWhatsAppReports(record.key)}>
+                        {<WhatsAppOutlined />}
+                    </Button>
                 </div>
             ),
         },
@@ -214,6 +218,37 @@ export default function Reports() {
             setExportLoading(false);
         }
     };
+
+    const { mutateAsync: sendWhatsAppMessage } = useSendWhatsAppMessage();
+    const handleWhatsAppReports = async (key: string) => {
+        try {
+            const selectedItem = data?.content.find((item) =>
+                `${item.testId},${item.testRegisterId}` === key
+            ) as DataEmptyTests;
+
+            if (selectedItem) {
+                const promise = sendWhatsAppMessage({
+                    investigationRegisterId: selectedItem.testRegisterId,
+                    investigationId: selectedItem.testId,
+                    patientId: selectedItem.patientId,
+                });
+
+                toast.promise(promise, {
+                    loading: "Sending link to the patient",
+                    success: "Link sent!"
+                });
+
+                try {
+                    await promise;
+                } catch (error: any) {
+                    toast.error(error.toString())
+                }
+            }
+
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+    }
 
     return (
         <div>

@@ -157,3 +157,14 @@ export const updateInvestigationPrintedStatus = async (
         throw error;
     }
 };
+
+export const triggerWhatsAppMessage = async (investigationRegisterId: number, investigationId: number, patientId: number, signal?: AbortSignal, userId?: string) => {
+    const response = await fetch(`${API_BASE_URL}/investigation-data/whatsapp?userId=${userId}&registrationId=${investigationRegisterId}&investigationId=${investigationId}&patientId=${patientId}`, { signal });
+    
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to trigger WhatsApp message");
+    }
+    
+    return response.json();
+};
