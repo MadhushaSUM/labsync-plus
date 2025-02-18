@@ -10,6 +10,7 @@ import Breadcrumbs from "@/components/breadcrumb/BreadcrumbService";
 import { Toaster } from "sonner";
 import UserAvatar from "@/components/custom-ui/UserPopOver";
 import { useCurrentUser } from "@/hooks/api/auth/useCurrentUser";
+// import Image from "next/image";
 
 const { Header, Content, Sider } = Layout;
 
@@ -162,6 +163,14 @@ export default function ProtectedLayout({
                             <h1 className="text-lg font-black text-cyan-400 ring-1 rounded-lg px-2 py-1 ring-cyan-300">
                                 LabSync - Plus
                             </h1>
+                            {/* <div>
+                                <Image
+                                    src="/LabSync-Plus_logo_wide.png"
+                                    width={100}
+                                    height={100}
+                                    alt="labsync - plus banner"
+                                />
+                            </div> */}
                             <div className="flex flex-row gap-2 justify-center content-center items-center">
                                 <UserAvatar
                                     isDarkMode={isDarkMode}

@@ -44,8 +44,8 @@ function PatientPortalCard() {
                 style={{ width: 300, height: 480 }}
                 cover={
                     <img
-                        alt="example"
-                        src="https://www.medicaltranscriptionservicecompany.com/wp-content/uploads/2022/09/what-are-the-15-main-components-of-a-complete-medical-record.webp"
+                        alt="labsync-plus logo"
+                        src="/LabSync-Plus_logo_128.png"
                     />
                 }
                 actions={[

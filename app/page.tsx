@@ -16,8 +16,8 @@ export default function Home() {
                 style={{ width: 300, height:480 }}
                 cover={
                     <img
-                        alt="example"
-                        src="https://demo.ou.ac.lk/wp-content/uploads/2024/10/Medical-Laboratory-Sciences.jpg"
+                        alt="labsync-plus logo"
+                        src="/LabSync-Plus_logo_128.png"
                     />
                 }
                 actions={[
